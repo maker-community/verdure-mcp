@@ -66,7 +66,26 @@ public class KeycloakSettings
     public string AdminRole { get; set; } = "admin";
 
     /// <summary>
-    /// Full authority URL with realm
+    /// Full authority URL with realm. Returns empty if configuration is invalid.
     /// </summary>
-    public string RealmAuthority => $"{Authority.TrimEnd('/')}/realms/{Realm}";
+    public string RealmAuthority
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(Authority) || string.IsNullOrEmpty(Realm))
+            {
+                return string.Empty;
+            }
+
+            var baseUri = Authority.TrimEnd('/');
+            var realmPath = $"/realms/{Uri.EscapeDataString(Realm)}";
+
+            if (Uri.TryCreate(baseUri + realmPath, UriKind.Absolute, out var result))
+            {
+                return result.ToString();
+            }
+
+            return string.Empty;
+        }
+    }
 }
