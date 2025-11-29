@@ -265,7 +265,7 @@
     <value>MCP 广场</value>
   </data>
   <data name="Nav_SupportUs" xml:space="preserve">
-    <value>支持我们</value>
+    <value>支持我</value>
   </data>
   <data name="Nav_PersonalCenter" xml:space="preserve">
     <value>个人中心</value>
@@ -472,13 +472,13 @@
 
   <!-- Support -->
   <data name="Support_PageTitle" xml:space="preserve">
-    <value>支持我们 - Verdure MCP 服务平台</value>
+    <value>支持我 - Verdure MCP 服务平台</value>
   </data>
   <data name="Support_Title" xml:space="preserve">
-    <value>支持我们</value>
+    <value>支持我</value>
   </data>
   <data name="Support_Subtitle" xml:space="preserve">
-    <value>感谢您使用 Verdure MCP 服务平台！我们提供免费的 MCP 服务，如果您觉得有帮助，欢迎通过以下方式支持我们的开发工作。</value>
+    <value>感谢您使用 Verdure MCP 服务平台！如果您觉得这个项目对您有帮助，不妨通过以下方式支持一下我的开发工作。</value>
   </data>
   <data name="Support_FollowBilibili" xml:space="preserve">
     <value>关注 B站</value>
@@ -505,13 +505,13 @@
     <value>去充电</value>
   </data>
   <data name="Support_ScanDonate" xml:space="preserve">
-    <value>扫码赞助</value>
+    <value>请我喝杯咖啡</value>
   </data>
   <data name="Support_DirectSupport" xml:space="preserve">
     <value>直接支持</value>
   </data>
   <data name="Support_DonateDesc" xml:space="preserve">
-    <value>扫描下方二维码直接赞助，您的支持将用于服务器维护、功能开发和更多优质内容的创作。</value>
+    <value>如果这个项目帮到了您，可以扫描下方二维码请我喝杯咖啡或饮料，您的支持是我继续开发的动力！</value>
   </data>
   <data name="Support_ShowQrCode" xml:space="preserve">
     <value>显示二维码</value>
@@ -523,7 +523,7 @@
     <value>Star 项目</value>
   </data>
   <data name="Support_StarDesc" xml:space="preserve">
-    <value>在 GitHub 上给我们的项目点个 Star，让更多人发现这个项目</value>
+    <value>在 GitHub 上给这个项目点个 Star，让更多人发现它</value>
   </data>
   <data name="Support_Share" xml:space="preserve">
     <value>分享推荐</value>
@@ -547,18 +547,18 @@
     <value>感谢您的支持！</value>
   </data>
   <data name="Support_ThanksDesc" xml:space="preserve">
-    <value>每一份支持都是我们前进的动力，让我们一起打造更好的 MCP 服务生态！</value>
+    <value>每一份支持都是我继续前进的动力，让我们一起打造更好的 MCP 服务生态！</value>
   </data>
 
   <!-- QR Code Dialog -->
   <data name="QrCode_DialogTitle" xml:space="preserve">
-    <value>扫码赞助</value>
+    <value>请我喝杯咖啡</value>
   </data>
   <data name="QrCode_ScanHint" xml:space="preserve">
-    <value>使用微信或支付宝扫描下方二维码进行赞助</value>
+    <value>使用微信或支付宝扫描下方二维码请我喝杯咖啡或饮料</value>
   </data>
   <data name="QrCode_Thanks" xml:space="preserve">
-    <value>感谢您的支持！您的每一份赞助都将用于服务器维护和功能开发。</value>
+    <value>感谢您的支持！您的每一份心意都是我继续开发的动力。</value>
   </data>
 
   <!-- Service Details -->
@@ -593,10 +593,10 @@
     <value>在小智平台配置</value>
   </data>
   <data name="ServiceDetails_SupportUs" xml:space="preserve">
-    <value>支持我们</value>
+    <value>支持我</value>
   </data>
   <data name="ServiceDetails_SupportDesc" xml:space="preserve">
-    <value>如果您觉得这个服务对您有帮助，欢迎支持我们的开发工作！</value>
+    <value>如果您觉得这个服务对您有帮助，欢迎支持我的开发工作！</value>
   </data>
   <data name="ServiceDetails_GoSupport" xml:space="preserve">
     <value>去支持</value>

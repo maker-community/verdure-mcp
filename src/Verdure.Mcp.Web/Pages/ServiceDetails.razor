@@ -3,8 +3,9 @@
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
 @inject IClipboardService ClipboardService
+@inject IStringLocalizer<SharedResources> L
 
-<PageTitle>@(_service?.DisplayName ?? "服务详情") - Verdure MCP 服务平台</PageTitle>
+<PageTitle>@string.Format(L["ServiceDetails_PageTitle"], _service?.DisplayName ?? L["ServiceDetails_NotFound"])</PageTitle>
 
 @if (_loading)
 {
@@ -14,10 +15,10 @@ else if (_service == null)
 {
     <MudPaper Class="pa-8 text-center" Style="border-radius: 16px;">
         <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Large" Color="Color.Error" />
-        <MudText Typo="Typo.h5" Class="mt-4" Style="font-weight: 500;">服务未找到</MudText>
+        <MudText Typo="Typo.h5" Class="mt-4" Style="font-weight: 500;">@L["ServiceDetails_NotFound"]</MudText>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-4" Href="/"
                    Style="border-radius: 20px; text-transform: none;">
-            返回首页
+            @L["ServiceDetails_BackToHome"]
         </MudButton>
     </MudPaper>
 }
@@ -59,12 +60,12 @@ else
 
                 <MudDivider Class="mb-5" />
 
-                <MudText Typo="Typo.h6" Class="mb-3" Style="font-weight: 500;">描述</MudText>
+                <MudText Typo="Typo.h6" Class="mb-3" Style="font-weight: 500;">@L["ServiceDetails_Description"]</MudText>
                 <MudText Typo="Typo.body1" Class="mb-5" Style="line-height: 1.75; color: rgba(0, 0, 0, 0.75);">
-                    @(_service.Description ?? "暂无描述")
+                    @(_service.Description ?? L["NoDescription"])
                 </MudText>
 
-                <MudText Typo="Typo.h6" Class="mb-3" Style="font-weight: 500;">端点</MudText>
+                <MudText Typo="Typo.h6" Class="mb-3" Style="font-weight: 500;">@L["ServiceDetails_Endpoint"]</MudText>
                 <MudPaper Class="pa-4 mb-5" Elevation="0" Style="background-color: var(--mud-palette-surface-container-low); border-radius: 12px;">
                     <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
                         <code style="font-family: 'Fira Code', 'Consolas', monospace; font-size: 0.9rem;">@_service.EndpointRoute</code>
@@ -76,7 +77,7 @@ else
 
                 @if (!string.IsNullOrEmpty(_service.Tags))
                 {
-                    <MudText Typo="Typo.h6" Class="mb-3" Style="font-weight: 500;">标签</MudText>
+                    <MudText Typo="Typo.h6" Class="mb-3" Style="font-weight: 500;">@L["ServiceDetails_Tags"]</MudText>
                     <MudStack Row="true" Spacing="2" Class="mb-5" Wrap="Wrap.Wrap">
                         @foreach (var tag in _service.Tags.Split(','))
                         {
@@ -89,7 +90,7 @@ else
                 @if (!string.IsNullOrEmpty(_service.Author))
                 {
                     <MudText Typo="Typo.body2" Color="Color.Secondary" Style="line-height: 1.6;">
-                        作者: @_service.Author
+                        @string.Format(L["ServiceDetails_Author"], _service.Author)
                     </MudText>
                 }
             </MudPaper>
@@ -97,7 +98,7 @@ else
 
         <MudItem xs="12" md="4">
             <MudPaper Elevation="0" Class="pa-5 mb-4" Style="border-radius: 16px; background-color: #FFFFFF; border: 1px solid rgba(124, 77, 255, 0.12); box-shadow: 0 2px 8px rgba(124, 77, 255, 0.06);">
-                <MudText Typo="Typo.h6" Class="mb-4" Style="font-weight: 500;">快速操作</MudText>
+                <MudText Typo="Typo.h6" Class="mb-4" Style="font-weight: 500;">@L["ServiceDetails_QuickActions"]</MudText>
                 
                 @if (!string.IsNullOrEmpty(_service.DocumentationUrl))
                 {
@@ -105,7 +106,7 @@ else
                                Href="@_service.DocumentationUrl" Target="_blank"
                                StartIcon="@Icons.Material.Filled.Description"
                                Style="border-radius: 20px; text-transform: none; height: 44px;">
-                        查看文档
+                        @L["ServiceDetails_ViewDocs"]
                     </MudButton>
                 }
                 
@@ -113,23 +114,23 @@ else
                            Href="https://xiaozhi.verdure-hiro.cn/" Target="_blank"
                            StartIcon="@Icons.Material.Filled.Link"
                            Style="border-radius: 20px; text-transform: none; height: 44px;">
-                    在小智平台配置
+                    @L["ServiceDetails_ConfigureOnXiaozhi"]
                 </MudButton>
             </MudPaper>
 
             <MudPaper Elevation="0" Class="pa-5" Style="background: linear-gradient(135deg, #FCE4EC 0%, #F8BBD0 100%); border-radius: 16px; border: 2px solid #E91E63;">
                 <MudIcon Icon="@Icons.Material.Filled.Favorite" Color="Color.Tertiary" Size="Size.Large" Class="mb-3" />
                 <MudText Typo="Typo.h6" Color="Color.Default" Class="mb-2" Style="font-weight: 500;">
-                    支持我们
+                    @L["ServiceDetails_SupportUs"]
                 </MudText>
                 <MudText Typo="Typo.body2" Color="Color.Default" Class="mb-4" Style="line-height: 1.6;">
-                    如果您觉得这个服务对您有帮助，欢迎支持我们的开发工作！
+                    @L["ServiceDetails_SupportDesc"]
                 </MudText>
                 <MudButton Variant="Variant.Filled" Color="Color.Tertiary" FullWidth="true"
                            Href="/support"
                            StartIcon="@Icons.Material.Filled.Favorite"
                            Style="border-radius: 20px; text-transform: none; height: 44px;">
-                    去支持
+                    @L["ServiceDetails_GoSupport"]
                 </MudButton>
             </MudPaper>
         </MudItem>
