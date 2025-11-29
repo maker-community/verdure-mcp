@@ -1,7 +1,8 @@
 @page "/"
 @layout LandingLayout
+@inject IStringLocalizer<SharedResources> L
 
-<PageTitle>Verdure MCP - 开源 MCP 服务平台</PageTitle>
+<PageTitle>@L["AppTitle"]</PageTitle>
 
 <!-- Hero Section - 全宽大气背景 -->
 <div Style="background: linear-gradient(135deg, #7C4DFF 0%, #5E35B1 100%); padding: 120px 0 100px;">
@@ -12,14 +13,13 @@
                     <MudIcon Icon="@Icons.Material.Filled.Hub" 
                              Style="font-size: 80px; margin-bottom: 1.5rem; color: #FFFFFF; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));" />
                     <MudText Typo="Typo.h2" Class="mb-4" Style="font-weight: 600; color: #FFFFFF;">
-                        Verdure MCP 服务平台
+                        @L["Index_HeroTitle"]
                     </MudText>
                     <MudText Typo="Typo.h5" Class="mb-6" Style="color: rgba(255,255,255,0.9);">
-                        开源的 MCP 服务提供平台
+                        @L["Index_HeroSubtitle"]
                     </MudText>
                     <MudText Typo="Typo.body1" Class="mb-8" Style="max-width: 700px; margin: 0 auto; color: rgba(255,255,255,0.85); font-size: 1.1rem;">
-                        为 AI 助手提供丰富的工具能力扩展，支持图片生成、邮件发送等多种功能。
-                        基于 MCP 协议，轻松集成到 Claude、ChatGPT 等主流 AI 平台。
+                        @L["Index_HeroDescription"]
                     </MudText>
                     <AuthorizeView>
                         <Authorized>
@@ -29,7 +29,7 @@
                                           Size="Size.Large"
                                           Style="background-color: #FFFFFF; color: #7C4DFF; font-weight: 600; padding: 12px 32px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"
                                           StartIcon="@Icons.Material.Filled.Dashboard">
-                                    进入控制台
+                                    @L["Index_EnterConsole"]
                                 </MudButton>
                                 <MudButton Href="https://github.com/maker-community/verdure-mcp" 
                                           Target="_blank"
@@ -37,7 +37,7 @@
                                           Size="Size.Large"
                                           Style="border-color: rgba(255,255,255,0.8); border-width: 2px; color: #FFFFFF; font-weight: 600; padding: 12px 32px;"
                                           StartIcon="@Icons.Material.Filled.Code">
-                                    查看源码
+                                    @L["Index_ViewSource"]
                                 </MudButton>
                             </div>
                         </Authorized>
@@ -48,7 +48,7 @@
                                           Size="Size.Large"
                                           Style="background-color: #FFFFFF; color: #7C4DFF; font-weight: 600; padding: 12px 32px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"
                                           StartIcon="@Icons.Material.Filled.Login">
-                                    立即开始
+                                    @L["Index_GetStarted"]
                                 </MudButton>
                                 <MudButton Href="https://github.com/maker-community/verdure-mcp" 
                                           Target="_blank"
@@ -56,7 +56,7 @@
                                           Size="Size.Large"
                                           Style="border-color: rgba(255,255,255,0.8); border-width: 2px; color: #FFFFFF; font-weight: 600; padding: 12px 32px;"
                                           StartIcon="@Icons.Material.Filled.Code">
-                                    查看源码
+                                    @L["Index_ViewSource"]
                                 </MudButton>
                             </div>
                         </NotAuthorized>
@@ -71,7 +71,7 @@
 <div id="features" Style="padding: 80px 0; background: #FFFFFF;">
     <MudContainer MaxWidth="MaxWidth.ExtraLarge">
         <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-8" Style="font-weight: 500;">
-            核心功能
+            @L["Index_CoreFeatures"]
         </MudText>
         <MudGrid>
             <MudItem xs="12" md="4">
@@ -81,9 +81,9 @@
                                 Size="Size.Large" 
                                 Color="Color.Primary" 
                                 Class="mb-4" />
-                        <MudText Typo="Typo.h6" Class="mb-3">AI 图片生成</MudText>
+                        <MudText Typo="Typo.h6" Class="mb-3">@L["Index_AIImageGeneration"]</MudText>
                         <MudText Typo="Typo.body2" Color="Color.Secondary">
-                            集成 Azure OpenAI DALL-E，支持多种尺寸和风格的高质量图片生成
+                            @L["Index_AIImageGenerationDesc"]
                         </MudText>
                     </MudCardContent>
                 </MudCard>
@@ -95,9 +95,9 @@
                                 Size="Size.Large" 
                                 Color="Color.Secondary" 
                                 Class="mb-4" />
-                        <MudText Typo="Typo.h6" Class="mb-3">邮件服务</MudText>
+                        <MudText Typo="Typo.h6" Class="mb-3">@L["Index_EmailService"]</MudText>
                         <MudText Typo="Typo.body2" Color="Color.Secondary">
-                            支持发送 HTML 格式邮件，可附加图片等附件
+                            @L["Index_EmailServiceDesc"]
                         </MudText>
                     </MudCardContent>
                 </MudCard>
@@ -109,9 +109,9 @@
                                 Size="Size.Large" 
                                 Color="Color.Tertiary" 
                                 Class="mb-4" />
-                        <MudText Typo="Typo.h6" Class="mb-3">可扩展工具</MudText>
+                        <MudText Typo="Typo.h6" Class="mb-3">@L["Index_ExtensibleTools"]</MudText>
                         <MudText Typo="Typo.body2" Color="Color.Secondary">
-                            模块化架构，支持多种 MCP 工具，轻松扩展新功能
+                            @L["Index_ExtensibleToolsDesc"]
                         </MudText>
                     </MudCardContent>
                 </MudCard>
@@ -124,7 +124,7 @@
 <div id="architecture" Style="padding: 80px 0; background: #FAFAFA;">
     <MudContainer MaxWidth="MaxWidth.ExtraLarge">
         <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-8" Style="font-weight: 500;">
-            技术架构
+            @L["Index_TechArchitecture"]
         </MudText>
         <MudGrid Justify="Justify.Center">
             <MudItem xs="12" md="8">
@@ -132,19 +132,19 @@
                     <MudCardContent>
                         <MudList T="string">
                             <MudListItem T="string" Icon="@Icons.Material.Filled.CheckCircle" IconColor="Color.Success">
-                                <MudText>基于 .NET 9.0 和 MCP 协议实现</MudText>
+                                <MudText>@L["Index_ArchItem1"]</MudText>
                             </MudListItem>
                             <MudListItem T="string" Icon="@Icons.Material.Filled.CheckCircle" IconColor="Color.Success">
-                                <MudText>Blazor WebAssembly 前端 + Web API 后端分离架构</MudText>
+                                <MudText>@L["Index_ArchItem2"]</MudText>
                             </MudListItem>
                             <MudListItem T="string" Icon="@Icons.Material.Filled.CheckCircle" IconColor="Color.Success">
-                                <MudText>PostgreSQL 数据库存储</MudText>
+                                <MudText>@L["Index_ArchItem3"]</MudText>
                             </MudListItem>
                             <MudListItem T="string" Icon="@Icons.Material.Filled.CheckCircle" IconColor="Color.Success">
-                                <MudText>Hangfire 后台任务处理</MudText>
+                                <MudText>@L["Index_ArchItem4"]</MudText>
                             </MudListItem>
                             <MudListItem T="string" Icon="@Icons.Material.Filled.CheckCircle" IconColor="Color.Success">
-                                <MudText>Bearer Token 认证机制</MudText>
+                                <MudText>@L["Index_ArchItem5"]</MudText>
                             </MudListItem>
                         </MudList>
                     </MudCardContent>
@@ -158,14 +158,14 @@
 <div id="community" Style="padding: 80px 0; background: #FFFFFF;">
     <MudContainer MaxWidth="MaxWidth.ExtraLarge">
         <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-8" Style="font-weight: 500;">
-            加入创客社区
+            @L["Index_JoinCommunity"]
         </MudText>
         <MudGrid Justify="Justify.Center">
             <MudItem xs="12" md="10">
                 <MudPaper Elevation="2" Class="pa-8" Style="background: linear-gradient(135deg, #7C4DFF 0%, #5E35B1 100%);">
                     <div class="text-center">
                         <MudText Typo="Typo.h5" Style="color: #FFFFFF; margin-bottom: 2rem;">
-                            关注绿荫阿广，获取更多开源项目和技术分享
+                            @L["Index_FollowUs"]
                         </MudText>
                         <MudGrid>
                             <MudItem xs="12" sm="6" md="3">
@@ -175,7 +175,7 @@
                                           FullWidth="true"
                                           StartIcon="@Icons.Custom.Brands.GitHub"
                                           Style="background-color: #FFFFFF; color: #7C4DFF; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                                    GitHub 社区
+                                    @L["Index_GitHubCommunity"]
                                 </MudButton>
                             </MudItem>
                             <MudItem xs="12" sm="6" md="3">
@@ -185,7 +185,7 @@
                                           FullWidth="true"
                                           StartIcon="@Icons.Material.Filled.VideoLibrary"
                                           Style="background-color: #FFFFFF; color: #7C4DFF; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                                    B站主页
+                                    @L["Index_BilibiliHome"]
                                 </MudButton>
                             </MudItem>
                             <MudItem xs="12" sm="6" md="3">
@@ -195,7 +195,7 @@
                                           FullWidth="true"
                                           StartIcon="@Icons.Material.Filled.Code"
                                           Style="background-color: #FFFFFF; color: #7C4DFF; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                                    项目源码
+                                    @L["Index_ProjectSource"]
                                 </MudButton>
                             </MudItem>
                             <MudItem xs="12" sm="6" md="3">
@@ -204,7 +204,7 @@
                                           StartIcon="@Icons.Material.Filled.Group"
                                           Style="background-color: #FFFFFF; color: #7C4DFF; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"
                                           OnClick="@ToggleQQGroup">
-                                    QQ 交流群
+                                    @L["Index_QQGroup"]
                                 </MudButton>
                             </MudItem>
                         </MudGrid>
@@ -212,7 +212,7 @@
                         {
                             <MudAlert Severity="Severity.Info" Class="mt-4" Style="background-color: rgba(255,255,255,0.95);">
                                 <MudText Typo="Typo.body1" Style="color: #5E35B1; font-weight: 600;">
-                                    QQ 群号：946599801
+                                    @L["Index_QQGroupNumber"]
                                 </MudText>
                             </MudAlert>
                         }
@@ -227,7 +227,7 @@
 <div Style="padding: 80px 0 100px; background: #FAFAFA;">
     <MudContainer MaxWidth="MaxWidth.ExtraLarge">
         <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-8" Style="font-weight: 500;">
-            快速开始
+            @L["Index_QuickStart"]
         </MudText>
         <MudGrid Justify="Justify.Center">
             <MudItem xs="12" md="8">
@@ -235,27 +235,27 @@
                     <MudCardContent Class="pa-6">
                         <MudTimeline TimelineOrientation="TimelineOrientation.Vertical" TimelinePosition="TimelinePosition.Start">
                             <MudTimelineItem Color="Color.Primary" Size="Size.Small">
-                                <MudText Typo="Typo.h6" Class="mb-2">1. 登录系统</MudText>
+                                <MudText Typo="Typo.h6" Class="mb-2">@L["Index_Step1Title"]</MudText>
                                 <MudText Typo="Typo.body2" Color="Color.Secondary">
-                                    使用 GitHub 或其他方式登录 Verdure MCP 平台
+                                    @L["Index_Step1Desc"]
                                 </MudText>
                             </MudTimelineItem>
                             <MudTimelineItem Color="Color.Secondary" Size="Size.Small">
-                                <MudText Typo="Typo.h6" Class="mb-2">2. 创建 API 密钥</MudText>
+                                <MudText Typo="Typo.h6" Class="mb-2">@L["Index_Step2Title"]</MudText>
                                 <MudText Typo="Typo.body2" Color="Color.Secondary">
-                                    在个人中心创建您的 API 密钥，用于调用 MCP 服务
+                                    @L["Index_Step2Desc"]
                                 </MudText>
                             </MudTimelineItem>
                             <MudTimelineItem Color="Color.Tertiary" Size="Size.Small">
-                                <MudText Typo="Typo.h6" Class="mb-2">3. 配置 MCP 客户端</MudText>
+                                <MudText Typo="Typo.h6" Class="mb-2">@L["Index_Step3Title"]</MudText>
                                 <MudText Typo="Typo.body2" Color="Color.Secondary">
-                                    在 Claude Desktop 或其他 MCP 客户端中配置服务端点和密钥
+                                    @L["Index_Step3Desc"]
                                 </MudText>
                             </MudTimelineItem>
                             <MudTimelineItem Color="Color.Success" Size="Size.Small">
-                                <MudText Typo="Typo.h6" Class="mb-2">4. 开始使用</MudText>
+                                <MudText Typo="Typo.h6" Class="mb-2">@L["Index_Step4Title"]</MudText>
                                 <MudText Typo="Typo.body2" Color="Color.Secondary">
-                                    现在您的 AI 助手已经具备了图片生成、邮件发送等强大能力！
+                                    @L["Index_Step4Desc"]
                                 </MudText>
                             </MudTimelineItem>
                         </MudTimeline>

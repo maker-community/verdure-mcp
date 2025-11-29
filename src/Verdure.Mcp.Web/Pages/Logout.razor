@@ -2,8 +2,9 @@
 @layout LandingLayout
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResources> L
 
-<PageTitle>退出登录 - Verdure MCP 服务平台</PageTitle>
+<PageTitle>@L["Logout_PageTitle"]</PageTitle>
 
 <div class="d-flex justify-center align-center" style="min-height: 70vh;">
     <MudCard Elevation="4" Style="max-width: 400px; width: 100%;">
@@ -13,11 +14,11 @@
                     Color="Color.Primary" 
                     Style="font-size: 4rem; margin-bottom: 1rem;" />
             <MudText Typo="Typo.h5" Class="mb-4" Style="font-weight: 600;">
-                正在退出登录...
+                @L["Logout_Title"]
             </MudText>
             <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
             <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mt-4">
-                请稍候，正在安全退出您的账号
+                @L["Logout_Message"]
             </MudText>
         </MudCardContent>
     </MudCard>

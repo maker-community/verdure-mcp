@@ -1,0 +1,905 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- Application -->
+  <data name="AppTitle" xml:space="preserve">
+    <value>Verdure MCP - 开源 MCP 服务平台</value>
+  </data>
+  <data name="AppName" xml:space="preserve">
+    <value>Verdure MCP</value>
+  </data>
+  <data name="PlatformName" xml:space="preserve">
+    <value>Verdure MCP 服务平台</value>
+  </data>
+
+  <!-- Common -->
+  <data name="Home" xml:space="preserve">
+    <value>首页</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>登录</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>退出登录</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>创建</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="Done" xml:space="preserve">
+    <value>完成</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>加载中...</value>
+  </data>
+  <data name="Revoke" xml:space="preserve">
+    <value>撤销</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>确认</value>
+  </data>
+  <data name="ViewDetails" xml:space="preserve">
+    <value>查看详情</value>
+  </data>
+  <data name="Documentation" xml:space="preserve">
+    <value>文档</value>
+  </data>
+  <data name="LoadMore" xml:space="preserve">
+    <value>加载更多</value>
+  </data>
+  <data name="CopiedToClipboard" xml:space="preserve">
+    <value>已复制到剪贴板</value>
+  </data>
+  <data name="CopyFailed" xml:space="preserve">
+    <value>复制失败，请手动复制</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>全部</value>
+  </data>
+  <data name="Free" xml:space="preserve">
+    <value>免费</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>启用</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>禁用</value>
+  </data>
+  <data name="NeverExpires" xml:space="preserve">
+    <value>永不过期</value>
+  </data>
+  <data name="NeverUsed" xml:space="preserve">
+    <value>从未使用</value>
+  </data>
+  <data name="NoDescription" xml:space="preserve">
+    <value>暂无描述</value>
+  </data>
+
+  <!-- Index Page -->
+  <data name="Index_HeroTitle" xml:space="preserve">
+    <value>Verdure MCP 服务平台</value>
+  </data>
+  <data name="Index_HeroSubtitle" xml:space="preserve">
+    <value>开源的 MCP 服务提供平台</value>
+  </data>
+  <data name="Index_HeroDescription" xml:space="preserve">
+    <value>为 AI 助手提供丰富的工具能力扩展，支持图片生成、邮件发送等多种功能。基于 MCP 协议，轻松集成到 Claude、ChatGPT 等主流 AI 平台。</value>
+  </data>
+  <data name="Index_EnterConsole" xml:space="preserve">
+    <value>进入控制台</value>
+  </data>
+  <data name="Index_ViewSource" xml:space="preserve">
+    <value>查看源码</value>
+  </data>
+  <data name="Index_GetStarted" xml:space="preserve">
+    <value>立即开始</value>
+  </data>
+  <data name="Index_Features" xml:space="preserve">
+    <value>功能特性</value>
+  </data>
+  <data name="Index_CoreFeatures" xml:space="preserve">
+    <value>核心功能</value>
+  </data>
+  <data name="Index_AIImageGeneration" xml:space="preserve">
+    <value>AI 图片生成</value>
+  </data>
+  <data name="Index_AIImageGenerationDesc" xml:space="preserve">
+    <value>集成 Azure OpenAI DALL-E，支持多种尺寸和风格的高质量图片生成</value>
+  </data>
+  <data name="Index_EmailService" xml:space="preserve">
+    <value>邮件服务</value>
+  </data>
+  <data name="Index_EmailServiceDesc" xml:space="preserve">
+    <value>支持发送 HTML 格式邮件，可附加图片等附件</value>
+  </data>
+  <data name="Index_ExtensibleTools" xml:space="preserve">
+    <value>可扩展工具</value>
+  </data>
+  <data name="Index_ExtensibleToolsDesc" xml:space="preserve">
+    <value>模块化架构，支持多种 MCP 工具，轻松扩展新功能</value>
+  </data>
+  <data name="Index_TechArchitecture" xml:space="preserve">
+    <value>技术架构</value>
+  </data>
+  <data name="Index_ArchItem1" xml:space="preserve">
+    <value>基于 .NET 9.0 和 MCP 协议实现</value>
+  </data>
+  <data name="Index_ArchItem2" xml:space="preserve">
+    <value>Blazor WebAssembly 前端 + Web API 后端分离架构</value>
+  </data>
+  <data name="Index_ArchItem3" xml:space="preserve">
+    <value>PostgreSQL 数据库存储</value>
+  </data>
+  <data name="Index_ArchItem4" xml:space="preserve">
+    <value>Hangfire 后台任务处理</value>
+  </data>
+  <data name="Index_ArchItem5" xml:space="preserve">
+    <value>Bearer Token 认证机制</value>
+  </data>
+  <data name="Index_JoinCommunity" xml:space="preserve">
+    <value>加入创客社区</value>
+  </data>
+  <data name="Index_FollowUs" xml:space="preserve">
+    <value>关注绿荫阿广，获取更多开源项目和技术分享</value>
+  </data>
+  <data name="Index_GitHubCommunity" xml:space="preserve">
+    <value>GitHub 社区</value>
+  </data>
+  <data name="Index_BilibiliHome" xml:space="preserve">
+    <value>B站主页</value>
+  </data>
+  <data name="Index_ProjectSource" xml:space="preserve">
+    <value>项目源码</value>
+  </data>
+  <data name="Index_QQGroup" xml:space="preserve">
+    <value>QQ 交流群</value>
+  </data>
+  <data name="Index_QQGroupNumber" xml:space="preserve">
+    <value>QQ 群号：946599801</value>
+  </data>
+  <data name="Index_QuickStart" xml:space="preserve">
+    <value>快速开始</value>
+  </data>
+  <data name="Index_Step1Title" xml:space="preserve">
+    <value>1. 登录系统</value>
+  </data>
+  <data name="Index_Step1Desc" xml:space="preserve">
+    <value>使用 GitHub 或其他方式登录 Verdure MCP 平台</value>
+  </data>
+  <data name="Index_Step2Title" xml:space="preserve">
+    <value>2. 创建 API 密钥</value>
+  </data>
+  <data name="Index_Step2Desc" xml:space="preserve">
+    <value>在个人中心创建您的 API 密钥，用于调用 MCP 服务</value>
+  </data>
+  <data name="Index_Step3Title" xml:space="preserve">
+    <value>3. 配置 MCP 客户端</value>
+  </data>
+  <data name="Index_Step3Desc" xml:space="preserve">
+    <value>在 Claude Desktop 或其他 MCP 客户端中配置服务端点和密钥</value>
+  </data>
+  <data name="Index_Step4Title" xml:space="preserve">
+    <value>4. 开始使用</value>
+  </data>
+  <data name="Index_Step4Desc" xml:space="preserve">
+    <value>现在您的 AI 助手已经具备了图片生成、邮件发送等强大能力！</value>
+  </data>
+
+  <!-- Navigation -->
+  <data name="Nav_Navigation" xml:space="preserve">
+    <value>导航</value>
+  </data>
+  <data name="Nav_McpSquare" xml:space="preserve">
+    <value>MCP 广场</value>
+  </data>
+  <data name="Nav_SupportUs" xml:space="preserve">
+    <value>支持我们</value>
+  </data>
+  <data name="Nav_PersonalCenter" xml:space="preserve">
+    <value>个人中心</value>
+  </data>
+  <data name="Nav_ApiKey" xml:space="preserve">
+    <value>API 密钥</value>
+  </data>
+  <data name="Nav_PersonalInfo" xml:space="preserve">
+    <value>个人信息</value>
+  </data>
+  <data name="Nav_Management" xml:space="preserve">
+    <value>管理</value>
+  </data>
+  <data name="Nav_McpServiceManagement" xml:space="preserve">
+    <value>MCP 服务管理</value>
+  </data>
+  <data name="Nav_UserManagement" xml:space="preserve">
+    <value>用户管理</value>
+  </data>
+  <data name="Nav_ExternalLinks" xml:space="preserve">
+    <value>外部链接</value>
+  </data>
+  <data name="Nav_XiaozhiPlatform" xml:space="preserve">
+    <value>小智 MCP 转接平台</value>
+  </data>
+
+  <!-- Landing Layout -->
+  <data name="Landing_FeaturesNav" xml:space="preserve">
+    <value>功能特性</value>
+  </data>
+  <data name="Landing_ArchitectureNav" xml:space="preserve">
+    <value>技术架构</value>
+  </data>
+  <data name="Landing_CommunityNav" xml:space="preserve">
+    <value>社区</value>
+  </data>
+  <data name="Landing_GitHubCommunity" xml:space="preserve">
+    <value>GitHub 创客社区</value>
+  </data>
+  <data name="Landing_ProjectSource" xml:space="preserve">
+    <value>项目源码</value>
+  </data>
+  <data name="Landing_BilibiliChannel" xml:space="preserve">
+    <value>B站频道</value>
+  </data>
+
+  <!-- Dashboard -->
+  <data name="Dashboard_PageTitle" xml:space="preserve">
+    <value>MCP 广场 - Verdure MCP 服务平台</value>
+  </data>
+  <data name="Dashboard_Title" xml:space="preserve">
+    <value>MCP 服务广场</value>
+  </data>
+  <data name="Dashboard_Subtitle" xml:space="preserve">
+    <value>探索和使用各种 MCP 服务，让 AI 助手更加强大</value>
+  </data>
+  <data name="Dashboard_XiaozhiIntegrationTitle" xml:space="preserve">
+    <value>无缝连接小智 MCP 转接平台</value>
+  </data>
+  <data name="Dashboard_XiaozhiIntegrationDesc" xml:space="preserve">
+    <value>使用我们的 MCP 服务,配合小智 MCP 转接平台,轻松为您的小智 AI 助手添加更多能力</value>
+  </data>
+  <data name="Dashboard_GoToXiaozhi" xml:space="preserve">
+    <value>前往小智 MCP 转接平台</value>
+  </data>
+  <data name="Dashboard_NoServices" xml:space="preserve">
+    <value>暂无服务</value>
+  </data>
+  <data name="Dashboard_NoServicesAll" xml:space="preserve">
+    <value>目前没有可用的 MCP 服务</value>
+  </data>
+  <data name="Dashboard_NoServicesCategory" xml:space="preserve">
+    <value>该分类下暂无服务</value>
+  </data>
+  <data name="Dashboard_LoadServicesFailed" xml:space="preserve">
+    <value>加载服务列表失败: {0}</value>
+  </data>
+
+  <!-- Tokens -->
+  <data name="Tokens_PageTitle" xml:space="preserve">
+    <value>API 密钥 - Verdure MCP 服务平台</value>
+  </data>
+  <data name="Tokens_Title" xml:space="preserve">
+    <value>API 密钥管理</value>
+  </data>
+  <data name="Tokens_Subtitle" xml:space="preserve">
+    <value>创建和管理您的 API 密钥，用于访问 MCP 服务</value>
+  </data>
+  <data name="Tokens_Notice" xml:space="preserve">
+    <value>注意：每个密钥默认有效期为 30 天，每日图片生成限额为 10 次。请妥善保管您的密钥，创建后将只显示一次。</value>
+  </data>
+  <data name="Tokens_CreateNew" xml:space="preserve">
+    <value>创建新密钥</value>
+  </data>
+  <data name="Tokens_NoKeys" xml:space="preserve">
+    <value>暂无 API 密钥</value>
+  </data>
+  <data name="Tokens_NoKeysHint" xml:space="preserve">
+    <value>点击上方按钮创建您的第一个 API 密钥</value>
+  </data>
+  <data name="Tokens_Name" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="Tokens_Status" xml:space="preserve">
+    <value>状态</value>
+  </data>
+  <data name="Tokens_CreatedAt" xml:space="preserve">
+    <value>创建时间</value>
+  </data>
+  <data name="Tokens_ExpiresAt" xml:space="preserve">
+    <value>过期时间</value>
+  </data>
+  <data name="Tokens_TodayUsage" xml:space="preserve">
+    <value>今日用量</value>
+  </data>
+  <data name="Tokens_LastUsed" xml:space="preserve">
+    <value>最后使用</value>
+  </data>
+  <data name="Tokens_Actions" xml:space="preserve">
+    <value>操作</value>
+  </data>
+  <data name="Tokens_Valid" xml:space="preserve">
+    <value>有效</value>
+  </data>
+  <data name="Tokens_Expired" xml:space="preserve">
+    <value>已过期</value>
+  </data>
+  <data name="Tokens_Revoked" xml:space="preserve">
+    <value>已撤销</value>
+  </data>
+  <data name="Tokens_RevokeConfirmTitle" xml:space="preserve">
+    <value>确认撤销</value>
+  </data>
+  <data name="Tokens_RevokeConfirmMessage" xml:space="preserve">
+    <value>确定要撤销密钥 "{0}" 吗？此操作不可恢复。</value>
+  </data>
+  <data name="Tokens_RevokeSuccess" xml:space="preserve">
+    <value>密钥已撤销</value>
+  </data>
+  <data name="Tokens_RevokeFailed" xml:space="preserve">
+    <value>撤销失败: {0}</value>
+  </data>
+  <data name="Tokens_LoadFailed" xml:space="preserve">
+    <value>加载密钥列表失败: {0}</value>
+  </data>
+
+  <!-- Create Token Dialog -->
+  <data name="CreateToken_DialogTitle" xml:space="preserve">
+    <value>创建 API 密钥</value>
+  </data>
+  <data name="CreateToken_NameLabel" xml:space="preserve">
+    <value>密钥名称</value>
+  </data>
+  <data name="CreateToken_NameRequired" xml:space="preserve">
+    <value>请输入密钥名称</value>
+  </data>
+  <data name="CreateToken_NameHelper" xml:space="preserve">
+    <value>给密钥起一个便于识别的名称</value>
+  </data>
+  <data name="CreateToken_SaveWarning" xml:space="preserve">
+    <value>请立即复制并保存您的密钥！此密钥只会显示一次，关闭对话框后将无法再次查看。</value>
+  </data>
+  <data name="CreateToken_ExpiresAt" xml:space="preserve">
+    <value>过期时间: {0}</value>
+  </data>
+  <data name="CreateToken_Success" xml:space="preserve">
+    <value>密钥创建成功</value>
+  </data>
+  <data name="CreateToken_Failed" xml:space="preserve">
+    <value>创建失败: {0}</value>
+  </data>
+
+  <!-- Profile -->
+  <data name="Profile_PageTitle" xml:space="preserve">
+    <value>个人中心 - Verdure MCP 服务平台</value>
+  </data>
+  <data name="Profile_Title" xml:space="preserve">
+    <value>个人中心</value>
+  </data>
+  <data name="Profile_UserId" xml:space="preserve">
+    <value>用户ID: {0}</value>
+  </data>
+  <data name="Profile_Role" xml:space="preserve">
+    <value>角色: {0}</value>
+  </data>
+  <data name="Profile_NoEmail" xml:space="preserve">
+    <value>未设置邮箱</value>
+  </data>
+  <data name="Profile_Unknown" xml:space="preserve">
+    <value>未知</value>
+  </data>
+  <data name="Profile_NormalUser" xml:space="preserve">
+    <value>普通用户</value>
+  </data>
+  <data name="Profile_QuickActions" xml:space="preserve">
+    <value>快速操作</value>
+  </data>
+  <data name="Profile_ManageApiKeys" xml:space="preserve">
+    <value>管理 API 密钥</value>
+  </data>
+  <data name="Profile_BrowseMcpServices" xml:space="preserve">
+    <value>浏览 MCP 服务</value>
+  </data>
+
+  <!-- Support -->
+  <data name="Support_PageTitle" xml:space="preserve">
+    <value>支持我们 - Verdure MCP 服务平台</value>
+  </data>
+  <data name="Support_Title" xml:space="preserve">
+    <value>支持我们</value>
+  </data>
+  <data name="Support_Subtitle" xml:space="preserve">
+    <value>感谢您使用 Verdure MCP 服务平台！我们提供免费的 MCP 服务，如果您觉得有帮助，欢迎通过以下方式支持我们的开发工作。</value>
+  </data>
+  <data name="Support_FollowBilibili" xml:space="preserve">
+    <value>关注 B站</value>
+  </data>
+  <data name="Support_SubscribeVideos" xml:space="preserve">
+    <value>订阅我的视频</value>
+  </data>
+  <data name="Support_BilibiliDesc" xml:space="preserve">
+    <value>在 Bilibili 关注我，获取最新的技术分享、教程和项目更新。一键三连是对我最大的支持！</value>
+  </data>
+  <data name="Support_GoToBilibili" xml:space="preserve">
+    <value>前往 B站</value>
+  </data>
+  <data name="Support_BilibiliCharge" xml:space="preserve">
+    <value>B站充电</value>
+  </data>
+  <data name="Support_SupportCreation" xml:space="preserve">
+    <value>支持创作</value>
+  </data>
+  <data name="Support_ChargeDesc" xml:space="preserve">
+    <value>如果您觉得我的内容对您有帮助，可以通过 B站充电功能支持我的创作，让我有更多动力输出优质内容。</value>
+  </data>
+  <data name="Support_GoCharge" xml:space="preserve">
+    <value>去充电</value>
+  </data>
+  <data name="Support_ScanDonate" xml:space="preserve">
+    <value>扫码赞助</value>
+  </data>
+  <data name="Support_DirectSupport" xml:space="preserve">
+    <value>直接支持</value>
+  </data>
+  <data name="Support_DonateDesc" xml:space="preserve">
+    <value>扫描下方二维码直接赞助，您的支持将用于服务器维护、功能开发和更多优质内容的创作。</value>
+  </data>
+  <data name="Support_ShowQrCode" xml:space="preserve">
+    <value>显示二维码</value>
+  </data>
+  <data name="Support_OtherWays" xml:space="preserve">
+    <value>其他支持方式</value>
+  </data>
+  <data name="Support_StarProject" xml:space="preserve">
+    <value>Star 项目</value>
+  </data>
+  <data name="Support_StarDesc" xml:space="preserve">
+    <value>在 GitHub 上给我们的项目点个 Star，让更多人发现这个项目</value>
+  </data>
+  <data name="Support_Share" xml:space="preserve">
+    <value>分享推荐</value>
+  </data>
+  <data name="Support_ShareDesc" xml:space="preserve">
+    <value>把这个服务分享给您的朋友，让更多人受益</value>
+  </data>
+  <data name="Support_ReportBug" xml:space="preserve">
+    <value>反馈问题</value>
+  </data>
+  <data name="Support_BugDesc" xml:space="preserve">
+    <value>发现 Bug 或有改进建议？欢迎提交 Issue</value>
+  </data>
+  <data name="Support_ContributeCode" xml:space="preserve">
+    <value>贡献代码</value>
+  </data>
+  <data name="Support_ContributeDesc" xml:space="preserve">
+    <value>欢迎提交 PR，一起让项目变得更好</value>
+  </data>
+  <data name="Support_ThanksTitle" xml:space="preserve">
+    <value>感谢您的支持！</value>
+  </data>
+  <data name="Support_ThanksDesc" xml:space="preserve">
+    <value>每一份支持都是我们前进的动力，让我们一起打造更好的 MCP 服务生态！</value>
+  </data>
+
+  <!-- QR Code Dialog -->
+  <data name="QrCode_DialogTitle" xml:space="preserve">
+    <value>扫码赞助</value>
+  </data>
+  <data name="QrCode_ScanHint" xml:space="preserve">
+    <value>使用微信或支付宝扫描下方二维码进行赞助</value>
+  </data>
+  <data name="QrCode_Thanks" xml:space="preserve">
+    <value>感谢您的支持！您的每一份赞助都将用于服务器维护和功能开发。</value>
+  </data>
+
+  <!-- Service Details -->
+  <data name="ServiceDetails_PageTitle" xml:space="preserve">
+    <value>{0} - Verdure MCP 服务平台</value>
+  </data>
+  <data name="ServiceDetails_NotFound" xml:space="preserve">
+    <value>服务未找到</value>
+  </data>
+  <data name="ServiceDetails_BackToHome" xml:space="preserve">
+    <value>返回首页</value>
+  </data>
+  <data name="ServiceDetails_Description" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="ServiceDetails_Endpoint" xml:space="preserve">
+    <value>端点</value>
+  </data>
+  <data name="ServiceDetails_Tags" xml:space="preserve">
+    <value>标签</value>
+  </data>
+  <data name="ServiceDetails_Author" xml:space="preserve">
+    <value>作者: {0}</value>
+  </data>
+  <data name="ServiceDetails_QuickActions" xml:space="preserve">
+    <value>快速操作</value>
+  </data>
+  <data name="ServiceDetails_ViewDocs" xml:space="preserve">
+    <value>查看文档</value>
+  </data>
+  <data name="ServiceDetails_ConfigureOnXiaozhi" xml:space="preserve">
+    <value>在小智平台配置</value>
+  </data>
+  <data name="ServiceDetails_SupportUs" xml:space="preserve">
+    <value>支持我们</value>
+  </data>
+  <data name="ServiceDetails_SupportDesc" xml:space="preserve">
+    <value>如果您觉得这个服务对您有帮助，欢迎支持我们的开发工作！</value>
+  </data>
+  <data name="ServiceDetails_GoSupport" xml:space="preserve">
+    <value>去支持</value>
+  </data>
+  <data name="ServiceDetails_LoadFailed" xml:space="preserve">
+    <value>加载服务详情失败: {0}</value>
+  </data>
+  <data name="ServiceDetails_Breadcrumb_Home" xml:space="preserve">
+    <value>首页</value>
+  </data>
+
+  <!-- Authentication -->
+  <data name="Auth_LoggingIn" xml:space="preserve">
+    <value>正在登录</value>
+  </data>
+  <data name="Auth_PleaseWait" xml:space="preserve">
+    <value>请稍候，正在进行身份验证...</value>
+  </data>
+  <data name="Auth_CompletingLogin" xml:space="preserve">
+    <value>完成登录</value>
+  </data>
+  <data name="Auth_Redirecting" xml:space="preserve">
+    <value>即将跳转...</value>
+  </data>
+  <data name="Auth_LoggingOut" xml:space="preserve">
+    <value>正在退出</value>
+  </data>
+  <data name="Auth_SafelyLoggingOut" xml:space="preserve">
+    <value>正在安全退出您的账号...</value>
+  </data>
+  <data name="Auth_CompletingLogout" xml:space="preserve">
+    <value>完成退出</value>
+  </data>
+  <data name="Auth_LoginFailed" xml:space="preserve">
+    <value>登录失败</value>
+  </data>
+  <data name="Auth_LoginErrorMessage" xml:space="preserve">
+    <value>登录过程中出现错误，请重试</value>
+  </data>
+  <data name="Auth_RetryLogin" xml:space="preserve">
+    <value>重新登录</value>
+  </data>
+  <data name="Auth_LogoutFailed" xml:space="preserve">
+    <value>退出失败</value>
+  </data>
+  <data name="Auth_LogoutErrorMessage" xml:space="preserve">
+    <value>退出过程中出现错误</value>
+  </data>
+  <data name="Auth_BackToHome" xml:space="preserve">
+    <value>返回首页</value>
+  </data>
+  <data name="Auth_LogoutSuccess" xml:space="preserve">
+    <value>已成功退出</value>
+  </data>
+  <data name="Auth_SafelyLoggedOut" xml:space="preserve">
+    <value>您已安全退出账号</value>
+  </data>
+
+  <!-- Logout Page -->
+  <data name="Logout_PageTitle" xml:space="preserve">
+    <value>退出登录 - Verdure MCP 服务平台</value>
+  </data>
+  <data name="Logout_Title" xml:space="preserve">
+    <value>正在退出登录...</value>
+  </data>
+  <data name="Logout_Message" xml:space="preserve">
+    <value>请稍候，正在安全退出您的账号</value>
+  </data>
+
+  <!-- Admin Services -->
+  <data name="AdminServices_PageTitle" xml:space="preserve">
+    <value>MCP 服务管理 - Verdure MCP 服务平台</value>
+  </data>
+  <data name="AdminServices_Title" xml:space="preserve">
+    <value>MCP 服务管理</value>
+  </data>
+  <data name="AdminServices_Subtitle" xml:space="preserve">
+    <value>管理和配置平台上的 MCP 服务</value>
+  </data>
+  <data name="AdminServices_AddService" xml:space="preserve">
+    <value>添加服务</value>
+  </data>
+  <data name="AdminServices_ServiceList" xml:space="preserve">
+    <value>服务列表</value>
+  </data>
+  <data name="AdminServices_TotalServices" xml:space="preserve">
+    <value>共 {0} 个服务</value>
+  </data>
+  <data name="AdminServices_Name" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="AdminServices_Category" xml:space="preserve">
+    <value>分类</value>
+  </data>
+  <data name="AdminServices_Endpoint" xml:space="preserve">
+    <value>端点</value>
+  </data>
+  <data name="AdminServices_Status" xml:space="preserve">
+    <value>状态</value>
+  </data>
+  <data name="AdminServices_SortOrder" xml:space="preserve">
+    <value>排序</value>
+  </data>
+  <data name="AdminServices_Actions" xml:space="preserve">
+    <value>操作</value>
+  </data>
+  <data name="AdminServices_NoServices" xml:space="preserve">
+    <value>暂无服务</value>
+  </data>
+  <data name="AdminServices_NoServicesHint" xml:space="preserve">
+    <value>点击上方按钮添加第一个 MCP 服务</value>
+  </data>
+  <data name="AdminServices_DeleteConfirmTitle" xml:space="preserve">
+    <value>确认删除</value>
+  </data>
+  <data name="AdminServices_DeleteConfirmMessage" xml:space="preserve">
+    <value>确定要删除服务 "{0}" 吗？此操作不可恢复。</value>
+  </data>
+  <data name="AdminServices_DeleteSuccess" xml:space="preserve">
+    <value>服务已删除</value>
+  </data>
+  <data name="AdminServices_DeleteFailed" xml:space="preserve">
+    <value>删除失败: {0}</value>
+  </data>
+  <data name="AdminServices_LoadFailed" xml:space="preserve">
+    <value>加载服务列表失败: {0}</value>
+  </data>
+  <data name="AdminServices_RowsPerPage" xml:space="preserve">
+    <value>每页显示</value>
+  </data>
+  <data name="AdminServices_PagerInfo" xml:space="preserve">
+    <value>{first_item}-{last_item} / 共 {all_items}</value>
+  </data>
+
+  <!-- Admin Users -->
+  <data name="AdminUsers_PageTitle" xml:space="preserve">
+    <value>用户管理 - Verdure MCP 服务平台</value>
+  </data>
+  <data name="AdminUsers_Title" xml:space="preserve">
+    <value>用户管理</value>
+  </data>
+  <data name="AdminUsers_Subtitle" xml:space="preserve">
+    <value>管理平台用户和权限</value>
+  </data>
+  <data name="AdminUsers_InDevelopment" xml:space="preserve">
+    <value>功能开发中</value>
+  </data>
+  <data name="AdminUsers_ComingSoon" xml:space="preserve">
+    <value>用户管理功能正在开发中，敬请期待</value>
+  </data>
+  <data name="AdminUsers_KeycloakHint" xml:space="preserve">
+    <value>提示：用户认证和角色管理由 Keycloak 提供</value>
+  </data>
+
+  <!-- Service Form Dialog -->
+  <data name="ServiceForm_AddTitle" xml:space="preserve">
+    <value>添加 MCP 服务</value>
+  </data>
+  <data name="ServiceForm_EditTitle" xml:space="preserve">
+    <value>编辑 MCP 服务</value>
+  </data>
+  <data name="ServiceForm_Name" xml:space="preserve">
+    <value>服务名称</value>
+  </data>
+  <data name="ServiceForm_NameRequired" xml:space="preserve">
+    <value>请输入服务名称</value>
+  </data>
+  <data name="ServiceForm_NameHelper" xml:space="preserve">
+    <value>唯一标识符，如 generate_image</value>
+  </data>
+  <data name="ServiceForm_DisplayName" xml:space="preserve">
+    <value>显示名称</value>
+  </data>
+  <data name="ServiceForm_DisplayNameRequired" xml:space="preserve">
+    <value>请输入显示名称</value>
+  </data>
+  <data name="ServiceForm_DisplayNameHelper" xml:space="preserve">
+    <value>用户看到的名称</value>
+  </data>
+  <data name="ServiceForm_Description" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="ServiceForm_DescriptionHelper" xml:space="preserve">
+    <value>服务的详细描述</value>
+  </data>
+  <data name="ServiceForm_Category" xml:space="preserve">
+    <value>分类</value>
+  </data>
+  <data name="ServiceForm_CategoryRequired" xml:space="preserve">
+    <value>请选择分类</value>
+  </data>
+  <data name="ServiceForm_CategoryImage" xml:space="preserve">
+    <value>图片生成</value>
+  </data>
+  <data name="ServiceForm_CategoryEmail" xml:space="preserve">
+    <value>邮件服务</value>
+  </data>
+  <data name="ServiceForm_CategoryDocument" xml:space="preserve">
+    <value>文档处理</value>
+  </data>
+  <data name="ServiceForm_CategoryData" xml:space="preserve">
+    <value>数据服务</value>
+  </data>
+  <data name="ServiceForm_CategoryAI" xml:space="preserve">
+    <value>AI 服务</value>
+  </data>
+  <data name="ServiceForm_CategoryOther" xml:space="preserve">
+    <value>其他</value>
+  </data>
+  <data name="ServiceForm_EndpointRoute" xml:space="preserve">
+    <value>端点路由</value>
+  </data>
+  <data name="ServiceForm_EndpointRequired" xml:space="preserve">
+    <value>请输入端点路由</value>
+  </data>
+  <data name="ServiceForm_EndpointHelper" xml:space="preserve">
+    <value>如 /image/mcp</value>
+  </data>
+  <data name="ServiceForm_Version" xml:space="preserve">
+    <value>版本</value>
+  </data>
+  <data name="ServiceForm_VersionHelper" xml:space="preserve">
+    <value>如 1.0.0</value>
+  </data>
+  <data name="ServiceForm_Author" xml:space="preserve">
+    <value>作者</value>
+  </data>
+  <data name="ServiceForm_DocsUrl" xml:space="preserve">
+    <value>文档链接</value>
+  </data>
+  <data name="ServiceForm_DocsHelper" xml:space="preserve">
+    <value>外部文档 URL</value>
+  </data>
+  <data name="ServiceForm_IconUrl" xml:space="preserve">
+    <value>图标链接</value>
+  </data>
+  <data name="ServiceForm_IconHelper" xml:space="preserve">
+    <value>图标 URL 或图标名称</value>
+  </data>
+  <data name="ServiceForm_Tags" xml:space="preserve">
+    <value>标签</value>
+  </data>
+  <data name="ServiceForm_TagsHelper" xml:space="preserve">
+    <value>逗号分隔的标签，如: AI, 图片, 创意</value>
+  </data>
+  <data name="ServiceForm_DisplayOrder" xml:space="preserve">
+    <value>排序</value>
+  </data>
+  <data name="ServiceForm_OrderHelper" xml:space="preserve">
+    <value>数字越小越靠前</value>
+  </data>
+  <data name="ServiceForm_EnableService" xml:space="preserve">
+    <value>启用服务</value>
+  </data>
+  <data name="ServiceForm_FreeService" xml:space="preserve">
+    <value>免费服务</value>
+  </data>
+  <data name="ServiceForm_UpdateSuccess" xml:space="preserve">
+    <value>服务更新成功</value>
+  </data>
+  <data name="ServiceForm_CreateSuccess" xml:space="preserve">
+    <value>服务创建成功</value>
+  </data>
+  <data name="ServiceForm_SaveFailed" xml:space="preserve">
+    <value>保存失败: {0}</value>
+  </data>
+
+  <!-- Footer -->
+  <data name="Footer_Description" xml:space="preserve">
+    <value>开源的 MCP 服务平台，为 AI 助手提供丰富的工具能力扩展。支持图片生成、邮件发送等多种功能，让您的 AI 更加强大。</value>
+  </data>
+  <data name="Footer_QuickLinks" xml:space="preserve">
+    <value>快速链接</value>
+  </data>
+  <data name="Footer_Resources" xml:space="preserve">
+    <value>资源</value>
+  </data>
+  <data name="Footer_SourceCode" xml:space="preserve">
+    <value>源代码</value>
+  </data>
+  <data name="Footer_ReportIssue" xml:space="preserve">
+    <value>问题反馈</value>
+  </data>
+  <data name="Footer_Docs" xml:space="preserve">
+    <value>文档</value>
+  </data>
+  <data name="Footer_MakerCommunity" xml:space="preserve">
+    <value>创客社区</value>
+  </data>
+  <data name="Footer_CommunityDesc" xml:space="preserve">
+    <value>加入创客社区，关注绿荫阿广，获取更多开源项目和技术分享。</value>
+  </data>
+  <data name="Footer_BilibiliChannel" xml:space="preserve">
+    <value>B站：绿荫阿广</value>
+  </data>
+  <data name="Footer_GitHubOrg" xml:space="preserve">
+    <value>GitHub：maker-community</value>
+  </data>
+  <data name="Footer_Copyright" xml:space="preserve">
+    <value>© {0} Verdure MCP. 基于 MIT 协议开源。</value>
+  </data>
+  <data name="Footer_OpenSourceLicense" xml:space="preserve">
+    <value>开源协议</value>
+  </data>
+
+</root>
