@@ -1,4 +1,5 @@
 @using Verdure.Mcp.Web.Icons
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @inherits LayoutComponentBase
 @inject NavigationManager Navigation
 
@@ -95,7 +96,7 @@
                                 <MudDivider />
                                 <MudMenuItem Href="/profile" Icon="@Icons.Material.Filled.Person">个人中心</MudMenuItem>
                                 <MudMenuItem Href="/tokens" Icon="@Icons.Material.Filled.Key">API 密钥</MudMenuItem>
-                                <MudMenuItem Href="authentication/logout" Icon="@Icons.Material.Filled.Logout">退出登录</MudMenuItem>
+                                <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="@HandleLogout">退出登录</MudMenuItem>
                             </ChildContent>
                         </MudMenu>
                     </Authorized>
@@ -126,3 +127,10 @@
         <Footer />
     </MudMainContent>
 </MudLayout>
+
+@code {
+    private void HandleLogout()
+    {
+        Navigation.NavigateToLogout("authentication/logout");
+    }
+}

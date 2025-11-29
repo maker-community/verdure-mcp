@@ -11,6 +11,7 @@ namespace Verdure.Mcp.Server.Services;
 public interface IMcpServiceService
 {
     Task<List<McpServiceDto>> GetServicesAsync(string? category = null, bool enabledOnly = true, CancellationToken cancellationToken = default);
+    Task<PagedResult<McpServiceDto>> GetServicesPagedAsync(int page, int pageSize, string? category = null, bool enabledOnly = true, CancellationToken cancellationToken = default);
     Task<McpServiceDto?> GetServiceAsync(Guid id, CancellationToken cancellationToken = default);
     Task<List<McpCategoryDto>> GetCategoriesAsync(CancellationToken cancellationToken = default);
     Task<McpServiceDto> CreateServiceAsync(McpServiceRequest request, string? userId, CancellationToken cancellationToken = default);
@@ -52,6 +53,40 @@ public class McpServiceService : IMcpServiceService
             .ToListAsync(cancellationToken);
 
         return services.Select(MapToDto).ToList();
+    }
+
+    public async Task<PagedResult<McpServiceDto>> GetServicesPagedAsync(int page, int pageSize, string? category = null, bool enabledOnly = true, CancellationToken cancellationToken = default)
+    {
+        var query = _dbContext.McpServices.AsQueryable();
+
+        if (enabledOnly)
+        {
+            query = query.Where(s => s.IsEnabled);
+        }
+
+        if (!string.IsNullOrEmpty(category))
+        {
+            // Use EF.Functions.ILike for case-insensitive comparison (PostgreSQL)
+            // Falls back to EF.Functions.Like for other databases
+            query = query.Where(s => EF.Functions.ILike(s.Category, category));
+        }
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var services = await query
+            .OrderBy(s => s.DisplayOrder)
+            .ThenBy(s => s.DisplayName)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return new PagedResult<McpServiceDto>
+        {
+            Items = services.Select(MapToDto).ToList(),
+            TotalCount = totalCount,
+            Page = page,
+            PageSize = pageSize
+        };
     }
 
     public async Task<McpServiceDto?> GetServiceAsync(Guid id, CancellationToken cancellationToken = default)
