@@ -1,6 +1,8 @@
 @page "/dashboard"
 @inject IMcpServiceClient McpServiceClient
 @inject ISnackbar Snackbar
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
 
 <PageTitle>MCP 广场 - Verdure MCP 服务平台</PageTitle>
 
@@ -29,7 +31,7 @@
     </MudGrid>
 </MudPaper>
 
-@if (_loading)
+@if (_initialLoading)
 {
     <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mb-4" />
 }
@@ -40,14 +42,16 @@ else
             <MudChipSet T="string" @bind-SelectedValue="_selectedCategory" SelectionMode="SelectionMode.SingleSelection">
                 <MudChip T="string" Value="@string.Empty" Color="Color.Primary" Size="Size.Small"
                          Variant="@(string.IsNullOrEmpty(_selectedCategory) ? Variant.Filled : Variant.Outlined)"
-                         Style="border-radius: 12px;">
-                    全部
+                         Style="border-radius: 12px;"
+                         OnClick="@OnCategoryChanged">
+                    全部 (@_totalCount)
                 </MudChip>
                 @foreach (var category in _categories)
                 {
                     <MudChip T="string" Value="@category.Name" Color="Color.Primary" Size="Size.Small"
                              Variant="@(_selectedCategory == category.Name ? Variant.Filled : Variant.Outlined)"
-                             Style="border-radius: 12px;">
+                             Style="border-radius: 12px;"
+                             OnClick="@OnCategoryChanged">
                         @category.DisplayName (@category.ServiceCount)
                     </MudChip>
                 }
@@ -55,64 +59,96 @@ else
         </MudItem>
     </MudGrid>
 
-    <MudGrid Spacing="4">
-        @foreach (var service in FilteredServices)
-        {
-            <MudItem xs="12" sm="6" md="4">
-                <MudCard Elevation="0" Class="h-100" Style="border-radius: 16px; background-color: #FFFFFF; border: 1px solid rgba(124, 77, 255, 0.12); box-shadow: 0 2px 8px rgba(124, 77, 255, 0.06);">
-                    <MudCardHeader Style="padding: 20px 20px 16px;">
-                        <CardHeaderAvatar>
-                            <MudAvatar Color="Color.Primary" Size="Size.Large" Style="border-radius: 12px;">
-                                @GetCategoryIcon(service.Category)
-                            </MudAvatar>
-                        </CardHeaderAvatar>
-                        <CardHeaderContent>
-                            <MudText Typo="Typo.h6" Style="font-weight: 500; line-height: 1.4;">@service.DisplayName</MudText>
-                            <MudText Typo="Typo.body2" Color="Color.Secondary" Style="margin-top: 4px;">@service.Category</MudText>
-                        </CardHeaderContent>
-                        <CardHeaderActions>
-                            @if (service.IsFree)
-                            {
-                                <MudChip T="string" Size="Size.Small" Color="Color.Success" Style="border-radius: 12px; font-weight: 500;">免费</MudChip>
-                            }
-                        </CardHeaderActions>
-                    </MudCardHeader>
-                    <MudCardContent Style="padding: 0 20px 16px;">
-                        <MudText Typo="Typo.body2" Style="line-height: 1.6; color: rgba(0, 0, 0, 0.70);">
-                            @(service.Description ?? "暂无描述")
-                        </MudText>
-                        @if (!string.IsNullOrEmpty(service.Tags))
-                        {
-                            <MudStack Row="true" Spacing="1" Class="mt-3" Wrap="Wrap.Wrap">
-                                @foreach (var tag in service.Tags.Split(',').Take(3))
+    <div @ref="_scrollContainer" class="services-scroll-container" style="max-height: calc(100vh - 350px); overflow-y: auto; overflow-x: hidden;">
+        <MudGrid Spacing="4">
+            @foreach (var service in _services)
+            {
+                <MudItem xs="12" sm="6" md="4">
+                    <MudCard Elevation="0" Class="h-100" Style="border-radius: 16px; background-color: #FFFFFF; border: 1px solid rgba(124, 77, 255, 0.12); box-shadow: 0 2px 8px rgba(124, 77, 255, 0.06);">
+                        <MudCardHeader Style="padding: 20px 20px 16px;">
+                            <CardHeaderAvatar>
+                                <MudAvatar Color="Color.Primary" Size="Size.Large" Style="border-radius: 12px;">
+                                    @GetCategoryIcon(service.Category)
+                                </MudAvatar>
+                            </CardHeaderAvatar>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.h6" Style="font-weight: 500; line-height: 1.4;">@service.DisplayName</MudText>
+                                <MudText Typo="Typo.body2" Color="Color.Secondary" Style="margin-top: 4px;">@service.Category</MudText>
+                            </CardHeaderContent>
+                            <CardHeaderActions>
+                                @if (service.IsFree)
                                 {
-                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" 
-                                             Style="border-radius: 12px;">@tag.Trim()</MudChip>
+                                    <MudChip T="string" Size="Size.Small" Color="Color.Success" Style="border-radius: 12px; font-weight: 500;">免费</MudChip>
                                 }
-                            </MudStack>
-                        }
-                    </MudCardContent>
-                    <MudCardActions Style="padding: 12px 20px 20px;">
-                        <MudButton Variant="Variant.Text" Color="Color.Primary" 
-                                   Href="@($"/service/{service.Id}")"
-                                   Style="text-transform: none; font-weight: 500;">
-                            查看详情
-                        </MudButton>
-                        @if (!string.IsNullOrEmpty(service.DocumentationUrl))
-                        {
-                            <MudButton Variant="Variant.Text" Color="Color.Secondary"
-                                       Href="@service.DocumentationUrl" Target="_blank"
+                            </CardHeaderActions>
+                        </MudCardHeader>
+                        <MudCardContent Style="padding: 0 20px 16px;">
+                            <MudText Typo="Typo.body2" Style="line-height: 1.6; color: rgba(0, 0, 0, 0.70);">
+                                @(service.Description ?? "暂无描述")
+                            </MudText>
+                            @if (!string.IsNullOrEmpty(service.Tags))
+                            {
+                                <MudStack Row="true" Spacing="1" Class="mt-3" Wrap="Wrap.Wrap">
+                                    @foreach (var tag in service.Tags.Split(',').Take(3))
+                                    {
+                                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" 
+                                                 Style="border-radius: 12px;">@tag.Trim()</MudChip>
+                                    }
+                                </MudStack>
+                            }
+                        </MudCardContent>
+                        <MudCardActions Style="padding: 12px 20px 20px;">
+                            <MudButton Variant="Variant.Text" Color="Color.Primary" 
+                                       Href="@($"/service/{service.Id}")"
                                        Style="text-transform: none; font-weight: 500;">
-                                文档
+                                查看详情
                             </MudButton>
-                        }
-                    </MudCardActions>
-                </MudCard>
-            </MudItem>
-        }
-    </MudGrid>
+                            @if (!string.IsNullOrEmpty(service.DocumentationUrl))
+                            {
+                                <MudButton Variant="Variant.Text" Color="Color.Secondary"
+                                           Href="@service.DocumentationUrl" Target="_blank"
+                                           Style="text-transform: none; font-weight: 500;">
+                                    文档
+                                </MudButton>
+                            }
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
 
-    @if (!FilteredServices.Any())
+        @if (_loadingMore)
+        {
+            <MudGrid Spacing="4" Class="mt-4">
+                @for (int i = 0; i < 3; i++)
+                {
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudCard Elevation="0" Style="border-radius: 16px; height: 280px;">
+                            <MudCardContent>
+                                <MudSkeleton SkeletonType="SkeletonType.Circle" Width="56px" Height="56px" Class="mb-4" />
+                                <MudSkeleton SkeletonType="SkeletonType.Text" Height="24px" Class="mb-2" />
+                                <MudSkeleton SkeletonType="SkeletonType.Text" Height="16px" Width="60%" Class="mb-4" />
+                                <MudSkeleton SkeletonType="SkeletonType.Text" Height="48px" Class="mb-2" />
+                            </MudCardContent>
+                        </MudCard>
+                    </MudItem>
+                }
+            </MudGrid>
+        }
+
+        @if (_hasMoreData && !_loadingMore)
+        {
+            <div @ref="_loadMoreTrigger" class="d-flex justify-center py-4">
+                <MudButton Variant="Variant.Text" Color="Color.Primary" 
+                           OnClick="LoadMoreAsync"
+                           Style="text-transform: none;">
+                    加载更多
+                </MudButton>
+            </div>
+        }
+    </div>
+
+    @if (!_services.Any() && !_initialLoading)
     {
         <MudPaper Class="pa-8 text-center" Elevation="0" Style="background-color: var(--mud-palette-surface-container-low); border-radius: 16px; margin-top: 24px;">
             <MudIcon Icon="@Icons.Material.Filled.SearchOff" Size="Size.Large" Color="Color.Secondary" />
@@ -132,22 +168,27 @@ else
 }
 
 @code {
-    private bool _loading = true;
+    private bool _initialLoading = true;
+    private bool _loadingMore = false;
     private List<McpServiceDto> _services = [];
     private List<McpCategoryDto> _categories = [];
     private string? _selectedCategory;
+    private int _currentPage = 1;
+    private int _totalCount = 0;
+    private bool _hasMoreData = true;
+    private const int PageSize = 9;
 
-    private IEnumerable<McpServiceDto> FilteredServices => 
-        string.IsNullOrEmpty(_selectedCategory) 
-            ? _services 
-            : _services.Where(s => s.Category.Equals(_selectedCategory, StringComparison.OrdinalIgnoreCase));
+    private ElementReference _scrollContainer;
+    private ElementReference _loadMoreTrigger;
+    private DotNetObjectReference<Dashboard>? _dotNetRef;
+    private bool _isObserverSetup = false;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            _services = await McpServiceClient.GetServicesAsync();
             _categories = await McpServiceClient.GetCategoriesAsync();
+            await LoadServicesAsync(resetList: true);
         }
         catch (Exception ex)
         {
@@ -155,7 +196,108 @@ else
         }
         finally
         {
-            _loading = false;
+            _initialLoading = false;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_isObserverSetup)
+        {
+            await SetupScrollObserver();
+        }
+    }
+
+    private async Task SetupScrollObserver()
+    {
+        try
+        {
+            _dotNetRef = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeVoidAsync("setupInfiniteScroll", _scrollContainer, _dotNetRef);
+            _isObserverSetup = true;
+        }
+        catch
+        {
+            // Fallback: infinite scroll not available, user can click "load more"
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnScrollNearBottom()
+    {
+        if (!_loadingMore && _hasMoreData)
+        {
+            await LoadMoreAsync();
+        }
+    }
+
+    private async Task LoadServicesAsync(bool resetList = false)
+    {
+        if (resetList)
+        {
+            _currentPage = 1;
+            _services.Clear();
+            _hasMoreData = true;
+        }
+
+        try
+        {
+            var result = await McpServiceClient.GetServicesPagedAsync(_currentPage, PageSize, _selectedCategory);
+            
+            if (resetList)
+            {
+                _services = result.Items;
+                _totalCount = result.TotalCount;
+            }
+            else
+            {
+                _services.AddRange(result.Items);
+            }
+
+            _hasMoreData = _currentPage < result.TotalPages;
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"加载服务列表失败: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task LoadMoreAsync()
+    {
+        if (_loadingMore || !_hasMoreData) return;
+
+        _loadingMore = true;
+        StateHasChanged();
+
+        try
+        {
+            _currentPage++;
+            await LoadServicesAsync(resetList: false);
+        }
+        finally
+        {
+            _loadingMore = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnCategoryChanged()
+    {
+        // Ensure UI state is updated before proceeding
+        await InvokeAsync(StateHasChanged);
+        await Task.Yield();
+        
+        _initialLoading = true;
+        StateHasChanged();
+
+        try
+        {
+            await LoadServicesAsync(resetList: true);
+        }
+        finally
+        {
+            _initialLoading = false;
+            StateHasChanged();
         }
     }
 
@@ -168,4 +310,21 @@ else
         "ai" => Icons.Material.Filled.Psychology,
         _ => Icons.Material.Filled.Extension
     };
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (_isObserverSetup)
+            {
+                await JSRuntime.InvokeVoidAsync("cleanupInfiniteScroll");
+            }
+        }
+        catch
+        {
+            // Ignore cleanup errors
+        }
+        
+        _dotNetRef?.Dispose();
+    }
 }

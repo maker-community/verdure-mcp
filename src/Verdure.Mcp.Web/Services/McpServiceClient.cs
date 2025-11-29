@@ -6,6 +6,8 @@ namespace Verdure.Mcp.Web.Services;
 public interface IMcpServiceClient
 {
     Task<List<McpServiceDto>> GetServicesAsync(string? category = null);
+    Task<PagedResult<McpServiceDto>> GetServicesPagedAsync(int page, int pageSize, string? category = null);
+    Task<PagedResult<McpServiceDto>> GetServicesPagedAdminAsync(int page, int pageSize, string? category = null);
     Task<McpServiceDto?> GetServiceAsync(Guid id);
     Task<List<McpCategoryDto>> GetCategoriesAsync();
     Task<McpServiceDto> CreateServiceAsync(McpServiceRequest request);
@@ -32,6 +34,30 @@ public class McpServiceClient : IMcpServiceClient
         
         var response = await _httpClient.GetFromJsonAsync<ApiResponse<List<McpServiceDto>>>(url);
         return response?.Data ?? [];
+    }
+
+    public async Task<PagedResult<McpServiceDto>> GetServicesPagedAsync(int page, int pageSize, string? category = null)
+    {
+        var url = $"api/mcp-services/paged?page={page}&pageSize={pageSize}";
+        if (!string.IsNullOrEmpty(category))
+        {
+            url += $"&category={Uri.EscapeDataString(category)}";
+        }
+        
+        var response = await _httpClient.GetFromJsonAsync<ApiResponse<PagedResult<McpServiceDto>>>(url);
+        return response?.Data ?? new PagedResult<McpServiceDto>();
+    }
+
+    public async Task<PagedResult<McpServiceDto>> GetServicesPagedAdminAsync(int page, int pageSize, string? category = null)
+    {
+        var url = $"api/mcp-services/admin/paged?page={page}&pageSize={pageSize}";
+        if (!string.IsNullOrEmpty(category))
+        {
+            url += $"&category={Uri.EscapeDataString(category)}";
+        }
+        
+        var response = await _httpClient.GetFromJsonAsync<ApiResponse<PagedResult<McpServiceDto>>>(url);
+        return response?.Data ?? new PagedResult<McpServiceDto>();
     }
 
     public async Task<McpServiceDto?> GetServiceAsync(Guid id)
