@@ -17,6 +17,7 @@ public class BearerTokenAuthenticationMiddleware
     // Paths that don't require authentication
     private static readonly string[] ExcludedPaths = 
     {
+        "/",
         "/health",
         "/openapi",
         "/scalar"
