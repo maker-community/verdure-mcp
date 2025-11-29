@@ -104,15 +104,19 @@ Configure the application using `appsettings.json`:
    ```
 
 5. **Access the server**
-   - MCP endpoint: `http://localhost:5000/mcp`
+   - MCP endpoint (all tools): `http://localhost:5000/` or `http://localhost:5000/all`
+   - MCP endpoint (image tools only): `http://localhost:5000/image`
+   - MCP endpoint (email tools only): `http://localhost:5000/email`
    - Health check: `http://localhost:5000/health`
    - Hangfire dashboard (dev only): `http://localhost:5000/hangfire`
 
 ## MCP Tools
 
-### generate_image
+The server provides different sets of tools based on the endpoint you connect to:
 
-Generates an image based on a text prompt using Azure OpenAI DALL-E.
+### All Tools (Endpoint: `/` or `/all`)
+
+**generate_image** - Generates an image based on a text prompt using Azure OpenAI DALL-E.
 
 **Parameters:**
 - `prompt` (required): The text prompt describing the image to generate
@@ -125,12 +129,27 @@ Generates an image based on a text prompt using Azure OpenAI DALL-E.
 - `X-User-Email` (optional): Email address to receive the generated image
 - `X-User-Id` (optional): If present, the task runs asynchronously
 
-### get_image_task_status
-
-Gets the status of an image generation task.
+**get_image_task_status** - Gets the status of an image generation task.
 
 **Parameters:**
 - `taskId` (required): The ID of the task to check
+
+**send_email** - Sends an email with optional image attachment.
+
+**Parameters:**
+- `toEmail` (required): The recipient email address
+- `subject` (required): The email subject
+- `body` (required): The email body (HTML format)
+- `imageBase64` (optional): Base64-encoded image data to attach
+- `imageName` (optional): Image filename (default: image.png)
+
+### Image Tools Only (Endpoint: `/image`)
+
+Only `generate_image` and `get_image_task_status` tools are available.
+
+### Email Tools Only (Endpoint: `/email`)
+
+Only `send_email` tool is available.
 
 ## Authentication
 
@@ -143,7 +162,45 @@ curl -X POST "http://localhost:5000/admin/tokens?name=my-token"
 
 Use the token in requests:
 ```bash
-curl -H "Authorization: Bearer <your-token>" http://localhost:5000/mcp
+curl -H "Authorization: Bearer <your-token>" http://localhost:5000/all
+```
+
+## MCP Client Configuration
+
+To connect to this server from a Claude Desktop or other MCP client:
+
+```json
+{
+  "mcpServers": {
+    "verdure-all-tools": {
+      "transport": {
+        "type": "http",
+        "url": "http://localhost:5000/all",
+        "headers": {
+          "Authorization": "Bearer YOUR_TOKEN_HERE"
+        }
+      }
+    },
+    "verdure-image-only": {
+      "transport": {
+        "type": "http",
+        "url": "http://localhost:5000/image",
+        "headers": {
+          "Authorization": "Bearer YOUR_TOKEN_HERE"
+        }
+      }
+    },
+    "verdure-email-only": {
+      "transport": {
+        "type": "http",
+        "url": "http://localhost:5000/email",
+        "headers": {
+          "Authorization": "Bearer YOUR_TOKEN_HERE"
+        }
+      }
+    }
+  }
+}
 ```
 
 ## Async Processing
