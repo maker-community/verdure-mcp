@@ -1,21 +1,45 @@
 <MudDialog>
     <DialogContent>
         <MudStack AlignItems="AlignItems.Center" Spacing="4">
-            <MudText Typo="Typo.body1" Class="text-center">
+            <MudText Typo="Typo.body1" Class="text-center" Style="font-weight: 500;">
                 使用微信或支付宝扫描下方二维码进行赞助
             </MudText>
             
-            <MudPaper Elevation="0" Class="pa-4" Style="background-color: #f5f5f5;">
-                <MudIcon Icon="@Icons.Material.Filled.QrCode2" Size="Size.Large" Style="font-size: 150px;" />
-            </MudPaper>
+            <MudGrid Spacing="4" Justify="Justify.Center">
+                <MudItem xs="12" sm="6">
+                    <MudStack AlignItems="AlignItems.Center" Spacing="2">
+                        <MudText Typo="Typo.h6" Style="font-weight: 500; color: #07C160;">微信支付</MudText>
+                        <MudPaper Elevation="2" Class="pa-3" Style="border-radius: 12px; background-color: #ffffff;">
+                            <MudImage Src="/wechat.JPG" Alt="微信收款码" Width="240" Height="240" 
+                                      Style="display: block; border-radius: 8px;" />
+                        </MudPaper>
+                        <MudText Typo="Typo.body2" Color="Color.Secondary" Class="text-center">
+                            打开微信扫一扫
+                        </MudText>
+                    </MudStack>
+                </MudItem>
+                
+                <MudItem xs="12" sm="6">
+                    <MudStack AlignItems="AlignItems.Center" Spacing="2">
+                        <MudText Typo="Typo.h6" Style="font-weight: 500; color: #1677FF;">支付宝</MudText>
+                        <MudPaper Elevation="2" Class="pa-3" Style="border-radius: 12px; background-color: #ffffff;">
+                            <MudImage Src="/alipay.JPG" Alt="支付宝收款码" Width="240" Height="240" 
+                                      Style="display: block; border-radius: 8px;" />
+                        </MudPaper>
+                        <MudText Typo="Typo.body2" Color="Color.Secondary" Class="text-center">
+                            打开支付宝扫一扫
+                        </MudText>
+                    </MudStack>
+                </MudItem>
+            </MudGrid>
             
-            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="text-center">
+            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="text-center" Style="line-height: 1.6;">
                 感谢您的支持！您的每一份赞助都将用于服务器维护和功能开发。
             </MudText>
         </MudStack>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">关闭</MudButton>
+        <MudButton OnClick="Cancel" Color="Color.Primary" Variant="Variant.Text">关闭</MudButton>
     </DialogActions>
 </MudDialog>
 
