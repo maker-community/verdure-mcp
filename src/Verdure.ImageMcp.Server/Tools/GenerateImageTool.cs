@@ -55,7 +55,8 @@ public class GenerateImageTool
         [Description("The text prompt describing the image to generate")] string prompt,
         [Description("Image size: '1024x1024', '1792x1024', or '1024x1792'. Default is '1024x1024'")] string? size = null,
         [Description("Image quality: 'standard' or 'hd'. Default is 'standard'")] string? quality = null,
-        [Description("Image style: 'vivid' or 'natural'. Default is 'vivid'")] string? style = null)
+        [Description("Image style: 'vivid' or 'natural'. Default is 'vivid'")] string? style = null,
+        CancellationToken cancellationToken = default)
     {
         var httpContext = _httpContextAccessor.HttpContext;
         
@@ -83,7 +84,7 @@ public class GenerateImageTool
         };
 
         _dbContext.ImageGenerationTasks.Add(task);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync(cancellationToken);
 
         // If user info is present, use async processing with Hangfire
         if (!string.IsNullOrEmpty(userId))
@@ -95,7 +96,7 @@ public class GenerateImageTool
             
             task.HangfireJobId = jobId;
             task.Status = ImageTaskStatus.Processing;
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             return new ImageGenerationResponse
             {
@@ -111,12 +112,12 @@ public class GenerateImageTool
             _logger.LogInformation("No user ID, using sync processing for task {TaskId}", task.Id);
             
             task.Status = ImageTaskStatus.Processing;
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             try
             {
                 var result = await _imageGenerationService.GenerateImageAsync(
-                    prompt, size, quality, style);
+                    prompt, size, quality, style, cancellationToken);
 
                 if (result.Success)
                 {
@@ -125,7 +126,7 @@ public class GenerateImageTool
                     task.ImageUrl = result.ImageUrl;
                     task.CompletedAt = DateTime.UtcNow;
                     task.UpdatedAt = DateTime.UtcNow;
-                    await _dbContext.SaveChangesAsync();
+                    await _dbContext.SaveChangesAsync(cancellationToken);
 
                     // Send email if provided
                     if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(result.ImageBase64))
@@ -140,10 +141,11 @@ public class GenerateImageTool
                                 "Your Generated Image",
                                 $"<h1>Your image has been generated!</h1><p>Prompt: {encodedPrompt}</p><p>Revised prompt: {encodedRevisedPrompt}</p>",
                                 imageBytes,
-                                $"image_{task.Id}.png");
+                                $"image_{task.Id}.png",
+                                cancellationToken);
                             
                             task.EmailSent = true;
-                            await _dbContext.SaveChangesAsync();
+                            await _dbContext.SaveChangesAsync(cancellationToken);
                         }
                         catch (Exception ex)
                         {
@@ -167,7 +169,7 @@ public class GenerateImageTool
                     task.Status = ImageTaskStatus.Failed;
                     task.ErrorMessage = result.ErrorMessage;
                     task.UpdatedAt = DateTime.UtcNow;
-                    await _dbContext.SaveChangesAsync();
+                    await _dbContext.SaveChangesAsync(cancellationToken);
 
                     return new ImageGenerationResponse
                     {
@@ -185,7 +187,7 @@ public class GenerateImageTool
                 task.Status = ImageTaskStatus.Failed;
                 task.ErrorMessage = ex.Message;
                 task.UpdatedAt = DateTime.UtcNow;
-                await _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync(cancellationToken);
 
                 return new ImageGenerationResponse
                 {
@@ -206,7 +208,8 @@ public class GenerateImageTool
     [McpServerTool(Name = "get_image_task_status")]
     [Description("Gets the status of an image generation task")]
     public async Task<ImageGenerationResponse> GetImageTaskStatus(
-        [Description("The ID of the task to check")] string taskId)
+        [Description("The ID of the task to check")] string taskId,
+        CancellationToken cancellationToken = default)
     {
         if (!Guid.TryParse(taskId, out var id))
         {
@@ -217,7 +220,7 @@ public class GenerateImageTool
             };
         }
 
-        var task = await _dbContext.ImageGenerationTasks.FindAsync(id);
+        var task = await _dbContext.ImageGenerationTasks.FindAsync(new object[] { id }, cancellationToken);
         
         if (task == null)
         {
