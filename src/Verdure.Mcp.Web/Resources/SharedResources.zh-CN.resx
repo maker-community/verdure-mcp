@@ -902,4 +902,23 @@
     <value>开源协议</value>
   </data>
 
+  <!-- Auth Additional -->
+  <data name="Auth_LoginRequired" xml:space="preserve">
+    <value>请先登录</value>
+  </data>
+  <data name="Auth_LoginRequiredMessage" xml:space="preserve">
+    <value>您需要登录才能访问此页面。</value>
+  </data>
+
+  <!-- Not Found Page -->
+  <data name="NotFound_PageTitle" xml:space="preserve">
+    <value>未找到页面</value>
+  </data>
+  <data name="NotFound_Title" xml:space="preserve">
+    <value>404 - 页面未找到</value>
+  </data>
+  <data name="NotFound_Message" xml:space="preserve">
+    <value>抱歉，您访问的页面不存在。</value>
+  </data>
+
 </root>

@@ -1,23 +1,24 @@
 @page "/admin/users"
 @attribute [Authorize(Policy = "AdminPolicy")]
 @inject ISnackbar Snackbar
+@inject IStringLocalizer<SharedResources> L
 
-<PageTitle>用户管理 - Verdure MCP 服务平台</PageTitle>
+<PageTitle>@L["AdminUsers_PageTitle"]</PageTitle>
 
-<MudText Typo="Typo.h4" Class="mb-4">用户管理</MudText>
+<MudText Typo="Typo.h4" Class="mb-4">@L["AdminUsers_Title"]</MudText>
 
 <MudText Typo="Typo.body1" Class="mb-4" Color="Color.Secondary">
-    管理平台用户和权限
+    @L["AdminUsers_Subtitle"]
 </MudText>
 
 <MudPaper Class="pa-8 text-center" Elevation="0">
     <MudIcon Icon="@Icons.Material.Filled.Engineering" Size="Size.Large" Color="Color.Secondary" />
-    <MudText Typo="Typo.h6" Class="mt-4">功能开发中</MudText>
+    <MudText Typo="Typo.h6" Class="mt-4">@L["AdminUsers_InDevelopment"]</MudText>
     <MudText Typo="Typo.body2" Color="Color.Secondary">
-        用户管理功能正在开发中，敬请期待
+        @L["AdminUsers_ComingSoon"]
     </MudText>
     <MudText Typo="Typo.caption" Color="Color.Tertiary" Class="mt-4">
-        提示：用户认证和角色管理由 Keycloak 提供
+        @L["AdminUsers_KeycloakHint"]
     </MudText>
 </MudPaper>
 

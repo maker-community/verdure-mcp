@@ -43,7 +43,7 @@ else
                     @if (_service.IsFree)
                     {
                         <MudChip T="string" Color="Color.Success" Size="Size.Small" 
-                                 Style="border-radius: 12px; font-weight: 500;">免费</MudChip>
+                                 Style="border-radius: 12px; font-weight: 500;">@L["Free"]</MudChip>
                     }
                     <MudChip T="string" Color="Color.Primary" Size="Size.Small" Variant="Variant.Outlined"
                              Style="border-radius: 12px;">
@@ -153,14 +153,14 @@ else
             
             _breadcrumbs =
             [
-                new BreadcrumbItem("首页", "/"),
-                new BreadcrumbItem("MCP 广场", "/"),
-                new BreadcrumbItem(_service?.DisplayName ?? "服务详情", null, disabled: true)
+                new BreadcrumbItem(L["ServiceDetails_Breadcrumb_Home"], "/"),
+                new BreadcrumbItem(L["Nav_McpSquare"], "/dashboard"),
+                new BreadcrumbItem(_service?.DisplayName ?? L["ServiceDetails_NotFound"], null, disabled: true)
             ];
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"加载服务详情失败: {ex.Message}", Severity.Error);
+            Snackbar.Add(string.Format(L["ServiceDetails_LoadFailed"], ex.Message), Severity.Error);
         }
         finally
         {
@@ -183,11 +183,11 @@ else
         try
         {
             await ClipboardService.CopyToClipboardAsync(text);
-            Snackbar.Add("已复制到剪贴板", Severity.Success);
+            Snackbar.Add(L["CopiedToClipboard"], Severity.Success);
         }
         catch
         {
-            Snackbar.Add("复制失败，请手动复制", Severity.Warning);
+            Snackbar.Add(L["CopyFailed"], Severity.Warning);
         }
     }
 }

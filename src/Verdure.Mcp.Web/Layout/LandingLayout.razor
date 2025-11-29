@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @inherits LayoutComponentBase
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResources> L
 
 <MudLayout>
     <!-- 全宽顶部导航栏 - 透明背景，固定在顶部 -->
@@ -12,7 +13,7 @@
                 <MudIcon Icon="@Icons.Material.Filled.Hub" Size="Size.Large" Style="color: #7C4DFF;" />
                 <!-- 平台标题：在手机等窄屏幕设备上隐藏，以节省空间 -->
                 <MudText Typo="Typo.h6" Class="d-none d-sm-block" Style="color: #7C4DFF; font-weight: 600; margin-left: 0.75rem;">
-                    Verdure MCP
+                    @L["AppName"]
                 </MudText>
             </div>
             
@@ -20,20 +21,20 @@
             <div class="d-flex align-center gap-4">
                 <!-- 导航链接：在平板以下设备隐藏 -->
                 <MudLink Href="/#features" Underline="Underline.None" Class="d-none d-md-block" Style="color: #424242; font-weight: 500;">
-                    功能特性
+                    @L["Landing_FeaturesNav"]
                 </MudLink>
                 <MudLink Href="/#architecture" Underline="Underline.None" Class="d-none d-md-block" Style="color: #424242; font-weight: 500;">
-                    技术架构
+                    @L["Landing_ArchitectureNav"]
                 </MudLink>
                 <MudLink Href="/#community" Underline="Underline.None" Class="d-none d-md-block" Style="color: #424242; font-weight: 500;">
-                    社区
+                    @L["Landing_CommunityNav"]
                 </MudLink>
                 
                 <!-- 分隔线：在平板以下设备隐藏 -->
                 <MudDivider Vertical="true" FlexItem="true" Class="d-none d-md-block" Style="height: 30px;" />
                 
                 <!-- 社区图标链接：在手机等窄屏幕设备上隐藏部分图标 -->
-                <MudTooltip Text="GitHub 创客社区">
+                <MudTooltip Text="@L["Landing_GitHubCommunity"]">
                     <MudIconButton Icon="@Icons.Material.Filled.Groups" 
                                   Size="Size.Medium"
                                   Class="d-none d-sm-inline-flex"
@@ -41,14 +42,14 @@
                                   Href="https://github.com/maker-community" 
                                   Target="_blank" />
                 </MudTooltip>
-                <MudTooltip Text="项目源码">
+                <MudTooltip Text="@L["Landing_ProjectSource"]">
                     <MudIconButton Icon="@Icons.Custom.Brands.GitHub" 
                                   Size="Size.Medium"
                                   Style="color: #424242;"
                                   Href="https://github.com/maker-community/verdure-mcp" 
                                   Target="_blank" />
                 </MudTooltip>
-                <MudTooltip Text="B站频道">
+                <MudTooltip Text="@L["Landing_BilibiliChannel"]">
                     <MudIconButton Icon="@VerdureIcons.SocialMedia.Bilibili" 
                                   Size="Size.Medium"
                                   Class="d-none d-sm-inline-flex"
@@ -59,6 +60,9 @@
                 
                 <!-- 分隔线：在手机等窄屏幕设备上隐藏 -->
                 <MudDivider Vertical="true" FlexItem="true" Class="d-none d-sm-block" Style="height: 30px;" />
+                
+                <!-- 语言切换 -->
+                <CultureSelector TextColor="#424242" />
                 
                 <!-- 登录/用户菜单 -->
                 <AuthorizeView>
@@ -75,7 +79,7 @@
                                   StartIcon="@Icons.Material.Filled.Dashboard"
                                   Size="Size.Small"
                                   Class="d-none d-sm-inline-flex mr-2">
-                            进入控制台
+                            @L["Index_EnterConsole"]
                         </MudButton>
                         
                         <!-- 用户菜单 -->
@@ -94,9 +98,9 @@
                                     </div>
                                 </MudMenuItem>
                                 <MudDivider />
-                                <MudMenuItem Href="/profile" Icon="@Icons.Material.Filled.Person">个人中心</MudMenuItem>
-                                <MudMenuItem Href="/tokens" Icon="@Icons.Material.Filled.Key">API 密钥</MudMenuItem>
-                                <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="@HandleLogout">退出登录</MudMenuItem>
+                                <MudMenuItem Href="/profile" Icon="@Icons.Material.Filled.Person">@L["Nav_PersonalCenter"]</MudMenuItem>
+                                <MudMenuItem Href="/tokens" Icon="@Icons.Material.Filled.Key">@L["Nav_ApiKey"]</MudMenuItem>
+                                <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="@HandleLogout">@L["Logout"]</MudMenuItem>
                             </ChildContent>
                         </MudMenu>
                     </Authorized>
@@ -113,7 +117,7 @@
                                   StartIcon="@Icons.Material.Filled.Login"
                                   Size="Size.Small"
                                   Class="d-none d-sm-inline-flex">
-                            登录
+                            @L["Login"]
                         </MudButton>
                     </NotAuthorized>
                 </AuthorizeView>

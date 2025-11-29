@@ -3,19 +3,20 @@
 @inject IMcpServiceClient McpServiceClient
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
+@inject IStringLocalizer<SharedResources> L
 
-<PageTitle>MCP 服务管理 - Verdure MCP 服务平台</PageTitle>
+<PageTitle>@L["AdminServices_PageTitle"]</PageTitle>
 
-<MudText Typo="Typo.h4" Class="mb-4">MCP 服务管理</MudText>
+<MudText Typo="Typo.h4" Class="mb-4">@L["AdminServices_Title"]</MudText>
 
 <MudText Typo="Typo.body1" Class="mb-4" Color="Color.Secondary">
-    管理和配置平台上的 MCP 服务
+    @L["AdminServices_Subtitle"]
 </MudText>
 
 <MudStack Row="true" Justify="Justify.FlexEnd" Class="mb-4">
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CreateService"
                StartIcon="@Icons.Material.Filled.Add">
-        添加服务
+        @L["AdminServices_AddService"]
     </MudButton>
 </MudStack>
 
@@ -27,47 +28,47 @@
           Loading="@_loading"
           LoadingProgressColor="Color.Primary">
     <ToolBarContent>
-        <MudText Typo="Typo.h6">服务列表</MudText>
+        <MudText Typo="Typo.h6">@L["AdminServices_ServiceList"]</MudText>
         <MudSpacer />
         <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mr-4">
-            共 @_totalItems 个服务
+            @string.Format(L["AdminServices_TotalServices"], _totalItems)
         </MudText>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh>名称</MudTh>
-        <MudTh>分类</MudTh>
-        <MudTh>端点</MudTh>
-        <MudTh>状态</MudTh>
-        <MudTh>排序</MudTh>
-        <MudTh>操作</MudTh>
+        <MudTh>@L["AdminServices_Name"]</MudTh>
+        <MudTh>@L["AdminServices_Category"]</MudTh>
+        <MudTh>@L["AdminServices_Endpoint"]</MudTh>
+        <MudTh>@L["AdminServices_Status"]</MudTh>
+        <MudTh>@L["AdminServices_SortOrder"]</MudTh>
+        <MudTh>@L["AdminServices_Actions"]</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="名称">
+        <MudTd DataLabel="@L["AdminServices_Name"]">
             <MudStack Spacing="0">
                 <MudText>@context.DisplayName</MudText>
                 <MudText Typo="Typo.caption" Color="Color.Secondary">@context.Name</MudText>
             </MudStack>
         </MudTd>
-        <MudTd DataLabel="分类">
+        <MudTd DataLabel="@L["AdminServices_Category"]">
             <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Outlined">
                 @context.Category
             </MudChip>
         </MudTd>
-        <MudTd DataLabel="端点">
+        <MudTd DataLabel="@L["AdminServices_Endpoint"]">
             <code>@context.EndpointRoute</code>
         </MudTd>
-        <MudTd DataLabel="状态">
+        <MudTd DataLabel="@L["AdminServices_Status"]">
             @if (context.IsEnabled)
             {
-                <MudChip T="string" Size="Size.Small" Color="Color.Success">启用</MudChip>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">@L["Enabled"]</MudChip>
             }
             else
             {
-                <MudChip T="string" Size="Size.Small" Color="Color.Default">禁用</MudChip>
+                <MudChip T="string" Size="Size.Small" Color="Color.Default">@L["Disabled"]</MudChip>
             }
         </MudTd>
-        <MudTd DataLabel="排序">@context.DisplayOrder</MudTd>
-        <MudTd DataLabel="操作">
+        <MudTd DataLabel="@L["AdminServices_SortOrder"]">@context.DisplayOrder</MudTd>
+        <MudTd DataLabel="@L["AdminServices_Actions"]">
             <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Size="Size.Small"
                            OnClick="@(() => EditService(context))" />
             <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
@@ -77,20 +78,20 @@
     <NoRecordsContent>
         <MudPaper Class="pa-8 text-center" Elevation="0">
             <MudIcon Icon="@Icons.Material.Filled.Extension" Size="Size.Large" Color="Color.Secondary" />
-            <MudText Typo="Typo.h6" Class="mt-4">暂无服务</MudText>
+            <MudText Typo="Typo.h6" Class="mt-4">@L["AdminServices_NoServices"]</MudText>
             <MudText Typo="Typo.body2" Color="Color.Secondary">
-                点击上方按钮添加第一个 MCP 服务
+                @L["AdminServices_NoServicesHint"]
             </MudText>
         </MudPaper>
     </NoRecordsContent>
     <LoadingContent>
-        <MudText>加载中...</MudText>
+        <MudText>@L["Loading"]</MudText>
     </LoadingContent>
     <PagerContent>
         <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100 }" 
-                       RowsPerPageString="每页显示"
-                       InfoFormat="{first_item}-{last_item} / 共 {all_items}"
-                       AllItemsText="全部"
+                       RowsPerPageString="@L["AdminServices_RowsPerPage"]"
+                       InfoFormat="@L["AdminServices_PagerInfo"]"
+                       AllItemsText="@L["All"]"
                        HorizontalAlignment="HorizontalAlignment.Right" />
     </PagerContent>
 </MudTable>
@@ -122,7 +123,7 @@
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"加载服务列表失败: {ex.Message}", Severity.Error);
+            Snackbar.Add(string.Format(L["AdminServices_LoadFailed"], ex.Message), Severity.Error);
             return new TableData<McpServiceDto>
             {
                 Items = [],
@@ -140,7 +141,7 @@
     {
         var parameters = new DialogParameters<ServiceFormDialog>();
         var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
-        var dialog = await DialogService.ShowAsync<ServiceFormDialog>("添加 MCP 服务", parameters, options);
+        var dialog = await DialogService.ShowAsync<ServiceFormDialog>(L["ServiceForm_AddTitle"], parameters, options);
         var result = await dialog.Result;
 
         if (!result?.Canceled ?? false)
@@ -159,7 +160,7 @@
             { x => x.Service, service }
         };
         var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
-        var dialog = await DialogService.ShowAsync<ServiceFormDialog>("编辑 MCP 服务", parameters, options);
+        var dialog = await DialogService.ShowAsync<ServiceFormDialog>(L["ServiceForm_EditTitle"], parameters, options);
         var result = await dialog.Result;
 
         if (!result?.Canceled ?? false)
@@ -174,17 +175,17 @@
     private async Task DeleteService(McpServiceDto service)
     {
         var result = await DialogService.ShowMessageBox(
-            "确认删除",
-            $"确定要删除服务 \"{service.DisplayName}\" 吗？此操作不可恢复。",
-            yesText: "删除",
-            cancelText: "取消");
+            L["AdminServices_DeleteConfirmTitle"],
+            string.Format(L["AdminServices_DeleteConfirmMessage"], service.DisplayName),
+            yesText: L["Delete"],
+            cancelText: L["Cancel"]);
 
         if (result == true)
         {
             try
             {
                 await McpServiceClient.DeleteServiceAsync(service.Id);
-                Snackbar.Add("服务已删除", Severity.Success);
+                Snackbar.Add(L["AdminServices_DeleteSuccess"], Severity.Success);
                 if (_table != null)
                 {
                     await _table.ReloadServerData();
@@ -192,7 +193,7 @@
             }
             catch (Exception ex)
             {
-                Snackbar.Add($"删除失败: {ex.Message}", Severity.Error);
+                Snackbar.Add(string.Format(L["AdminServices_DeleteFailed"], ex.Message), Severity.Error);
             }
         }
     }
