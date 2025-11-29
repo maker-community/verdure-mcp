@@ -151,6 +151,30 @@ When the `X-User-Id` header is present in requests, image generation tasks are p
 
 The task status can be checked using the `get_image_task_status` tool with the returned task ID.
 
+## Security Notes
+
+- **Token Storage**: API tokens are hashed using PBKDF2 with 100,000 iterations, random salt, and constant-time comparison for maximum security.
+- **Configuration**: In production, use environment variables or user secrets instead of `appsettings.json` for sensitive data like API keys and connection strings.
+- **Email Content**: User prompts are HTML-encoded before being included in email content to prevent XSS attacks.
+- **Admin Endpoints**: Token creation endpoint is only available in development environment.
+
+## Production Deployment
+
+For production deployments:
+
+1. Use environment variables or Azure Key Vault for secrets:
+   ```bash
+   export ConnectionStrings__DefaultConnection="your-secure-connection-string"
+   export AzureOpenAI__ApiKey="your-api-key"
+   export Email__SmtpPassword="your-smtp-password"
+   ```
+
+2. Enable authentication by setting `Authentication:RequireToken` to `true`.
+
+3. Use HTTPS for all communications.
+
+4. Consider implementing token caching for high-throughput scenarios.
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details.
