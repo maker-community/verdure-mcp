@@ -27,7 +27,7 @@ else
 
     <MudGrid Spacing="4">
         <MudItem xs="12" md="8">
-            <MudPaper Elevation="1" Class="pa-6" Style="border-radius: 16px;">
+            <MudPaper Elevation="0" Class="pa-6" Style="border-radius: 16px; background-color: #FFFFFF; border: 1px solid rgba(124, 77, 255, 0.12); box-shadow: 0 2px 8px rgba(124, 77, 255, 0.06);">
                 <MudStack Row="true" AlignItems="AlignItems.Start" Class="mb-5" Spacing="3">
                     <MudAvatar Color="Color.Primary" Size="Size.Large" Style="border-radius: 16px;">
                         @GetCategoryIcon(_service.Category)
@@ -96,7 +96,7 @@ else
         </MudItem>
 
         <MudItem xs="12" md="4">
-            <MudPaper Elevation="1" Class="pa-5 mb-4" Style="border-radius: 16px;">
+            <MudPaper Elevation="0" Class="pa-5 mb-4" Style="border-radius: 16px; background-color: #FFFFFF; border: 1px solid rgba(124, 77, 255, 0.12); box-shadow: 0 2px 8px rgba(124, 77, 255, 0.06);">
                 <MudText Typo="Typo.h6" Class="mb-4" Style="font-weight: 500;">快速操作</MudText>
                 
                 @if (!string.IsNullOrEmpty(_service.DocumentationUrl))
@@ -117,7 +117,7 @@ else
                 </MudButton>
             </MudPaper>
 
-            <MudPaper Elevation="0" Class="pa-5" Style="background-color: var(--mud-palette-tertiary-container, #FFE0B2); border-radius: 16px; border: 2px solid var(--mud-palette-tertiary, #FF9800);">
+            <MudPaper Elevation="0" Class="pa-5" Style="background: linear-gradient(135deg, #FCE4EC 0%, #F8BBD0 100%); border-radius: 16px; border: 2px solid #E91E63;">
                 <MudIcon Icon="@Icons.Material.Filled.Favorite" Color="Color.Tertiary" Size="Size.Large" Class="mb-3" />
                 <MudText Typo="Typo.h6" Color="Color.Default" Class="mb-2" Style="font-weight: 500;">
                     支持我们
