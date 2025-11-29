@@ -195,10 +195,15 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 // Use authentication and authorization
+// Note: The order matters:
+// 1. Keycloak JWT authentication (for /api/* endpoints)
+// 2. Authorization policies
+// 3. Bearer token authentication (for MCP endpoints only, excludes /api/*)
 app.UseAuthentication();
 app.UseAuthorization();
 
 // Use Bearer token authentication middleware for MCP endpoints
+// This middleware automatically excludes /api/* paths (see BearerTokenAuthenticationMiddleware.ExcludedPaths)
 app.UseBearerTokenAuthentication();
 
 // Map MCP endpoints with route parameter for tool filtering
