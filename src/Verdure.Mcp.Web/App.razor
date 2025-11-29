@@ -1,0 +1,102 @@
+@using Microsoft.AspNetCore.Components.Authorization
+
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <NotAuthorized>
+                    <MudContainer Class="mt-16">
+                        <MudText Typo="Typo.h5" Class="mb-4">请先登录</MudText>
+                        <MudText>您需要登录才能访问此页面。</MudText>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="authentication/login" Class="mt-4">
+                            登录
+                        </MudButton>
+                    </MudContainer>
+                </NotAuthorized>
+                <Authorizing>
+                    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+                </Authorizing>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <PageTitle>未找到页面</PageTitle>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <MudContainer Class="mt-16 text-center">
+                    <MudText Typo="Typo.h4" Class="mb-4">404 - 页面未找到</MudText>
+                    <MudText>抱歉，您访问的页面不存在。</MudText>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/" Class="mt-4">
+                        返回首页
+                    </MudButton>
+                </MudContainer>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
+
+<MudThemeProvider Theme="_theme" IsDarkMode="@_isDarkMode" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+@code {
+    private bool _isDarkMode = false;
+    
+    private MudTheme _theme = new()
+    {
+        PaletteLight = new PaletteLight()
+        {
+            Primary = "#6750A4",
+            Secondary = "#625B71",
+            Tertiary = "#7D5260",
+            Background = "#FFFBFE",
+            Surface = "#FFFBFE",
+            AppbarBackground = "#6750A4",
+            AppbarText = "#FFFFFF",
+            DrawerBackground = "#FFFBFE",
+            DrawerText = "#1C1B1F",
+            TextPrimary = "#1C1B1F",
+            TextSecondary = "#49454F"
+        },
+        PaletteDark = new PaletteDark()
+        {
+            Primary = "#D0BCFF",
+            Secondary = "#CCC2DC",
+            Tertiary = "#EFB8C8",
+            Background = "#1C1B1F",
+            Surface = "#1C1B1F",
+            AppbarBackground = "#1C1B1F",
+            AppbarText = "#E6E1E5",
+            DrawerBackground = "#1C1B1F",
+            DrawerText = "#E6E1E5",
+            TextPrimary = "#E6E1E5",
+            TextSecondary = "#CAC4D0"
+        },
+        Typography = new Typography()
+        {
+            Default = new DefaultTypography()
+            {
+                FontFamily = ["Roboto", "Helvetica", "Arial", "sans-serif"]
+            },
+            H1 = new H1Typography()
+            {
+                FontWeight = "400",
+                FontSize = "3rem"
+            },
+            H2 = new H2Typography()
+            {
+                FontWeight = "400",
+                FontSize = "2.5rem"
+            },
+            H3 = new H3Typography()
+            {
+                FontWeight = "400",
+                FontSize = "2rem"
+            }
+        },
+        LayoutProperties = new LayoutProperties()
+        {
+            DefaultBorderRadius = "16px"
+        }
+    };
+}

@@ -1,0 +1,100 @@
+@page "/profile"
+@attribute [Authorize]
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<PageTitle>个人中心 - Verdure MCP 服务平台</PageTitle>
+
+<MudText Typo="Typo.h4" Class="mb-4">个人中心</MudText>
+
+<AuthorizeView>
+    <Authorized>
+        <MudGrid>
+            <MudItem xs="12" md="6">
+                <MudPaper Elevation="2" Class="pa-6">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4">
+                        <MudAvatar Color="Color.Primary" Size="Size.Large">
+                            @GetInitials(context.User.Identity?.Name)
+                        </MudAvatar>
+                        <MudStack Spacing="0">
+                            <MudText Typo="Typo.h5">@context.User.Identity?.Name</MudText>
+                            <MudText Typo="Typo.body2" Color="Color.Secondary">
+                                @GetUserEmail(context.User)
+                            </MudText>
+                        </MudStack>
+                    </MudStack>
+
+                    <MudDivider Class="mb-4" />
+
+                    <MudList T="string">
+                        <MudListItem Icon="@Icons.Material.Filled.Badge">
+                            <MudText>用户ID: @GetUserId(context.User)</MudText>
+                        </MudListItem>
+                        <MudListItem Icon="@Icons.Material.Filled.Security">
+                            <MudText>角色: @GetRoles(context.User)</MudText>
+                        </MudListItem>
+                    </MudList>
+                </MudPaper>
+            </MudItem>
+
+            <MudItem xs="12" md="6">
+                <MudPaper Elevation="2" Class="pa-6">
+                    <MudText Typo="Typo.h6" Class="mb-4">快速操作</MudText>
+                    
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" FullWidth="true" Class="mb-2"
+                               Href="/tokens"
+                               StartIcon="@Icons.Material.Filled.Key">
+                        管理 API 密钥
+                    </MudButton>
+                    
+                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" FullWidth="true" Class="mb-2"
+                               Href="/"
+                               StartIcon="@Icons.Material.Filled.Home">
+                        浏览 MCP 服务
+                    </MudButton>
+                    
+                    <MudButton Variant="Variant.Outlined" Color="Color.Tertiary" FullWidth="true"
+                               Href="/support"
+                               StartIcon="@Icons.Material.Filled.Favorite">
+                        支持我们
+                    </MudButton>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private string GetInitials(string? name)
+    {
+        if (string.IsNullOrEmpty(name)) return "U";
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length >= 2)
+            return $"{parts[0][0]}{parts[1][0]}".ToUpper();
+        return name[..Math.Min(2, name.Length)].ToUpper();
+    }
+
+    private string GetUserEmail(System.Security.Claims.ClaimsPrincipal user)
+    {
+        return user.FindFirst("email")?.Value ?? 
+               user.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? 
+               "未设置邮箱";
+    }
+
+    private string GetUserId(System.Security.Claims.ClaimsPrincipal user)
+    {
+        return user.FindFirst("sub")?.Value ?? 
+               user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? 
+               "未知";
+    }
+
+    private string GetRoles(System.Security.Claims.ClaimsPrincipal user)
+    {
+        var roles = user.FindAll("role")
+            .Concat(user.FindAll(System.Security.Claims.ClaimTypes.Role))
+            .Select(c => c.Value)
+            .Distinct()
+            .ToList();
+        
+        return roles.Any() ? string.Join(", ", roles) : "普通用户";
+    }
+}
