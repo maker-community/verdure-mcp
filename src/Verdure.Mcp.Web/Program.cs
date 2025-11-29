@@ -17,6 +17,7 @@ builder.Services.AddMudServices();
 // Add custom services
 builder.Services.AddScoped<IMcpServiceClient, McpServiceClient>();
 builder.Services.AddScoped<ITokenServiceClient, TokenServiceClient>();
+builder.Services.AddScoped<IClipboardService, ClipboardService>();
 
 // Add authentication
 builder.Services.AddOidcAuthentication(options =>

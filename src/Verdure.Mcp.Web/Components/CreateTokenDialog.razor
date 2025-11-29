@@ -1,5 +1,6 @@
 @inject ITokenServiceClient TokenServiceClient
 @inject ISnackbar Snackbar
+@inject IClipboardService ClipboardService
 
 <MudDialog>
     <DialogContent>
@@ -93,12 +94,19 @@
         }
     }
 
-    private void CopyToken()
+    private async Task CopyToken()
     {
         if (_createdToken != null)
         {
-            // Note: This would require JS interop in a real implementation
-            Snackbar.Add("已复制到剪贴板", Severity.Success);
+            try
+            {
+                await ClipboardService.CopyToClipboardAsync(_createdToken.Token);
+                Snackbar.Add("已复制到剪贴板", Severity.Success);
+            }
+            catch
+            {
+                Snackbar.Add("复制失败，请手动复制", Severity.Warning);
+            }
         }
     }
 }

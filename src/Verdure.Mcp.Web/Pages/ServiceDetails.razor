@@ -2,6 +2,7 @@
 @inject IMcpServiceClient McpServiceClient
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
+@inject IClipboardService ClipboardService
 
 <PageTitle>@(_service?.DisplayName ?? "服务详情") - Verdure MCP 服务平台</PageTitle>
 
@@ -166,7 +167,14 @@ else
 
     private async Task CopyToClipboard(string text)
     {
-        // Note: This would require JS interop in a real implementation
-        Snackbar.Add("已复制到剪贴板", Severity.Success);
+        try
+        {
+            await ClipboardService.CopyToClipboardAsync(text);
+            Snackbar.Add("已复制到剪贴板", Severity.Success);
+        }
+        catch
+        {
+            Snackbar.Add("复制失败，请手动复制", Severity.Warning);
+        }
     }
 }

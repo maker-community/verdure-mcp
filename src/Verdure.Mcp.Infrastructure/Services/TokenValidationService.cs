@@ -211,14 +211,8 @@ public class TokenValidationService : ITokenValidationService
             return false;
         }
 
-        // Reset daily count if it's a new day
-        var today = DateTime.UtcNow.Date;
-        if (apiToken.LastImageCountReset == null || apiToken.LastImageCountReset.Value.Date < today)
-        {
-            apiToken.TodayImageCount = 0;
-            apiToken.LastImageCountReset = today;
-            await _dbContext.SaveChangesAsync(cancellationToken);
-        }
+        ResetDailyCountIfNeeded(apiToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
 
         return apiToken.TodayImageCount < apiToken.DailyImageLimit;
     }
@@ -232,13 +226,7 @@ public class TokenValidationService : ITokenValidationService
             return false;
         }
 
-        // Reset daily count if it's a new day
-        var today = DateTime.UtcNow.Date;
-        if (apiToken.LastImageCountReset == null || apiToken.LastImageCountReset.Value.Date < today)
-        {
-            apiToken.TodayImageCount = 0;
-            apiToken.LastImageCountReset = today;
-        }
+        ResetDailyCountIfNeeded(apiToken);
 
         if (apiToken.TodayImageCount >= apiToken.DailyImageLimit)
         {
@@ -249,6 +237,19 @@ public class TokenValidationService : ITokenValidationService
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         return true;
+    }
+
+    /// <summary>
+    /// Resets the daily image count if it's a new day
+    /// </summary>
+    private static void ResetDailyCountIfNeeded(ApiToken apiToken)
+    {
+        var today = DateTime.UtcNow.Date;
+        if (apiToken.LastImageCountReset == null || apiToken.LastImageCountReset.Value.Date < today)
+        {
+            apiToken.TodayImageCount = 0;
+            apiToken.LastImageCountReset = today;
+        }
     }
 
     /// <summary>
