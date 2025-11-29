@@ -25,17 +25,20 @@
         </Authorized>
     </AuthorizeView>
     
-    <AuthorizeView Roles="admin">
+    <AuthorizeView>
         <Authorized>
-            <MudText Typo="Typo.subtitle2" Class="px-4 mt-4 mb-2" Color="Color.Secondary">管理</MudText>
-            
-            <MudNavLink Href="/admin/services" Icon="@Icons.Material.Filled.Settings">
-                MCP 服务管理
-            </MudNavLink>
-            
-            <MudNavLink Href="/admin/users" Icon="@Icons.Material.Filled.People">
-                用户管理
-            </MudNavLink>
+            @if (context.User.IsAdmin())
+            {
+                <MudText Typo="Typo.subtitle2" Class="px-4 mt-4 mb-2" Color="Color.Secondary">管理</MudText>
+                
+                <MudNavLink Href="/admin/services" Icon="@Icons.Material.Filled.Settings">
+                    MCP 服务管理
+                </MudNavLink>
+                
+                <MudNavLink Href="/admin/users" Icon="@Icons.Material.Filled.People">
+                    用户管理
+                </MudNavLink>
+            }
         </Authorized>
     </AuthorizeView>
     
