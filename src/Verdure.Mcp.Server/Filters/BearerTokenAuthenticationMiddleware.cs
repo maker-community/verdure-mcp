@@ -15,12 +15,14 @@ public class BearerTokenAuthenticationMiddleware
     private readonly AuthenticationSettings _settings;
 
     // Paths that don't require authentication
+    // Note: /api/* uses Keycloak JWT authentication, not custom bearer token
     private static readonly string[] ExcludedPaths = 
     {
         "/",
         "/health",
         "/openapi",
-        "/scalar"
+        "/scalar",
+        "/api"  // Exclude admin/management API endpoints (they use Keycloak JWT)
     };
 
     public BearerTokenAuthenticationMiddleware(
