@@ -1,0 +1,180 @@
+@page "/service/{Id:guid}"
+@inject IMcpServiceClient McpServiceClient
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+@inject IClipboardService ClipboardService
+
+<PageTitle>@(_service?.DisplayName ?? "服务详情") - Verdure MCP 服务平台</PageTitle>
+
+@if (_loading)
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
+}
+else if (_service == null)
+{
+    <MudPaper Class="pa-8 text-center">
+        <MudIcon Icon="@Icons.Material.Filled.Error" Size="Size.Large" Color="Color.Error" />
+        <MudText Typo="Typo.h5" Class="mt-4">服务未找到</MudText>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-4" Href="/">
+            返回首页
+        </MudButton>
+    </MudPaper>
+}
+else
+{
+    <MudBreadcrumbs Items="_breadcrumbs" Class="mb-4" />
+
+    <MudGrid>
+        <MudItem xs="12" md="8">
+            <MudPaper Elevation="2" Class="pa-6">
+                <MudStack Row="true" AlignItems="AlignItems.Start" Class="mb-4">
+                    <MudAvatar Color="Color.Primary" Size="Size.Large">
+                        @GetCategoryIcon(_service.Category)
+                    </MudAvatar>
+                    <MudStack Spacing="0">
+                        <MudText Typo="Typo.h4">@_service.DisplayName</MudText>
+                        <MudText Typo="Typo.body2" Color="Color.Secondary">@_service.Name</MudText>
+                    </MudStack>
+                </MudStack>
+
+                <MudStack Row="true" Spacing="2" Class="mb-4">
+                    @if (_service.IsFree)
+                    {
+                        <MudChip T="string" Color="Color.Success" Size="Size.Small">免费</MudChip>
+                    }
+                    <MudChip T="string" Color="Color.Primary" Size="Size.Small" Variant="Variant.Outlined">
+                        @_service.Category
+                    </MudChip>
+                    @if (!string.IsNullOrEmpty(_service.Version))
+                    {
+                        <MudChip T="string" Color="Color.Default" Size="Size.Small" Variant="Variant.Outlined">
+                            v@_service.Version
+                        </MudChip>
+                    }
+                </MudStack>
+
+                <MudDivider Class="mb-4" />
+
+                <MudText Typo="Typo.h6" Class="mb-2">描述</MudText>
+                <MudText Typo="Typo.body1" Class="mb-4">
+                    @(_service.Description ?? "暂无描述")
+                </MudText>
+
+                <MudText Typo="Typo.h6" Class="mb-2">端点</MudText>
+                <MudPaper Class="pa-3 mb-4" Style="background-color: var(--mud-palette-background-grey);">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                        <code>@_service.EndpointRoute</code>
+                        <MudIconButton Icon="@Icons.Material.Filled.ContentCopy" Size="Size.Small"
+                                       OnClick="@(() => CopyToClipboard(_service.EndpointRoute))" />
+                    </MudStack>
+                </MudPaper>
+
+                @if (!string.IsNullOrEmpty(_service.Tags))
+                {
+                    <MudText Typo="Typo.h6" Class="mb-2">标签</MudText>
+                    <MudStack Row="true" Spacing="1" Class="mb-4" Wrap="Wrap.Wrap">
+                        @foreach (var tag in _service.Tags.Split(','))
+                        {
+                            <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">@tag.Trim()</MudChip>
+                        }
+                    </MudStack>
+                }
+
+                @if (!string.IsNullOrEmpty(_service.Author))
+                {
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">
+                        作者: @_service.Author
+                    </MudText>
+                }
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" md="4">
+            <MudPaper Elevation="2" Class="pa-4 mb-4">
+                <MudText Typo="Typo.h6" Class="mb-3">快速操作</MudText>
+                
+                @if (!string.IsNullOrEmpty(_service.DocumentationUrl))
+                {
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" FullWidth="true" Class="mb-2"
+                               Href="@_service.DocumentationUrl" Target="_blank"
+                               StartIcon="@Icons.Material.Filled.Description">
+                        查看文档
+                    </MudButton>
+                }
+                
+                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" FullWidth="true" Class="mb-2"
+                           Href="https://xiaozhi.verdure-hiro.cn/" Target="_blank"
+                           StartIcon="@Icons.Material.Filled.Link">
+                    在小智平台配置
+                </MudButton>
+            </MudPaper>
+
+            <MudPaper Elevation="2" Class="pa-4" Style="background: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%);">
+                <MudText Typo="Typo.h6" Color="Color.Surface" Class="mb-2">支持我们</MudText>
+                <MudText Typo="Typo.body2" Color="Color.Surface" Class="mb-3">
+                    如果您觉得这个服务对您有帮助，欢迎支持我们的开发工作！
+                </MudText>
+                <MudButton Variant="Variant.Filled" Color="Color.Surface" FullWidth="true"
+                           Href="/support"
+                           StartIcon="@Icons.Material.Filled.Favorite">
+                    去支持
+                </MudButton>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+}
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private bool _loading = true;
+    private McpServiceDto? _service;
+    private List<BreadcrumbItem> _breadcrumbs = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _service = await McpServiceClient.GetServiceAsync(Id);
+            
+            _breadcrumbs =
+            [
+                new BreadcrumbItem("首页", "/"),
+                new BreadcrumbItem("MCP 广场", "/"),
+                new BreadcrumbItem(_service?.DisplayName ?? "服务详情", null, disabled: true)
+            ];
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"加载服务详情失败: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private string GetCategoryIcon(string category) => category.ToLower() switch
+    {
+        "image" => Icons.Material.Filled.Image,
+        "email" => Icons.Material.Filled.Email,
+        "document" => Icons.Material.Filled.Description,
+        "data" => Icons.Material.Filled.DataObject,
+        "ai" => Icons.Material.Filled.Psychology,
+        _ => Icons.Material.Filled.Extension
+    };
+
+    private async Task CopyToClipboard(string text)
+    {
+        try
+        {
+            await ClipboardService.CopyToClipboardAsync(text);
+            Snackbar.Add("已复制到剪贴板", Severity.Success);
+        }
+        catch
+        {
+            Snackbar.Add("复制失败，请手动复制", Severity.Warning);
+        }
+    }
+}

@@ -1,0 +1,169 @@
+@page "/tokens"
+@attribute [Authorize]
+@inject ITokenServiceClient TokenServiceClient
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<PageTitle>API 密钥 - Verdure MCP 服务平台</PageTitle>
+
+<MudText Typo="Typo.h4" Class="mb-4">API 密钥管理</MudText>
+
+<MudText Typo="Typo.body1" Class="mb-4" Color="Color.Secondary">
+    创建和管理您的 API 密钥，用于访问 MCP 服务
+</MudText>
+
+<MudAlert Severity="Severity.Info" Class="mb-4">
+    <MudText>
+        <strong>注意：</strong>
+        每个密钥默认有效期为 30 天，每日图片生成限额为 10 次。
+        请妥善保管您的密钥，创建后将只显示一次。
+    </MudText>
+</MudAlert>
+
+<MudStack Row="true" Justify="Justify.FlexEnd" Class="mb-4">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CreateToken"
+               StartIcon="@Icons.Material.Filled.Add">
+        创建新密钥
+    </MudButton>
+</MudStack>
+
+@if (_loading)
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mb-4" />
+}
+else if (!_tokens.Any())
+{
+    <MudPaper Class="pa-8 text-center" Elevation="0">
+        <MudIcon Icon="@Icons.Material.Filled.Key" Size="Size.Large" Color="Color.Secondary" />
+        <MudText Typo="Typo.h6" Class="mt-4">暂无 API 密钥</MudText>
+        <MudText Typo="Typo.body2" Color="Color.Secondary">
+            点击上方按钮创建您的第一个 API 密钥
+        </MudText>
+    </MudPaper>
+}
+else
+{
+    <MudTable Items="@_tokens" Hover="true" Striped="true" Elevation="2">
+        <HeaderContent>
+            <MudTh>名称</MudTh>
+            <MudTh>状态</MudTh>
+            <MudTh>创建时间</MudTh>
+            <MudTh>过期时间</MudTh>
+            <MudTh>今日用量</MudTh>
+            <MudTh>最后使用</MudTh>
+            <MudTh>操作</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="名称">@context.Name</MudTd>
+            <MudTd DataLabel="状态">
+                @if (context.IsActive)
+                {
+                    @if (context.ExpiresAt.HasValue && context.ExpiresAt.Value < DateTime.UtcNow)
+                    {
+                        <MudChip T="string" Size="Size.Small" Color="Color.Error">已过期</MudChip>
+                    }
+                    else
+                    {
+                        <MudChip T="string" Size="Size.Small" Color="Color.Success">有效</MudChip>
+                    }
+                }
+                else
+                {
+                    <MudChip T="string" Size="Size.Small" Color="Color.Default">已撤销</MudChip>
+                }
+            </MudTd>
+            <MudTd DataLabel="创建时间">@context.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</MudTd>
+            <MudTd DataLabel="过期时间">
+                @if (context.ExpiresAt.HasValue)
+                {
+                    @context.ExpiresAt.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+                }
+                else
+                {
+                    <text>永不过期</text>
+                }
+            </MudTd>
+            <MudTd DataLabel="今日用量">@context.TodayImageCount / @context.DailyImageLimit</MudTd>
+            <MudTd DataLabel="最后使用">
+                @if (context.LastUsedAt.HasValue)
+                {
+                    @context.LastUsedAt.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+                }
+                else
+                {
+                    <text>从未使用</text>
+                }
+            </MudTd>
+            <MudTd DataLabel="操作">
+                @if (context.IsActive)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
+                                   OnClick="@(() => RevokeToken(context))" />
+                }
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+
+@code {
+    private bool _loading = true;
+    private List<ApiTokenDto> _tokens = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTokens();
+    }
+
+    private async Task LoadTokens()
+    {
+        _loading = true;
+        try
+        {
+            _tokens = await TokenServiceClient.GetUserTokensAsync();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"加载密钥列表失败: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task CreateToken()
+    {
+        var parameters = new DialogParameters<CreateTokenDialog>();
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small };
+        var dialog = await DialogService.ShowAsync<CreateTokenDialog>("创建 API 密钥", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result?.Canceled ?? false)
+        {
+            await LoadTokens();
+        }
+    }
+
+    private async Task RevokeToken(ApiTokenDto token)
+    {
+        var result = await DialogService.ShowMessageBox(
+            "确认撤销",
+            $"确定要撤销密钥 \"{token.Name}\" 吗？此操作不可恢复。",
+            yesText: "撤销",
+            cancelText: "取消");
+
+        if (result == true)
+        {
+            try
+            {
+                await TokenServiceClient.RevokeTokenAsync(token.Id);
+                Snackbar.Add("密钥已撤销", Severity.Success);
+                await LoadTokens();
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"撤销失败: {ex.Message}", Severity.Error);
+            }
+        }
+    }
+}

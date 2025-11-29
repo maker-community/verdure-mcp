@@ -1,0 +1,160 @@
+@page "/admin/services"
+@attribute [Authorize(Roles = "admin")]
+@inject IMcpServiceClient McpServiceClient
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<PageTitle>MCP 服务管理 - Verdure MCP 服务平台</PageTitle>
+
+<MudText Typo="Typo.h4" Class="mb-4">MCP 服务管理</MudText>
+
+<MudText Typo="Typo.body1" Class="mb-4" Color="Color.Secondary">
+    管理和配置平台上的 MCP 服务
+</MudText>
+
+<MudStack Row="true" Justify="Justify.FlexEnd" Class="mb-4">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@CreateService"
+               StartIcon="@Icons.Material.Filled.Add">
+        添加服务
+    </MudButton>
+</MudStack>
+
+@if (_loading)
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mb-4" />
+}
+else if (!_services.Any())
+{
+    <MudPaper Class="pa-8 text-center" Elevation="0">
+        <MudIcon Icon="@Icons.Material.Filled.Extension" Size="Size.Large" Color="Color.Secondary" />
+        <MudText Typo="Typo.h6" Class="mt-4">暂无服务</MudText>
+        <MudText Typo="Typo.body2" Color="Color.Secondary">
+            点击上方按钮添加第一个 MCP 服务
+        </MudText>
+    </MudPaper>
+}
+else
+{
+    <MudTable Items="@_services" Hover="true" Striped="true" Elevation="2">
+        <HeaderContent>
+            <MudTh>名称</MudTh>
+            <MudTh>分类</MudTh>
+            <MudTh>端点</MudTh>
+            <MudTh>状态</MudTh>
+            <MudTh>排序</MudTh>
+            <MudTh>操作</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="名称">
+                <MudStack Spacing="0">
+                    <MudText>@context.DisplayName</MudText>
+                    <MudText Typo="Typo.caption" Color="Color.Secondary">@context.Name</MudText>
+                </MudStack>
+            </MudTd>
+            <MudTd DataLabel="分类">
+                <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Outlined">
+                    @context.Category
+                </MudChip>
+            </MudTd>
+            <MudTd DataLabel="端点">
+                <code>@context.EndpointRoute</code>
+            </MudTd>
+            <MudTd DataLabel="状态">
+                @if (context.IsEnabled)
+                {
+                    <MudChip T="string" Size="Size.Small" Color="Color.Success">启用</MudChip>
+                }
+                else
+                {
+                    <MudChip T="string" Size="Size.Small" Color="Color.Default">禁用</MudChip>
+                }
+            </MudTd>
+            <MudTd DataLabel="排序">@context.DisplayOrder</MudTd>
+            <MudTd DataLabel="操作">
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Size="Size.Small"
+                               OnClick="@(() => EditService(context))" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
+                               OnClick="@(() => DeleteService(context))" />
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+
+@code {
+    private bool _loading = true;
+    private List<McpServiceDto> _services = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadServices();
+    }
+
+    private async Task LoadServices()
+    {
+        _loading = true;
+        try
+        {
+            _services = await McpServiceClient.GetServicesAsync();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"加载服务列表失败: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task CreateService()
+    {
+        var parameters = new DialogParameters<ServiceFormDialog>();
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var dialog = await DialogService.ShowAsync<ServiceFormDialog>("添加 MCP 服务", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result?.Canceled ?? false)
+        {
+            await LoadServices();
+        }
+    }
+
+    private async Task EditService(McpServiceDto service)
+    {
+        var parameters = new DialogParameters<ServiceFormDialog>
+        {
+            { x => x.Service, service }
+        };
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Medium, FullWidth = true };
+        var dialog = await DialogService.ShowAsync<ServiceFormDialog>("编辑 MCP 服务", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result?.Canceled ?? false)
+        {
+            await LoadServices();
+        }
+    }
+
+    private async Task DeleteService(McpServiceDto service)
+    {
+        var result = await DialogService.ShowMessageBox(
+            "确认删除",
+            $"确定要删除服务 \"{service.DisplayName}\" 吗？此操作不可恢复。",
+            yesText: "删除",
+            cancelText: "取消");
+
+        if (result == true)
+        {
+            try
+            {
+                await McpServiceClient.DeleteServiceAsync(service.Id);
+                Snackbar.Add("服务已删除", Severity.Success);
+                await LoadServices();
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"删除失败: {ex.Message}", Severity.Error);
+            }
+        }
+    }
+}

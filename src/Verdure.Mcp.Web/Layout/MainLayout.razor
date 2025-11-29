@@ -1,0 +1,71 @@
+@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@DrawerToggle" />
+        <MudText Typo="Typo.h6" Class="ml-3">Verdure MCP 服务平台</MudText>
+        <MudSpacer />
+        
+        <MudTooltip Text="小智 MCP 转接平台">
+            <MudIconButton Icon="@Icons.Material.Filled.Link" Color="Color.Inherit" 
+                           OnClick="@(() => NavigateToXiaozhi())" />
+        </MudTooltip>
+        
+        <AuthorizeView>
+            <Authorized>
+                <MudMenu Icon="@Icons.Material.Filled.Person" Color="Color.Inherit">
+                    <MudMenuItem Icon="@Icons.Material.Filled.AccountCircle" OnClick="@(() => Navigation.NavigateTo("/profile"))">
+                        个人中心
+                    </MudMenuItem>
+                    <MudMenuItem Icon="@Icons.Material.Filled.Key" OnClick="@(() => Navigation.NavigateTo("/tokens"))">
+                        API 密钥
+                    </MudMenuItem>
+                    <MudDivider />
+                    <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="@(() => Navigation.NavigateTo("authentication/logout"))">
+                        退出登录
+                    </MudMenuItem>
+                </MudMenu>
+            </Authorized>
+            <NotAuthorized>
+                <MudButton Variant="Variant.Text" Color="Color.Inherit" 
+                           OnClick="@(() => Navigation.NavigateTo("authentication/login"))">
+                    登录
+                </MudButton>
+            </NotAuthorized>
+        </AuthorizeView>
+        
+        <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)" 
+                       Color="Color.Inherit" OnClick="@ToggleDarkMode" />
+    </MudAppBar>
+    
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+        <NavMenu />
+    </MudDrawer>
+    
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Large" Class="my-4 pt-4">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private bool _drawerOpen = true;
+    private bool _isDarkMode = false;
+
+    private void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    private void ToggleDarkMode()
+    {
+        _isDarkMode = !_isDarkMode;
+    }
+
+    private void NavigateToXiaozhi()
+    {
+        Navigation.NavigateTo("https://xiaozhi.verdure-hiro.cn/", forceLoad: true);
+    }
+}
