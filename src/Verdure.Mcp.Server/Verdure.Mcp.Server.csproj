@@ -7,6 +7,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -26,6 +28,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Verdure.Mcp.Domain\Verdure.Mcp.Domain.csproj" />
     <ProjectReference Include="..\Verdure.Mcp.Infrastructure\Verdure.Mcp.Infrastructure.csproj" />
+    <ProjectReference Include="..\Verdure.Mcp.Shared\Verdure.Mcp.Shared.csproj" />
+    <ProjectReference Include="..\Verdure.Mcp.Web\Verdure.Mcp.Web.csproj" />
   </ItemGroup>
 
 </Project>

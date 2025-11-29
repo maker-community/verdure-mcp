@@ -1,12 +1,15 @@
 using Hangfire;
 using Hangfire.PostgreSql;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Scalar.AspNetCore;
 using Verdure.Mcp.Infrastructure.Data;
 using Verdure.Mcp.Infrastructure.Services;
+using Verdure.Mcp.Server.Endpoints;
 using Verdure.Mcp.Server.Filters;
 using Verdure.Mcp.Server.Services;
 using Verdure.Mcp.Server.Settings;
@@ -21,6 +24,10 @@ builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection(EmailSettings.SectionName));
 builder.Services.Configure<AuthenticationSettings>(
     builder.Configuration.GetSection(AuthenticationSettings.SectionName));
+builder.Services.Configure<KeycloakSettings>(
+    builder.Configuration.GetSection(KeycloakSettings.SectionName));
+builder.Services.Configure<TokenValidationSettings>(
+    builder.Configuration.GetSection(TokenValidationSettings.SectionName));
 
 // Add database context
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -45,6 +52,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IImageGenerationService, ImageGenerationService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ITokenValidationService, TokenValidationService>();
+builder.Services.AddScoped<IMcpServiceService, McpServiceService>();
 
 // Add MCP tool filter service
 builder.Services.AddSingleton<McpToolFilterService>();
@@ -83,6 +91,67 @@ builder.Services.AddMcpServer()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
+// Configure Keycloak JWT authentication
+var keycloakSettings = builder.Configuration.GetSection(KeycloakSettings.SectionName).Get<KeycloakSettings>();
+if (keycloakSettings != null && !string.IsNullOrEmpty(keycloakSettings.Authority))
+{
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.Authority = keycloakSettings.RealmAuthority;
+            options.Audience = keycloakSettings.Audience ?? keycloakSettings.ClientId;
+            options.RequireHttpsMetadata = keycloakSettings.RequireHttpsMetadata;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true
+            };
+            
+            // Handle Keycloak roles from realm_access.roles claim
+            options.Events = new JwtBearerEvents
+            {
+                OnTokenValidated = context =>
+                {
+                    // Extract roles from Keycloak realm_access claim
+                    var realmAccessClaim = context.Principal?.FindFirst("realm_access");
+                    if (realmAccessClaim != null)
+                    {
+                        try
+                        {
+                            var realmAccess = System.Text.Json.JsonDocument.Parse(realmAccessClaim.Value);
+                            if (realmAccess.RootElement.TryGetProperty("roles", out var rolesElement))
+                            {
+                                var claims = new List<System.Security.Claims.Claim>();
+                                foreach (var role in rolesElement.EnumerateArray())
+                                {
+                                    var roleValue = role.GetString();
+                                    if (!string.IsNullOrEmpty(roleValue))
+                                    {
+                                        claims.Add(new System.Security.Claims.Claim(
+                                            System.Security.Claims.ClaimTypes.Role, roleValue));
+                                    }
+                                }
+                                
+                                if (claims.Count > 0 && context.Principal?.Identity is System.Security.Claims.ClaimsIdentity identity)
+                                {
+                                    identity.AddClaims(claims);
+                                }
+                            }
+                        }
+                        catch
+                        {
+                            // Ignore parsing errors
+                        }
+                    }
+                    return Task.CompletedTask;
+                }
+            };
+        });
+    builder.Services.AddAuthorization();
+}
+
 // Add OpenTelemetry
 builder.Services.AddOpenTelemetry()
     .WithTracing(tracing => tracing
@@ -118,9 +187,18 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
+    app.UseWebAssemblyDebugging();
 }
 
-// Use Bearer token authentication middleware
+// Serve Blazor WASM static files
+app.UseBlazorFrameworkFiles();
+app.UseStaticFiles();
+
+// Use authentication and authorization
+app.UseAuthentication();
+app.UseAuthorization();
+
+// Use Bearer token authentication middleware for MCP endpoints
 app.UseBearerTokenAuthentication();
 
 // Map MCP endpoints with route parameter for tool filtering
@@ -151,6 +229,9 @@ app.MapGet("/health", () => Results.Ok(new
 .WithTags("Health")
 .AllowAnonymous();
 
+// Map API endpoints
+app.MapApiEndpoints();
+
 // Token management endpoints (for admin purposes - only available in development)
 if (app.Environment.IsDevelopment())
 {
@@ -166,6 +247,9 @@ if (app.Environment.IsDevelopment())
     .WithName("CreateToken")
     .WithTags("Admin");
 }
+
+// Fallback to index.html for SPA routing
+app.MapFallbackToFile("index.html");
 
 app.Logger.LogInformation("Verdure MCP Server started");
 

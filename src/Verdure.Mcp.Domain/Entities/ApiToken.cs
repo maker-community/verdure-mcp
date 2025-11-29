@@ -11,6 +11,11 @@ public class ApiToken
     public Guid Id { get; set; }
 
     /// <summary>
+    /// User ID from Keycloak (sub claim)
+    /// </summary>
+    public string? UserId { get; set; }
+
+    /// <summary>
     /// The token value (hashed for security)
     /// </summary>
     public required string TokenHash { get; set; }
@@ -39,4 +44,19 @@ public class ApiToken
     /// When the token was last used
     /// </summary>
     public DateTime? LastUsedAt { get; set; }
+
+    /// <summary>
+    /// Daily image generation limit
+    /// </summary>
+    public int DailyImageLimit { get; set; } = 10;
+
+    /// <summary>
+    /// Number of images generated today
+    /// </summary>
+    public int TodayImageCount { get; set; }
+
+    /// <summary>
+    /// Date when the daily count was last reset
+    /// </summary>
+    public DateTime? LastImageCountReset { get; set; }
 }

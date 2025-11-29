@@ -1,0 +1,112 @@
+@inject ITokenServiceClient TokenServiceClient
+@inject ISnackbar Snackbar
+@inject IClipboardService ClipboardService
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="_form" @bind-IsValid="@_formValid">
+            <MudTextField @bind-Value="_tokenName" Label="密钥名称" Required="true"
+                          RequiredError="请输入密钥名称"
+                          HelperText="给密钥起一个便于识别的名称" />
+        </MudForm>
+
+        @if (_createdToken != null)
+        {
+            <MudAlert Severity="Severity.Warning" Class="mt-4">
+                <MudText>
+                    <strong>请立即复制并保存您的密钥！</strong><br />
+                    此密钥只会显示一次，关闭对话框后将无法再次查看。
+                </MudText>
+            </MudAlert>
+
+            <MudPaper Class="pa-3 mt-4" Style="background-color: var(--mud-palette-background-grey);">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                    <code style="word-break: break-all;">@_createdToken.Token</code>
+                    <MudIconButton Icon="@Icons.Material.Filled.ContentCopy" Size="Size.Small"
+                                   OnClick="@CopyToken" />
+                </MudStack>
+            </MudPaper>
+
+            <MudText Typo="Typo.body2" Class="mt-2" Color="Color.Secondary">
+                过期时间: @_createdToken.ExpiresAt?.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+            </MudText>
+        }
+    </DialogContent>
+    <DialogActions>
+        @if (_createdToken == null)
+        {
+            <MudButton OnClick="Cancel">取消</MudButton>
+            <MudButton Color="Color.Primary" OnClick="Create" Disabled="@(!_formValid || _creating)">
+                @if (_creating)
+                {
+                    <MudProgressCircular Size="Size.Small" Indeterminate="true" />
+                }
+                else
+                {
+                    <text>创建</text>
+                }
+            </MudButton>
+        }
+        else
+        {
+            <MudButton Color="Color.Primary" OnClick="Close">完成</MudButton>
+        }
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance? MudDialog { get; set; }
+
+    private MudForm? _form;
+    private bool _formValid;
+    private bool _creating;
+    private string _tokenName = string.Empty;
+    private CreateTokenResponse? _createdToken;
+
+    private void Cancel() => MudDialog?.Close(DialogResult.Cancel());
+    private void Close() => MudDialog?.Close(DialogResult.Ok(true));
+
+    private async Task Create()
+    {
+        if (_form != null)
+        {
+            await _form.Validate();
+            if (!_formValid) return;
+        }
+
+        _creating = true;
+        try
+        {
+            _createdToken = await TokenServiceClient.CreateTokenAsync(new CreateTokenRequest
+            {
+                Name = _tokenName
+            });
+            Snackbar.Add("密钥创建成功", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"创建失败: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _creating = false;
+        }
+    }
+
+    private async Task CopyToken()
+    {
+        if (_createdToken != null)
+        {
+            try
+            {
+                await ClipboardService.CopyToClipboardAsync(_createdToken.Token);
+                Snackbar.Add("已复制到剪贴板", Severity.Success);
+            }
+            catch
+            {
+                Snackbar.Add("复制失败，请手动复制", Severity.Warning);
+            }
+        }
+    }
+}

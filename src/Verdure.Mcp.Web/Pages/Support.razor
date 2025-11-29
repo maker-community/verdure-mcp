@@ -1,0 +1,176 @@
+@page "/support"
+
+<PageTitle>支持我们 - Verdure MCP 服务平台</PageTitle>
+
+<MudText Typo="Typo.h4" Class="mb-4">支持我们</MudText>
+
+<MudText Typo="Typo.body1" Class="mb-6" Color="Color.Secondary">
+    感谢您使用 Verdure MCP 服务平台！我们提供免费的 MCP 服务，如果您觉得有帮助，欢迎通过以下方式支持我们的开发工作。
+</MudText>
+
+<MudGrid>
+    <MudItem xs="12" md="4">
+        <MudCard Elevation="2" Class="h-100">
+            <MudCardHeader>
+                <CardHeaderAvatar>
+                    <MudAvatar Color="Color.Primary">
+                        <MudIcon Icon="@Icons.Custom.Brands.YouTube" />
+                    </MudAvatar>
+                </CardHeaderAvatar>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">关注 B站</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">订阅我的视频</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText Typo="Typo.body2">
+                    在 Bilibili 关注我，获取最新的技术分享、教程和项目更新。一键三连是对我最大的支持！
+                </MudText>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true"
+                           Href="https://space.bilibili.com/" Target="_blank"
+                           StartIcon="@Icons.Material.Filled.PlayArrow">
+                    前往 B站
+                </MudButton>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+
+    <MudItem xs="12" md="4">
+        <MudCard Elevation="2" Class="h-100">
+            <MudCardHeader>
+                <CardHeaderAvatar>
+                    <MudAvatar Color="Color.Warning">
+                        <MudIcon Icon="@Icons.Material.Filled.ElectricBolt" />
+                    </MudAvatar>
+                </CardHeaderAvatar>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">B站充电</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">支持创作</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText Typo="Typo.body2">
+                    如果您觉得我的内容对您有帮助，可以通过 B站充电功能支持我的创作，让我有更多动力输出优质内容。
+                </MudText>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Filled" Color="Color.Warning" FullWidth="true"
+                           Href="https://space.bilibili.com/" Target="_blank"
+                           StartIcon="@Icons.Material.Filled.FlashOn">
+                    去充电
+                </MudButton>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+
+    <MudItem xs="12" md="4">
+        <MudCard Elevation="2" Class="h-100">
+            <MudCardHeader>
+                <CardHeaderAvatar>
+                    <MudAvatar Color="Color.Success">
+                        <MudIcon Icon="@Icons.Material.Filled.Favorite" />
+                    </MudAvatar>
+                </CardHeaderAvatar>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">扫码赞助</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">直接支持</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText Typo="Typo.body2">
+                    扫描下方二维码直接赞助，您的支持将用于服务器维护、功能开发和更多优质内容的创作。
+                </MudText>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Filled" Color="Color.Success" FullWidth="true"
+                           OnClick="@ShowQrCode"
+                           StartIcon="@Icons.Material.Filled.QrCode">
+                    显示二维码
+                </MudButton>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+</MudGrid>
+
+<MudDivider Class="my-8" />
+
+<MudText Typo="Typo.h5" Class="mb-4">其他支持方式</MudText>
+
+<MudGrid>
+    <MudItem xs="12" md="6">
+        <MudPaper Elevation="1" Class="pa-4">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+                <MudIcon Icon="@Icons.Material.Filled.Star" Color="Color.Warning" Size="Size.Large" />
+                <MudStack Spacing="0">
+                    <MudText Typo="Typo.h6">Star 项目</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">
+                        在 GitHub 上给我们的项目点个 Star，让更多人发现这个项目
+                    </MudText>
+                </MudStack>
+            </MudStack>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" md="6">
+        <MudPaper Elevation="1" Class="pa-4">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+                <MudIcon Icon="@Icons.Material.Filled.Share" Color="Color.Info" Size="Size.Large" />
+                <MudStack Spacing="0">
+                    <MudText Typo="Typo.h6">分享推荐</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">
+                        把这个服务分享给您的朋友，让更多人受益
+                    </MudText>
+                </MudStack>
+            </MudStack>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" md="6">
+        <MudPaper Elevation="1" Class="pa-4">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+                <MudIcon Icon="@Icons.Material.Filled.BugReport" Color="Color.Error" Size="Size.Large" />
+                <MudStack Spacing="0">
+                    <MudText Typo="Typo.h6">反馈问题</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">
+                        发现 Bug 或有改进建议？欢迎提交 Issue
+                    </MudText>
+                </MudStack>
+            </MudStack>
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12" md="6">
+        <MudPaper Elevation="1" Class="pa-4">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+                <MudIcon Icon="@Icons.Material.Filled.Code" Color="Color.Success" Size="Size.Large" />
+                <MudStack Spacing="0">
+                    <MudText Typo="Typo.h6">贡献代码</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">
+                        欢迎提交 PR，一起让项目变得更好
+                    </MudText>
+                </MudStack>
+            </MudStack>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+<MudPaper Class="pa-6 mt-8 text-center" Style="background: linear-gradient(135deg, var(--mud-palette-primary) 0%, var(--mud-palette-tertiary) 100%);">
+    <MudIcon Icon="@Icons.Material.Filled.Favorite" Color="Color.Surface" Size="Size.Large" />
+    <MudText Typo="Typo.h5" Color="Color.Surface" Class="mt-4">感谢您的支持！</MudText>
+    <MudText Typo="Typo.body1" Color="Color.Surface" Class="mt-2">
+        每一份支持都是我们前进的动力，让我们一起打造更好的 MCP 服务生态！
+    </MudText>
+</MudPaper>
+
+@inject IDialogService DialogService
+
+@code {
+    private async Task ShowQrCode()
+    {
+        var parameters = new DialogParameters<QrCodeDialog>();
+        var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small };
+        await DialogService.ShowAsync<QrCodeDialog>("扫码赞助", parameters, options);
+    }
+}
