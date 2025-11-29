@@ -1,0 +1,905 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- Application -->
+  <data name="AppTitle" xml:space="preserve">
+    <value>Verdure MCP - Open Source MCP Service Platform</value>
+  </data>
+  <data name="AppName" xml:space="preserve">
+    <value>Verdure MCP</value>
+  </data>
+  <data name="PlatformName" xml:space="preserve">
+    <value>Verdure MCP Service Platform</value>
+  </data>
+
+  <!-- Common -->
+  <data name="Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Done" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="Revoke" xml:space="preserve">
+    <value>Revoke</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="ViewDetails" xml:space="preserve">
+    <value>View Details</value>
+  </data>
+  <data name="Documentation" xml:space="preserve">
+    <value>Docs</value>
+  </data>
+  <data name="LoadMore" xml:space="preserve">
+    <value>Load More</value>
+  </data>
+  <data name="CopiedToClipboard" xml:space="preserve">
+    <value>Copied to clipboard</value>
+  </data>
+  <data name="CopyFailed" xml:space="preserve">
+    <value>Copy failed, please copy manually</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Free" xml:space="preserve">
+    <value>Free</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="NeverExpires" xml:space="preserve">
+    <value>Never expires</value>
+  </data>
+  <data name="NeverUsed" xml:space="preserve">
+    <value>Never used</value>
+  </data>
+  <data name="NoDescription" xml:space="preserve">
+    <value>No description</value>
+  </data>
+
+  <!-- Index Page -->
+  <data name="Index_HeroTitle" xml:space="preserve">
+    <value>Verdure MCP Service Platform</value>
+  </data>
+  <data name="Index_HeroSubtitle" xml:space="preserve">
+    <value>Open Source MCP Service Platform</value>
+  </data>
+  <data name="Index_HeroDescription" xml:space="preserve">
+    <value>Providing rich tool capability extensions for AI assistants, supporting image generation, email sending and more. Based on MCP protocol, easily integrate with mainstream AI platforms like Claude and ChatGPT.</value>
+  </data>
+  <data name="Index_EnterConsole" xml:space="preserve">
+    <value>Enter Console</value>
+  </data>
+  <data name="Index_ViewSource" xml:space="preserve">
+    <value>View Source</value>
+  </data>
+  <data name="Index_GetStarted" xml:space="preserve">
+    <value>Get Started</value>
+  </data>
+  <data name="Index_Features" xml:space="preserve">
+    <value>Features</value>
+  </data>
+  <data name="Index_CoreFeatures" xml:space="preserve">
+    <value>Core Features</value>
+  </data>
+  <data name="Index_AIImageGeneration" xml:space="preserve">
+    <value>AI Image Generation</value>
+  </data>
+  <data name="Index_AIImageGenerationDesc" xml:space="preserve">
+    <value>Integrated with Azure OpenAI DALL-E, supporting high-quality image generation in various sizes and styles</value>
+  </data>
+  <data name="Index_EmailService" xml:space="preserve">
+    <value>Email Service</value>
+  </data>
+  <data name="Index_EmailServiceDesc" xml:space="preserve">
+    <value>Support sending HTML format emails with image attachments</value>
+  </data>
+  <data name="Index_ExtensibleTools" xml:space="preserve">
+    <value>Extensible Tools</value>
+  </data>
+  <data name="Index_ExtensibleToolsDesc" xml:space="preserve">
+    <value>Modular architecture supporting multiple MCP tools, easy to extend new features</value>
+  </data>
+  <data name="Index_TechArchitecture" xml:space="preserve">
+    <value>Technical Architecture</value>
+  </data>
+  <data name="Index_ArchItem1" xml:space="preserve">
+    <value>Built on .NET 9.0 and MCP protocol</value>
+  </data>
+  <data name="Index_ArchItem2" xml:space="preserve">
+    <value>Blazor WebAssembly frontend + Web API backend separation architecture</value>
+  </data>
+  <data name="Index_ArchItem3" xml:space="preserve">
+    <value>PostgreSQL database storage</value>
+  </data>
+  <data name="Index_ArchItem4" xml:space="preserve">
+    <value>Hangfire background task processing</value>
+  </data>
+  <data name="Index_ArchItem5" xml:space="preserve">
+    <value>Bearer Token authentication mechanism</value>
+  </data>
+  <data name="Index_JoinCommunity" xml:space="preserve">
+    <value>Join Maker Community</value>
+  </data>
+  <data name="Index_FollowUs" xml:space="preserve">
+    <value>Follow LvYin Aguang for more open source projects and tech sharing</value>
+  </data>
+  <data name="Index_GitHubCommunity" xml:space="preserve">
+    <value>GitHub Community</value>
+  </data>
+  <data name="Index_BilibiliHome" xml:space="preserve">
+    <value>Bilibili Home</value>
+  </data>
+  <data name="Index_ProjectSource" xml:space="preserve">
+    <value>Project Source</value>
+  </data>
+  <data name="Index_QQGroup" xml:space="preserve">
+    <value>QQ Group</value>
+  </data>
+  <data name="Index_QQGroupNumber" xml:space="preserve">
+    <value>QQ Group: 946599801</value>
+  </data>
+  <data name="Index_QuickStart" xml:space="preserve">
+    <value>Quick Start</value>
+  </data>
+  <data name="Index_Step1Title" xml:space="preserve">
+    <value>1. Login</value>
+  </data>
+  <data name="Index_Step1Desc" xml:space="preserve">
+    <value>Login to Verdure MCP platform using GitHub or other methods</value>
+  </data>
+  <data name="Index_Step2Title" xml:space="preserve">
+    <value>2. Create API Key</value>
+  </data>
+  <data name="Index_Step2Desc" xml:space="preserve">
+    <value>Create your API key in the personal center for calling MCP services</value>
+  </data>
+  <data name="Index_Step3Title" xml:space="preserve">
+    <value>3. Configure MCP Client</value>
+  </data>
+  <data name="Index_Step3Desc" xml:space="preserve">
+    <value>Configure service endpoint and key in Claude Desktop or other MCP clients</value>
+  </data>
+  <data name="Index_Step4Title" xml:space="preserve">
+    <value>4. Start Using</value>
+  </data>
+  <data name="Index_Step4Desc" xml:space="preserve">
+    <value>Now your AI assistant has powerful capabilities like image generation and email sending!</value>
+  </data>
+
+  <!-- Navigation -->
+  <data name="Nav_Navigation" xml:space="preserve">
+    <value>Navigation</value>
+  </data>
+  <data name="Nav_McpSquare" xml:space="preserve">
+    <value>MCP Square</value>
+  </data>
+  <data name="Nav_SupportUs" xml:space="preserve">
+    <value>Support Us</value>
+  </data>
+  <data name="Nav_PersonalCenter" xml:space="preserve">
+    <value>Personal Center</value>
+  </data>
+  <data name="Nav_ApiKey" xml:space="preserve">
+    <value>API Key</value>
+  </data>
+  <data name="Nav_PersonalInfo" xml:space="preserve">
+    <value>Personal Info</value>
+  </data>
+  <data name="Nav_Management" xml:space="preserve">
+    <value>Management</value>
+  </data>
+  <data name="Nav_McpServiceManagement" xml:space="preserve">
+    <value>MCP Service Management</value>
+  </data>
+  <data name="Nav_UserManagement" xml:space="preserve">
+    <value>User Management</value>
+  </data>
+  <data name="Nav_ExternalLinks" xml:space="preserve">
+    <value>External Links</value>
+  </data>
+  <data name="Nav_XiaozhiPlatform" xml:space="preserve">
+    <value>Xiaozhi MCP Bridge Platform</value>
+  </data>
+
+  <!-- Landing Layout -->
+  <data name="Landing_FeaturesNav" xml:space="preserve">
+    <value>Features</value>
+  </data>
+  <data name="Landing_ArchitectureNav" xml:space="preserve">
+    <value>Architecture</value>
+  </data>
+  <data name="Landing_CommunityNav" xml:space="preserve">
+    <value>Community</value>
+  </data>
+  <data name="Landing_GitHubCommunity" xml:space="preserve">
+    <value>GitHub Maker Community</value>
+  </data>
+  <data name="Landing_ProjectSource" xml:space="preserve">
+    <value>Project Source</value>
+  </data>
+  <data name="Landing_BilibiliChannel" xml:space="preserve">
+    <value>Bilibili Channel</value>
+  </data>
+
+  <!-- Dashboard -->
+  <data name="Dashboard_PageTitle" xml:space="preserve">
+    <value>MCP Square - Verdure MCP Service Platform</value>
+  </data>
+  <data name="Dashboard_Title" xml:space="preserve">
+    <value>MCP Service Square</value>
+  </data>
+  <data name="Dashboard_Subtitle" xml:space="preserve">
+    <value>Explore and use various MCP services to make your AI assistant more powerful</value>
+  </data>
+  <data name="Dashboard_XiaozhiIntegrationTitle" xml:space="preserve">
+    <value>Seamless Connection with Xiaozhi MCP Bridge Platform</value>
+  </data>
+  <data name="Dashboard_XiaozhiIntegrationDesc" xml:space="preserve">
+    <value>Use our MCP services with Xiaozhi MCP Bridge Platform to easily add more capabilities to your Xiaozhi AI assistant</value>
+  </data>
+  <data name="Dashboard_GoToXiaozhi" xml:space="preserve">
+    <value>Go to Xiaozhi MCP Bridge Platform</value>
+  </data>
+  <data name="Dashboard_NoServices" xml:space="preserve">
+    <value>No Services</value>
+  </data>
+  <data name="Dashboard_NoServicesAll" xml:space="preserve">
+    <value>No MCP services available currently</value>
+  </data>
+  <data name="Dashboard_NoServicesCategory" xml:space="preserve">
+    <value>No services in this category</value>
+  </data>
+  <data name="Dashboard_LoadServicesFailed" xml:space="preserve">
+    <value>Failed to load service list: {0}</value>
+  </data>
+
+  <!-- Tokens -->
+  <data name="Tokens_PageTitle" xml:space="preserve">
+    <value>API Key - Verdure MCP Service Platform</value>
+  </data>
+  <data name="Tokens_Title" xml:space="preserve">
+    <value>API Key Management</value>
+  </data>
+  <data name="Tokens_Subtitle" xml:space="preserve">
+    <value>Create and manage your API keys for accessing MCP services</value>
+  </data>
+  <data name="Tokens_Notice" xml:space="preserve">
+    <value>Note: Each key has a default validity period of 30 days and a daily image generation limit of 10 times. Please keep your key safe, it will only be shown once after creation.</value>
+  </data>
+  <data name="Tokens_CreateNew" xml:space="preserve">
+    <value>Create New Key</value>
+  </data>
+  <data name="Tokens_NoKeys" xml:space="preserve">
+    <value>No API Keys</value>
+  </data>
+  <data name="Tokens_NoKeysHint" xml:space="preserve">
+    <value>Click the button above to create your first API key</value>
+  </data>
+  <data name="Tokens_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Tokens_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Tokens_CreatedAt" xml:space="preserve">
+    <value>Created At</value>
+  </data>
+  <data name="Tokens_ExpiresAt" xml:space="preserve">
+    <value>Expires At</value>
+  </data>
+  <data name="Tokens_TodayUsage" xml:space="preserve">
+    <value>Today Usage</value>
+  </data>
+  <data name="Tokens_LastUsed" xml:space="preserve">
+    <value>Last Used</value>
+  </data>
+  <data name="Tokens_Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="Tokens_Valid" xml:space="preserve">
+    <value>Valid</value>
+  </data>
+  <data name="Tokens_Expired" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="Tokens_Revoked" xml:space="preserve">
+    <value>Revoked</value>
+  </data>
+  <data name="Tokens_RevokeConfirmTitle" xml:space="preserve">
+    <value>Confirm Revoke</value>
+  </data>
+  <data name="Tokens_RevokeConfirmMessage" xml:space="preserve">
+    <value>Are you sure you want to revoke key "{0}"? This action cannot be undone.</value>
+  </data>
+  <data name="Tokens_RevokeSuccess" xml:space="preserve">
+    <value>Key revoked</value>
+  </data>
+  <data name="Tokens_RevokeFailed" xml:space="preserve">
+    <value>Revoke failed: {0}</value>
+  </data>
+  <data name="Tokens_LoadFailed" xml:space="preserve">
+    <value>Failed to load key list: {0}</value>
+  </data>
+
+  <!-- Create Token Dialog -->
+  <data name="CreateToken_DialogTitle" xml:space="preserve">
+    <value>Create API Key</value>
+  </data>
+  <data name="CreateToken_NameLabel" xml:space="preserve">
+    <value>Key Name</value>
+  </data>
+  <data name="CreateToken_NameRequired" xml:space="preserve">
+    <value>Please enter key name</value>
+  </data>
+  <data name="CreateToken_NameHelper" xml:space="preserve">
+    <value>Give the key an easy-to-identify name</value>
+  </data>
+  <data name="CreateToken_SaveWarning" xml:space="preserve">
+    <value>Please copy and save your key immediately! This key will only be shown once and cannot be viewed again after closing the dialog.</value>
+  </data>
+  <data name="CreateToken_ExpiresAt" xml:space="preserve">
+    <value>Expires at: {0}</value>
+  </data>
+  <data name="CreateToken_Success" xml:space="preserve">
+    <value>Key created successfully</value>
+  </data>
+  <data name="CreateToken_Failed" xml:space="preserve">
+    <value>Creation failed: {0}</value>
+  </data>
+
+  <!-- Profile -->
+  <data name="Profile_PageTitle" xml:space="preserve">
+    <value>Personal Center - Verdure MCP Service Platform</value>
+  </data>
+  <data name="Profile_Title" xml:space="preserve">
+    <value>Personal Center</value>
+  </data>
+  <data name="Profile_UserId" xml:space="preserve">
+    <value>User ID: {0}</value>
+  </data>
+  <data name="Profile_Role" xml:space="preserve">
+    <value>Role: {0}</value>
+  </data>
+  <data name="Profile_NoEmail" xml:space="preserve">
+    <value>No email set</value>
+  </data>
+  <data name="Profile_Unknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="Profile_NormalUser" xml:space="preserve">
+    <value>Normal User</value>
+  </data>
+  <data name="Profile_QuickActions" xml:space="preserve">
+    <value>Quick Actions</value>
+  </data>
+  <data name="Profile_ManageApiKeys" xml:space="preserve">
+    <value>Manage API Keys</value>
+  </data>
+  <data name="Profile_BrowseMcpServices" xml:space="preserve">
+    <value>Browse MCP Services</value>
+  </data>
+
+  <!-- Support -->
+  <data name="Support_PageTitle" xml:space="preserve">
+    <value>Support Us - Verdure MCP Service Platform</value>
+  </data>
+  <data name="Support_Title" xml:space="preserve">
+    <value>Support Us</value>
+  </data>
+  <data name="Support_Subtitle" xml:space="preserve">
+    <value>Thank you for using Verdure MCP Service Platform! We provide free MCP services, if you find it helpful, welcome to support our development work in the following ways.</value>
+  </data>
+  <data name="Support_FollowBilibili" xml:space="preserve">
+    <value>Follow Bilibili</value>
+  </data>
+  <data name="Support_SubscribeVideos" xml:space="preserve">
+    <value>Subscribe to my videos</value>
+  </data>
+  <data name="Support_BilibiliDesc" xml:space="preserve">
+    <value>Follow me on Bilibili for the latest tech shares, tutorials and project updates. Like, coin and collect is the biggest support for me!</value>
+  </data>
+  <data name="Support_GoToBilibili" xml:space="preserve">
+    <value>Go to Bilibili</value>
+  </data>
+  <data name="Support_BilibiliCharge" xml:space="preserve">
+    <value>Bilibili Charge</value>
+  </data>
+  <data name="Support_SupportCreation" xml:space="preserve">
+    <value>Support creation</value>
+  </data>
+  <data name="Support_ChargeDesc" xml:space="preserve">
+    <value>If you find my content helpful, you can support my creation through Bilibili charge feature, giving me more motivation to create quality content.</value>
+  </data>
+  <data name="Support_GoCharge" xml:space="preserve">
+    <value>Go Charge</value>
+  </data>
+  <data name="Support_ScanDonate" xml:space="preserve">
+    <value>Scan to Donate</value>
+  </data>
+  <data name="Support_DirectSupport" xml:space="preserve">
+    <value>Direct support</value>
+  </data>
+  <data name="Support_DonateDesc" xml:space="preserve">
+    <value>Scan the QR code below to donate directly, your support will be used for server maintenance, feature development and more quality content creation.</value>
+  </data>
+  <data name="Support_ShowQrCode" xml:space="preserve">
+    <value>Show QR Code</value>
+  </data>
+  <data name="Support_OtherWays" xml:space="preserve">
+    <value>Other Ways to Support</value>
+  </data>
+  <data name="Support_StarProject" xml:space="preserve">
+    <value>Star Project</value>
+  </data>
+  <data name="Support_StarDesc" xml:space="preserve">
+    <value>Give our project a Star on GitHub to help more people discover it</value>
+  </data>
+  <data name="Support_Share" xml:space="preserve">
+    <value>Share</value>
+  </data>
+  <data name="Support_ShareDesc" xml:space="preserve">
+    <value>Share this service with your friends to benefit more people</value>
+  </data>
+  <data name="Support_ReportBug" xml:space="preserve">
+    <value>Report Bug</value>
+  </data>
+  <data name="Support_BugDesc" xml:space="preserve">
+    <value>Found a bug or have improvement suggestions? Welcome to submit an Issue</value>
+  </data>
+  <data name="Support_ContributeCode" xml:space="preserve">
+    <value>Contribute Code</value>
+  </data>
+  <data name="Support_ContributeDesc" xml:space="preserve">
+    <value>Welcome to submit PR, let's make the project better together</value>
+  </data>
+  <data name="Support_ThanksTitle" xml:space="preserve">
+    <value>Thank you for your support!</value>
+  </data>
+  <data name="Support_ThanksDesc" xml:space="preserve">
+    <value>Every support is our motivation to move forward, let's build a better MCP service ecosystem together!</value>
+  </data>
+
+  <!-- QR Code Dialog -->
+  <data name="QrCode_DialogTitle" xml:space="preserve">
+    <value>Scan to Donate</value>
+  </data>
+  <data name="QrCode_ScanHint" xml:space="preserve">
+    <value>Use WeChat or Alipay to scan the QR code below to donate</value>
+  </data>
+  <data name="QrCode_Thanks" xml:space="preserve">
+    <value>Thank you for your support! Every donation will be used for server maintenance and feature development.</value>
+  </data>
+
+  <!-- Service Details -->
+  <data name="ServiceDetails_PageTitle" xml:space="preserve">
+    <value>{0} - Verdure MCP Service Platform</value>
+  </data>
+  <data name="ServiceDetails_NotFound" xml:space="preserve">
+    <value>Service Not Found</value>
+  </data>
+  <data name="ServiceDetails_BackToHome" xml:space="preserve">
+    <value>Back to Home</value>
+  </data>
+  <data name="ServiceDetails_Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ServiceDetails_Endpoint" xml:space="preserve">
+    <value>Endpoint</value>
+  </data>
+  <data name="ServiceDetails_Tags" xml:space="preserve">
+    <value>Tags</value>
+  </data>
+  <data name="ServiceDetails_Author" xml:space="preserve">
+    <value>Author: {0}</value>
+  </data>
+  <data name="ServiceDetails_QuickActions" xml:space="preserve">
+    <value>Quick Actions</value>
+  </data>
+  <data name="ServiceDetails_ViewDocs" xml:space="preserve">
+    <value>View Docs</value>
+  </data>
+  <data name="ServiceDetails_ConfigureOnXiaozhi" xml:space="preserve">
+    <value>Configure on Xiaozhi Platform</value>
+  </data>
+  <data name="ServiceDetails_SupportUs" xml:space="preserve">
+    <value>Support Us</value>
+  </data>
+  <data name="ServiceDetails_SupportDesc" xml:space="preserve">
+    <value>If you find this service helpful, welcome to support our development work!</value>
+  </data>
+  <data name="ServiceDetails_GoSupport" xml:space="preserve">
+    <value>Go Support</value>
+  </data>
+  <data name="ServiceDetails_LoadFailed" xml:space="preserve">
+    <value>Failed to load service details: {0}</value>
+  </data>
+  <data name="ServiceDetails_Breadcrumb_Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+
+  <!-- Authentication -->
+  <data name="Auth_LoggingIn" xml:space="preserve">
+    <value>Logging In</value>
+  </data>
+  <data name="Auth_PleaseWait" xml:space="preserve">
+    <value>Please wait, authenticating...</value>
+  </data>
+  <data name="Auth_CompletingLogin" xml:space="preserve">
+    <value>Completing Login</value>
+  </data>
+  <data name="Auth_Redirecting" xml:space="preserve">
+    <value>Redirecting...</value>
+  </data>
+  <data name="Auth_LoggingOut" xml:space="preserve">
+    <value>Logging Out</value>
+  </data>
+  <data name="Auth_SafelyLoggingOut" xml:space="preserve">
+    <value>Safely logging out your account...</value>
+  </data>
+  <data name="Auth_CompletingLogout" xml:space="preserve">
+    <value>Completing Logout</value>
+  </data>
+  <data name="Auth_LoginFailed" xml:space="preserve">
+    <value>Login Failed</value>
+  </data>
+  <data name="Auth_LoginErrorMessage" xml:space="preserve">
+    <value>An error occurred during login, please try again</value>
+  </data>
+  <data name="Auth_RetryLogin" xml:space="preserve">
+    <value>Retry Login</value>
+  </data>
+  <data name="Auth_LogoutFailed" xml:space="preserve">
+    <value>Logout Failed</value>
+  </data>
+  <data name="Auth_LogoutErrorMessage" xml:space="preserve">
+    <value>An error occurred during logout</value>
+  </data>
+  <data name="Auth_BackToHome" xml:space="preserve">
+    <value>Back to Home</value>
+  </data>
+  <data name="Auth_LogoutSuccess" xml:space="preserve">
+    <value>Logged Out Successfully</value>
+  </data>
+  <data name="Auth_SafelyLoggedOut" xml:space="preserve">
+    <value>You have safely logged out</value>
+  </data>
+
+  <!-- Logout Page -->
+  <data name="Logout_PageTitle" xml:space="preserve">
+    <value>Logging Out - Verdure MCP Service Platform</value>
+  </data>
+  <data name="Logout_Title" xml:space="preserve">
+    <value>Logging out...</value>
+  </data>
+  <data name="Logout_Message" xml:space="preserve">
+    <value>Please wait, safely logging out your account</value>
+  </data>
+
+  <!-- Admin Services -->
+  <data name="AdminServices_PageTitle" xml:space="preserve">
+    <value>MCP Service Management - Verdure MCP Service Platform</value>
+  </data>
+  <data name="AdminServices_Title" xml:space="preserve">
+    <value>MCP Service Management</value>
+  </data>
+  <data name="AdminServices_Subtitle" xml:space="preserve">
+    <value>Manage and configure MCP services on the platform</value>
+  </data>
+  <data name="AdminServices_AddService" xml:space="preserve">
+    <value>Add Service</value>
+  </data>
+  <data name="AdminServices_ServiceList" xml:space="preserve">
+    <value>Service List</value>
+  </data>
+  <data name="AdminServices_TotalServices" xml:space="preserve">
+    <value>Total {0} services</value>
+  </data>
+  <data name="AdminServices_Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="AdminServices_Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="AdminServices_Endpoint" xml:space="preserve">
+    <value>Endpoint</value>
+  </data>
+  <data name="AdminServices_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="AdminServices_SortOrder" xml:space="preserve">
+    <value>Sort</value>
+  </data>
+  <data name="AdminServices_Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="AdminServices_NoServices" xml:space="preserve">
+    <value>No Services</value>
+  </data>
+  <data name="AdminServices_NoServicesHint" xml:space="preserve">
+    <value>Click the button above to add the first MCP service</value>
+  </data>
+  <data name="AdminServices_DeleteConfirmTitle" xml:space="preserve">
+    <value>Confirm Delete</value>
+  </data>
+  <data name="AdminServices_DeleteConfirmMessage" xml:space="preserve">
+    <value>Are you sure you want to delete service "{0}"? This action cannot be undone.</value>
+  </data>
+  <data name="AdminServices_DeleteSuccess" xml:space="preserve">
+    <value>Service deleted</value>
+  </data>
+  <data name="AdminServices_DeleteFailed" xml:space="preserve">
+    <value>Delete failed: {0}</value>
+  </data>
+  <data name="AdminServices_LoadFailed" xml:space="preserve">
+    <value>Failed to load service list: {0}</value>
+  </data>
+  <data name="AdminServices_RowsPerPage" xml:space="preserve">
+    <value>Rows per page</value>
+  </data>
+  <data name="AdminServices_PagerInfo" xml:space="preserve">
+    <value>{first_item}-{last_item} / Total {all_items}</value>
+  </data>
+
+  <!-- Admin Users -->
+  <data name="AdminUsers_PageTitle" xml:space="preserve">
+    <value>User Management - Verdure MCP Service Platform</value>
+  </data>
+  <data name="AdminUsers_Title" xml:space="preserve">
+    <value>User Management</value>
+  </data>
+  <data name="AdminUsers_Subtitle" xml:space="preserve">
+    <value>Manage platform users and permissions</value>
+  </data>
+  <data name="AdminUsers_InDevelopment" xml:space="preserve">
+    <value>Feature In Development</value>
+  </data>
+  <data name="AdminUsers_ComingSoon" xml:space="preserve">
+    <value>User management feature is under development, stay tuned</value>
+  </data>
+  <data name="AdminUsers_KeycloakHint" xml:space="preserve">
+    <value>Hint: User authentication and role management is provided by Keycloak</value>
+  </data>
+
+  <!-- Service Form Dialog -->
+  <data name="ServiceForm_AddTitle" xml:space="preserve">
+    <value>Add MCP Service</value>
+  </data>
+  <data name="ServiceForm_EditTitle" xml:space="preserve">
+    <value>Edit MCP Service</value>
+  </data>
+  <data name="ServiceForm_Name" xml:space="preserve">
+    <value>Service Name</value>
+  </data>
+  <data name="ServiceForm_NameRequired" xml:space="preserve">
+    <value>Please enter service name</value>
+  </data>
+  <data name="ServiceForm_NameHelper" xml:space="preserve">
+    <value>Unique identifier, e.g. generate_image</value>
+  </data>
+  <data name="ServiceForm_DisplayName" xml:space="preserve">
+    <value>Display Name</value>
+  </data>
+  <data name="ServiceForm_DisplayNameRequired" xml:space="preserve">
+    <value>Please enter display name</value>
+  </data>
+  <data name="ServiceForm_DisplayNameHelper" xml:space="preserve">
+    <value>Name visible to users</value>
+  </data>
+  <data name="ServiceForm_Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ServiceForm_DescriptionHelper" xml:space="preserve">
+    <value>Detailed description of the service</value>
+  </data>
+  <data name="ServiceForm_Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="ServiceForm_CategoryRequired" xml:space="preserve">
+    <value>Please select category</value>
+  </data>
+  <data name="ServiceForm_CategoryImage" xml:space="preserve">
+    <value>Image Generation</value>
+  </data>
+  <data name="ServiceForm_CategoryEmail" xml:space="preserve">
+    <value>Email Service</value>
+  </data>
+  <data name="ServiceForm_CategoryDocument" xml:space="preserve">
+    <value>Document Processing</value>
+  </data>
+  <data name="ServiceForm_CategoryData" xml:space="preserve">
+    <value>Data Service</value>
+  </data>
+  <data name="ServiceForm_CategoryAI" xml:space="preserve">
+    <value>AI Service</value>
+  </data>
+  <data name="ServiceForm_CategoryOther" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="ServiceForm_EndpointRoute" xml:space="preserve">
+    <value>Endpoint Route</value>
+  </data>
+  <data name="ServiceForm_EndpointRequired" xml:space="preserve">
+    <value>Please enter endpoint route</value>
+  </data>
+  <data name="ServiceForm_EndpointHelper" xml:space="preserve">
+    <value>e.g. /image/mcp</value>
+  </data>
+  <data name="ServiceForm_Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="ServiceForm_VersionHelper" xml:space="preserve">
+    <value>e.g. 1.0.0</value>
+  </data>
+  <data name="ServiceForm_Author" xml:space="preserve">
+    <value>Author</value>
+  </data>
+  <data name="ServiceForm_DocsUrl" xml:space="preserve">
+    <value>Documentation URL</value>
+  </data>
+  <data name="ServiceForm_DocsHelper" xml:space="preserve">
+    <value>External documentation URL</value>
+  </data>
+  <data name="ServiceForm_IconUrl" xml:space="preserve">
+    <value>Icon URL</value>
+  </data>
+  <data name="ServiceForm_IconHelper" xml:space="preserve">
+    <value>Icon URL or icon name</value>
+  </data>
+  <data name="ServiceForm_Tags" xml:space="preserve">
+    <value>Tags</value>
+  </data>
+  <data name="ServiceForm_TagsHelper" xml:space="preserve">
+    <value>Comma-separated tags, e.g.: AI, Image, Creative</value>
+  </data>
+  <data name="ServiceForm_DisplayOrder" xml:space="preserve">
+    <value>Sort Order</value>
+  </data>
+  <data name="ServiceForm_OrderHelper" xml:space="preserve">
+    <value>Lower number appears first</value>
+  </data>
+  <data name="ServiceForm_EnableService" xml:space="preserve">
+    <value>Enable Service</value>
+  </data>
+  <data name="ServiceForm_FreeService" xml:space="preserve">
+    <value>Free Service</value>
+  </data>
+  <data name="ServiceForm_UpdateSuccess" xml:space="preserve">
+    <value>Service updated successfully</value>
+  </data>
+  <data name="ServiceForm_CreateSuccess" xml:space="preserve">
+    <value>Service created successfully</value>
+  </data>
+  <data name="ServiceForm_SaveFailed" xml:space="preserve">
+    <value>Save failed: {0}</value>
+  </data>
+
+  <!-- Footer -->
+  <data name="Footer_Description" xml:space="preserve">
+    <value>Open source MCP service platform, providing rich tool capability extensions for AI assistants. Supporting image generation, email sending and more, making your AI more powerful.</value>
+  </data>
+  <data name="Footer_QuickLinks" xml:space="preserve">
+    <value>Quick Links</value>
+  </data>
+  <data name="Footer_Resources" xml:space="preserve">
+    <value>Resources</value>
+  </data>
+  <data name="Footer_SourceCode" xml:space="preserve">
+    <value>Source Code</value>
+  </data>
+  <data name="Footer_ReportIssue" xml:space="preserve">
+    <value>Report Issue</value>
+  </data>
+  <data name="Footer_Docs" xml:space="preserve">
+    <value>Documentation</value>
+  </data>
+  <data name="Footer_MakerCommunity" xml:space="preserve">
+    <value>Maker Community</value>
+  </data>
+  <data name="Footer_CommunityDesc" xml:space="preserve">
+    <value>Join maker community, follow LvYin Aguang for more open source projects and tech sharing.</value>
+  </data>
+  <data name="Footer_BilibiliChannel" xml:space="preserve">
+    <value>Bilibili: LvYin Aguang</value>
+  </data>
+  <data name="Footer_GitHubOrg" xml:space="preserve">
+    <value>GitHub: maker-community</value>
+  </data>
+  <data name="Footer_Copyright" xml:space="preserve">
+    <value>© {0} Verdure MCP. Open source under MIT license.</value>
+  </data>
+  <data name="Footer_OpenSourceLicense" xml:space="preserve">
+    <value>Open Source License</value>
+  </data>
+
+</root>
