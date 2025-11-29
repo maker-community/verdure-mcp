@@ -283,8 +283,10 @@ else
 
     private async Task OnCategoryChanged()
     {
-        // Allow time for the binding to update
-        await Task.Delay(1);
+        // Ensure UI state is updated before proceeding
+        await InvokeAsync(StateHasChanged);
+        await Task.Yield();
+        
         _initialLoading = true;
         StateHasChanged();
 

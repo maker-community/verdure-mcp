@@ -1,5 +1,4 @@
 // Infinite scroll helper for Dashboard
-let scrollObserver = null;
 let scrollContainer = null;
 let dotNetRef = null;
 let isLoading = false;
@@ -59,7 +58,6 @@ window.cleanupInfiniteScroll = function () {
         debounceTimer = null;
     }
     
-    scrollObserver = null;
     scrollContainer = null;
     dotNetRef = null;
     isLoading = false;

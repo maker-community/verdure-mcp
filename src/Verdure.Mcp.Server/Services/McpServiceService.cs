@@ -66,7 +66,9 @@ public class McpServiceService : IMcpServiceService
 
         if (!string.IsNullOrEmpty(category))
         {
-            query = query.Where(s => s.Category.ToLower() == category.ToLower());
+            // Use EF.Functions.ILike for case-insensitive comparison (PostgreSQL)
+            // Falls back to EF.Functions.Like for other databases
+            query = query.Where(s => EF.Functions.ILike(s.Category, category));
         }
 
         var totalCount = await query.CountAsync(cancellationToken);
