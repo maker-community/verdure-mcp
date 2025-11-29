@@ -19,90 +19,120 @@
     </MudButton>
 </MudStack>
 
-@if (_loading)
-{
-    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mb-4" />
-}
-else if (!_services.Any())
-{
-    <MudPaper Class="pa-8 text-center" Elevation="0">
-        <MudIcon Icon="@Icons.Material.Filled.Extension" Size="Size.Large" Color="Color.Secondary" />
-        <MudText Typo="Typo.h6" Class="mt-4">暂无服务</MudText>
-        <MudText Typo="Typo.body2" Color="Color.Secondary">
-            点击上方按钮添加第一个 MCP 服务
+<MudTable @ref="_table" 
+          ServerData="@(new Func<TableState, CancellationToken, Task<TableData<McpServiceDto>>>(ServerReload))"
+          Hover="true" 
+          Striped="true" 
+          Elevation="2"
+          Loading="@_loading"
+          LoadingProgressColor="Color.Primary">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">服务列表</MudText>
+        <MudSpacer />
+        <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mr-4">
+            共 @_totalItems 个服务
         </MudText>
-    </MudPaper>
-}
-else
-{
-    <MudTable Items="@_services" Hover="true" Striped="true" Elevation="2">
-        <HeaderContent>
-            <MudTh>名称</MudTh>
-            <MudTh>分类</MudTh>
-            <MudTh>端点</MudTh>
-            <MudTh>状态</MudTh>
-            <MudTh>排序</MudTh>
-            <MudTh>操作</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="名称">
-                <MudStack Spacing="0">
-                    <MudText>@context.DisplayName</MudText>
-                    <MudText Typo="Typo.caption" Color="Color.Secondary">@context.Name</MudText>
-                </MudStack>
-            </MudTd>
-            <MudTd DataLabel="分类">
-                <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Outlined">
-                    @context.Category
-                </MudChip>
-            </MudTd>
-            <MudTd DataLabel="端点">
-                <code>@context.EndpointRoute</code>
-            </MudTd>
-            <MudTd DataLabel="状态">
-                @if (context.IsEnabled)
-                {
-                    <MudChip T="string" Size="Size.Small" Color="Color.Success">启用</MudChip>
-                }
-                else
-                {
-                    <MudChip T="string" Size="Size.Small" Color="Color.Default">禁用</MudChip>
-                }
-            </MudTd>
-            <MudTd DataLabel="排序">@context.DisplayOrder</MudTd>
-            <MudTd DataLabel="操作">
-                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Size="Size.Small"
-                               OnClick="@(() => EditService(context))" />
-                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
-                               OnClick="@(() => DeleteService(context))" />
-            </MudTd>
-        </RowTemplate>
-    </MudTable>
-}
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>名称</MudTh>
+        <MudTh>分类</MudTh>
+        <MudTh>端点</MudTh>
+        <MudTh>状态</MudTh>
+        <MudTh>排序</MudTh>
+        <MudTh>操作</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="名称">
+            <MudStack Spacing="0">
+                <MudText>@context.DisplayName</MudText>
+                <MudText Typo="Typo.caption" Color="Color.Secondary">@context.Name</MudText>
+            </MudStack>
+        </MudTd>
+        <MudTd DataLabel="分类">
+            <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Outlined">
+                @context.Category
+            </MudChip>
+        </MudTd>
+        <MudTd DataLabel="端点">
+            <code>@context.EndpointRoute</code>
+        </MudTd>
+        <MudTd DataLabel="状态">
+            @if (context.IsEnabled)
+            {
+                <MudChip T="string" Size="Size.Small" Color="Color.Success">启用</MudChip>
+            }
+            else
+            {
+                <MudChip T="string" Size="Size.Small" Color="Color.Default">禁用</MudChip>
+            }
+        </MudTd>
+        <MudTd DataLabel="排序">@context.DisplayOrder</MudTd>
+        <MudTd DataLabel="操作">
+            <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Primary" Size="Size.Small"
+                           OnClick="@(() => EditService(context))" />
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small"
+                           OnClick="@(() => DeleteService(context))" />
+        </MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudPaper Class="pa-8 text-center" Elevation="0">
+            <MudIcon Icon="@Icons.Material.Filled.Extension" Size="Size.Large" Color="Color.Secondary" />
+            <MudText Typo="Typo.h6" Class="mt-4">暂无服务</MudText>
+            <MudText Typo="Typo.body2" Color="Color.Secondary">
+                点击上方按钮添加第一个 MCP 服务
+            </MudText>
+        </MudPaper>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>加载中...</MudText>
+    </LoadingContent>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100 }" 
+                       RowsPerPageString="每页显示"
+                       InfoFormat="{first_item}-{last_item} / 共 {all_items}"
+                       AllItemsText="全部"
+                       HorizontalAlignment="HorizontalAlignment.Right" />
+    </PagerContent>
+</MudTable>
 
 @code {
+    private MudTable<McpServiceDto>? _table;
     private bool _loading = true;
-    private List<McpServiceDto> _services = [];
+    private int _totalItems = 0;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadServices();
-    }
-
-    private async Task LoadServices()
+    private async Task<TableData<McpServiceDto>> ServerReload(TableState state, CancellationToken cancellationToken)
     {
         _loading = true;
+        StateHasChanged();
+
         try
         {
-            _services = await McpServiceClient.GetServicesAsync();
+            var page = state.Page + 1; // MudTable uses 0-based page index
+            var pageSize = state.PageSize;
+
+            var result = await McpServiceClient.GetServicesPagedAdminAsync(page, pageSize);
+            
+            _totalItems = result.TotalCount;
+
+            return new TableData<McpServiceDto>
+            {
+                Items = result.Items,
+                TotalItems = result.TotalCount
+            };
         }
         catch (Exception ex)
         {
             Snackbar.Add($"加载服务列表失败: {ex.Message}", Severity.Error);
+            return new TableData<McpServiceDto>
+            {
+                Items = [],
+                TotalItems = 0
+            };
         }
         finally
         {
             _loading = false;
+            StateHasChanged();
         }
     }
 
@@ -115,7 +145,10 @@ else
 
         if (!result?.Canceled ?? false)
         {
-            await LoadServices();
+            if (_table != null)
+            {
+                await _table.ReloadServerData();
+            }
         }
     }
 
@@ -131,7 +164,10 @@ else
 
         if (!result?.Canceled ?? false)
         {
-            await LoadServices();
+            if (_table != null)
+            {
+                await _table.ReloadServerData();
+            }
         }
     }
 
@@ -149,7 +185,10 @@ else
             {
                 await McpServiceClient.DeleteServiceAsync(service.Id);
                 Snackbar.Add("服务已删除", Severity.Success);
-                await LoadServices();
+                if (_table != null)
+                {
+                    await _table.ReloadServerData();
+                }
             }
             catch (Exception ex)
             {
