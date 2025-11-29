@@ -2,7 +2,6 @@ using System.Globalization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
-using Microsoft.JSInterop;
 using MudBlazor.Services;
 using Verdure.Mcp.Web;
 using Verdure.Mcp.Web.Services;
@@ -14,7 +13,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 // Configure API base address
 var apiBaseAddress = builder.HostEnvironment.BaseAddress.TrimEnd('/');
 
-// Add localization services with Chinese as default culture
+// Add localization services
 builder.Services.AddLocalization();
 
 // Add MudBlazor with Material Design 3 theme configuration
@@ -69,24 +68,11 @@ builder.Services.AddScoped<IMcpServiceClient, McpServiceClient>();
 builder.Services.AddScoped<ITokenServiceClient, TokenServiceClient>();
 builder.Services.AddScoped<IClipboardService, ClipboardService>();
 
-var host = builder.Build();
-
-// Get culture from browser localStorage
-var jsInterop = host.Services.GetRequiredService<IJSRuntime>();
-var cultureName = await jsInterop.InvokeAsync<string?>("blazorCulture.get");
-
-// Set default culture - use stored culture or fall back to Chinese
-CultureInfo culture;
-if (!string.IsNullOrEmpty(cultureName))
-{
-    culture = new CultureInfo(cultureName);
-}
-else
-{
-    culture = new CultureInfo("zh-CN");
-}
-
+// Set default culture to Chinese
+// Note: User's language preference is read via JS interop and applied in CultureSelector component
+// For initial load, we default to Chinese. The browser will persist the user's choice.
+var culture = new CultureInfo("zh-CN");
 CultureInfo.DefaultThreadCurrentCulture = culture;
 CultureInfo.DefaultThreadCurrentUICulture = culture;
 
-await host.RunAsync();
+await builder.Build().RunAsync();

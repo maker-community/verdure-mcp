@@ -31,8 +31,9 @@
     <script src="js/culture.js"></script>
     <script>
         // Set the culture from localStorage before Blazor starts
+        // Blazor WASM will pick up the culture from HTML lang attribute
         (function() {
-            var culture = localStorage.getItem('BlazorCulture');
+            var culture = window.blazorCulture.get();
             if (culture) {
                 document.documentElement.lang = culture === 'zh-CN' ? 'zh-CN' : 'en';
             }
@@ -41,12 +42,6 @@
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
     <script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js"></script>
     <script src="js/scroll-helper.js"></script>
-    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
-    <script>
-        // Initialize Blazor with culture settings
-        Blazor.start({
-            applicationCulture: localStorage.getItem('BlazorCulture') || 'zh-CN'
-        });
-    </script>
+    <script src="_framework/blazor.webassembly.js"></script>
 </body>
 </html>
