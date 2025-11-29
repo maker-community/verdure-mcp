@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Verdure.Mcp.Infrastructure.Data;
@@ -11,9 +12,11 @@ using Verdure.Mcp.Infrastructure.Data;
 namespace Verdure.Mcp.Server.Migrations
 {
     [DbContext(typeof(McpDbContext))]
-    partial class McpDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251129125620_AddMcpServiceAndTokenUpdates")]
+    partial class AddMcpServiceAndTokenUpdates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
