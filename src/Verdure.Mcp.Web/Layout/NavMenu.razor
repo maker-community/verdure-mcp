@@ -1,30 +1,31 @@
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResources> L
 
 <MudNavMenu>
-    <MudText Typo="Typo.subtitle2" Class="px-4 mt-4 mb-2" Color="Color.Primary">导航</MudText>
+    <MudText Typo="Typo.subtitle2" Class="px-4 mt-4 mb-2" Color="Color.Primary">@L["Nav_Navigation"]</MudText>
     
     <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
-        首页
+        @L["Home"]
     </MudNavLink>
     
     <MudNavLink Href="/dashboard" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Apps">
-        MCP 广场
+        @L["Nav_McpSquare"]
     </MudNavLink>
     
     <MudNavLink Href="/support" Icon="@Icons.Material.Filled.Favorite">
-        支持我
+        @L["Nav_SupportUs"]
     </MudNavLink>
     
     <AuthorizeView>
         <Authorized>
-            <MudText Typo="Typo.subtitle2" Class="px-4 mt-4 mb-2" Color="Color.Primary">个人中心</MudText>
+            <MudText Typo="Typo.subtitle2" Class="px-4 mt-4 mb-2" Color="Color.Primary">@L["Nav_PersonalCenter"]</MudText>
             
             <MudNavLink Href="/tokens" Icon="@Icons.Material.Filled.Key">
-                API 密钥
+                @L["Nav_ApiKey"]
             </MudNavLink>
             
             <MudNavLink Href="/profile" Icon="@Icons.Material.Filled.Person">
-                个人信息
+                @L["Nav_PersonalInfo"]
             </MudNavLink>
         </Authorized>
     </AuthorizeView>
@@ -33,14 +34,14 @@
         <Authorized>
             @if (context.User.IsAdmin())
             {
-                <MudText Typo="Typo.subtitle2" Class="px-4 mt-4 mb-2" Color="Color.Secondary">管理</MudText>
+                <MudText Typo="Typo.subtitle2" Class="px-4 mt-4 mb-2" Color="Color.Secondary">@L["Nav_Management"]</MudText>
                 
                 <MudNavLink Href="/admin/services" Icon="@Icons.Material.Filled.Settings">
-                    MCP 服务管理
+                    @L["Nav_McpServiceManagement"]
                 </MudNavLink>
                 
                 <MudNavLink Href="/admin/users" Icon="@Icons.Material.Filled.People">
-                    用户管理
+                    @L["Nav_UserManagement"]
                 </MudNavLink>
             }
         </Authorized>
@@ -48,9 +49,9 @@
     
     <MudDivider Class="my-2" />
     
-    <MudText Typo="Typo.subtitle2" Class="px-4 mt-2 mb-2" Color="Color.Primary">外部链接</MudText>
+    <MudText Typo="Typo.subtitle2" Class="px-4 mt-2 mb-2" Color="Color.Primary">@L["Nav_ExternalLinks"]</MudText>
     
     <MudNavLink Href="https://xiaozhi.verdure-hiro.cn/" Target="_blank" Icon="@Icons.Material.Filled.Link">
-        小智 MCP 转接平台
+        @L["Nav_XiaozhiPlatform"]
     </MudNavLink>
 </MudNavMenu>
