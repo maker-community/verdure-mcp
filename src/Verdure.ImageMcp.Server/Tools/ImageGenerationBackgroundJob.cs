@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Verdure.ImageMcp.Domain.Enums;
 using Verdure.ImageMcp.Infrastructure.Data;
@@ -69,10 +70,12 @@ public class ImageGenerationBackgroundJob
                     try
                     {
                         var imageBytes = Convert.FromBase64String(result.ImageBase64);
+                        var encodedPrompt = WebUtility.HtmlEncode(task.Prompt);
+                        var encodedRevisedPrompt = WebUtility.HtmlEncode(result.RevisedPrompt ?? "N/A");
                         await _emailService.SendImageEmailAsync(
                             task.Email,
                             "Your Generated Image",
-                            $"<h1>Your image has been generated!</h1><p>Prompt: {task.Prompt}</p><p>Revised prompt: {result.RevisedPrompt ?? "N/A"}</p>",
+                            $"<h1>Your image has been generated!</h1><p>Prompt: {encodedPrompt}</p><p>Revised prompt: {encodedRevisedPrompt}</p>",
                             imageBytes,
                             $"image_{task.Id}.png",
                             cancellationToken);

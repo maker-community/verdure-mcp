@@ -117,19 +117,21 @@ app.MapGet("/health", () => Results.Ok(new
 .WithTags("Health")
 .AllowAnonymous();
 
-// Token management endpoints (for admin purposes)
-app.MapPost("/admin/tokens", async (
-    string name,
-    DateTime? expiresAt,
-    ITokenValidationService tokenService,
-    CancellationToken cancellationToken) =>
+// Token management endpoints (for admin purposes - only available in development)
+if (app.Environment.IsDevelopment())
 {
-    var token = await tokenService.CreateTokenAsync(name, expiresAt, cancellationToken);
-    return Results.Ok(new { token, name, expiresAt, message = "Store this token securely. It will not be shown again." });
-})
-.WithName("CreateToken")
-.WithTags("Admin")
-.RequireAuthorization();
+    app.MapPost("/admin/tokens", async (
+        string name,
+        DateTime? expiresAt,
+        ITokenValidationService tokenService,
+        CancellationToken cancellationToken) =>
+    {
+        var token = await tokenService.CreateTokenAsync(name, expiresAt, cancellationToken);
+        return Results.Ok(new { token, name, expiresAt, message = "Store this token securely. It will not be shown again." });
+    })
+    .WithName("CreateToken")
+    .WithTags("Admin");
+}
 
 app.Logger.LogInformation("Verdure Image MCP Server started");
 

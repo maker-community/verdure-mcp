@@ -18,12 +18,18 @@ public interface ITokenValidationService
 }
 
 /// <summary>
-/// Service for validating API tokens
+/// Service for validating API tokens using secure PBKDF2 hashing
 /// </summary>
 public class TokenValidationService : ITokenValidationService
 {
     private readonly ImageMcpDbContext _dbContext;
     private readonly ILogger<TokenValidationService> _logger;
+    
+    // PBKDF2 parameters for secure token hashing
+    private const int SaltSize = 16;
+    private const int HashSize = 32;
+    private const int Iterations = 100000;
+    private static readonly HashAlgorithmName HashAlgorithm = HashAlgorithmName.SHA256;
 
     public TokenValidationService(ImageMcpDbContext dbContext, ILogger<TokenValidationService> logger)
     {
@@ -62,9 +68,20 @@ public class TokenValidationService : ITokenValidationService
 
     public async Task<ApiToken?> GetTokenAsync(string token, CancellationToken cancellationToken = default)
     {
-        var tokenHash = ComputeHash(token);
-        return await _dbContext.ApiTokens
-            .FirstOrDefaultAsync(t => t.TokenHash == tokenHash, cancellationToken);
+        // Get all active tokens and verify against each using constant-time comparison
+        var tokens = await _dbContext.ApiTokens
+            .Where(t => t.IsActive)
+            .ToListAsync(cancellationToken);
+
+        foreach (var apiToken in tokens)
+        {
+            if (VerifyHash(token, apiToken.TokenHash))
+            {
+                return apiToken;
+            }
+        }
+
+        return null;
     }
 
     public async Task<string> CreateTokenAsync(string name, DateTime? expiresAt = null, CancellationToken cancellationToken = default)
@@ -96,11 +113,60 @@ public class TokenValidationService : ITokenValidationService
         return token;
     }
 
-    private static string ComputeHash(string input)
+    /// <summary>
+    /// Computes a secure hash of the token using PBKDF2 with a random salt
+    /// </summary>
+    private static string ComputeHash(string token)
     {
-        using var sha256 = SHA256.Create();
-        var bytes = Encoding.UTF8.GetBytes(input);
-        var hash = sha256.ComputeHash(bytes);
-        return Convert.ToHexString(hash);
+        // Generate a random salt
+        var salt = new byte[SaltSize];
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(salt);
+        }
+
+        // Compute the hash using PBKDF2
+        var hash = Rfc2898DeriveBytes.Pbkdf2(
+            Encoding.UTF8.GetBytes(token),
+            salt,
+            Iterations,
+            HashAlgorithm,
+            HashSize);
+
+        // Combine salt and hash for storage (salt:hash)
+        return $"{Convert.ToBase64String(salt)}:{Convert.ToBase64String(hash)}";
+    }
+
+    /// <summary>
+    /// Verifies a token against a stored hash using constant-time comparison
+    /// </summary>
+    private static bool VerifyHash(string token, string storedHash)
+    {
+        try
+        {
+            var parts = storedHash.Split(':');
+            if (parts.Length != 2)
+            {
+                return false;
+            }
+
+            var salt = Convert.FromBase64String(parts[0]);
+            var expectedHash = Convert.FromBase64String(parts[1]);
+
+            // Compute the hash of the provided token
+            var computedHash = Rfc2898DeriveBytes.Pbkdf2(
+                Encoding.UTF8.GetBytes(token),
+                salt,
+                Iterations,
+                HashAlgorithm,
+                HashSize);
+
+            // Use constant-time comparison to prevent timing attacks
+            return CryptographicOperations.FixedTimeEquals(computedHash, expectedHash);
+        }
+        catch
+        {
+            return false;
+        }
     }
 }
