@@ -1,0 +1,171 @@
+@page "/dashboard"
+@inject IMcpServiceClient McpServiceClient
+@inject ISnackbar Snackbar
+
+<PageTitle>MCP 广场 - Verdure MCP 服务平台</PageTitle>
+
+<MudText Typo="Typo.h5" Class="mb-3" Style="font-weight: 500;">MCP 服务广场</MudText>
+
+<MudText Typo="Typo.body2" Class="mb-4" Color="Color.Secondary">
+    探索和使用各种 MCP 服务，让 AI 助手更加强大
+</MudText>
+
+<MudPaper Elevation="0" Class="pa-4 mb-4" Style="background: linear-gradient(135deg, #EDE7FF 0%, #F8F7FC 100%); border-left: 4px solid #7C4DFF; border-radius: 12px;">
+    <MudGrid>
+        <MudItem xs="12" md="8">
+            <MudText Typo="Typo.h6" Style="font-weight: 500; margin-bottom: 8px; color: #5E35B1;">
+                无缝连接小智 MCP 转接平台
+            </MudText>
+            <MudText Typo="Typo.body2" Color="Color.Default" Class="mt-2" Style="line-height: 1.6;">
+                使用我们的 MCP 服务,配合小智 MCP 转接平台,轻松为您的小智 AI 助手添加更多能力
+            </MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" Size="Size.Small"
+                       Href="https://xiaozhi.verdure-hiro.cn/" Target="_blank"
+                       EndIcon="@Icons.Material.Filled.OpenInNew"
+                       Style="border-radius: 16px; text-transform: none;">
+                前往小智 MCP 转接平台
+            </MudButton>
+        </MudItem>
+    </MudGrid>
+</MudPaper>
+
+@if (_loading)
+{
+    <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="mb-4" />
+}
+else
+{
+    <MudGrid Class="mb-4">
+        <MudItem xs="12">
+            <MudChipSet T="string" @bind-SelectedValue="_selectedCategory" SelectionMode="SelectionMode.SingleSelection">
+                <MudChip T="string" Value="@string.Empty" Color="Color.Primary" Size="Size.Small"
+                         Variant="@(string.IsNullOrEmpty(_selectedCategory) ? Variant.Filled : Variant.Outlined)"
+                         Style="border-radius: 12px;">
+                    全部
+                </MudChip>
+                @foreach (var category in _categories)
+                {
+                    <MudChip T="string" Value="@category.Name" Color="Color.Primary" Size="Size.Small"
+                             Variant="@(_selectedCategory == category.Name ? Variant.Filled : Variant.Outlined)"
+                             Style="border-radius: 12px;">
+                        @category.DisplayName (@category.ServiceCount)
+                    </MudChip>
+                }
+            </MudChipSet>
+        </MudItem>
+    </MudGrid>
+
+    <MudGrid Spacing="4">
+        @foreach (var service in FilteredServices)
+        {
+            <MudItem xs="12" sm="6" md="4">
+                <MudCard Elevation="0" Class="h-100" Style="border-radius: 16px; background-color: #FFFFFF; border: 1px solid rgba(124, 77, 255, 0.12); box-shadow: 0 2px 8px rgba(124, 77, 255, 0.06);">
+                    <MudCardHeader Style="padding: 20px 20px 16px;">
+                        <CardHeaderAvatar>
+                            <MudAvatar Color="Color.Primary" Size="Size.Large" Style="border-radius: 12px;">
+                                @GetCategoryIcon(service.Category)
+                            </MudAvatar>
+                        </CardHeaderAvatar>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6" Style="font-weight: 500; line-height: 1.4;">@service.DisplayName</MudText>
+                            <MudText Typo="Typo.body2" Color="Color.Secondary" Style="margin-top: 4px;">@service.Category</MudText>
+                        </CardHeaderContent>
+                        <CardHeaderActions>
+                            @if (service.IsFree)
+                            {
+                                <MudChip T="string" Size="Size.Small" Color="Color.Success" Style="border-radius: 12px; font-weight: 500;">免费</MudChip>
+                            }
+                        </CardHeaderActions>
+                    </MudCardHeader>
+                    <MudCardContent Style="padding: 0 20px 16px;">
+                        <MudText Typo="Typo.body2" Style="line-height: 1.6; color: rgba(0, 0, 0, 0.70);">
+                            @(service.Description ?? "暂无描述")
+                        </MudText>
+                        @if (!string.IsNullOrEmpty(service.Tags))
+                        {
+                            <MudStack Row="true" Spacing="1" Class="mt-3" Wrap="Wrap.Wrap">
+                                @foreach (var tag in service.Tags.Split(',').Take(3))
+                                {
+                                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" 
+                                             Style="border-radius: 12px;">@tag.Trim()</MudChip>
+                                }
+                            </MudStack>
+                        }
+                    </MudCardContent>
+                    <MudCardActions Style="padding: 12px 20px 20px;">
+                        <MudButton Variant="Variant.Text" Color="Color.Primary" 
+                                   Href="@($"/service/{service.Id}")"
+                                   Style="text-transform: none; font-weight: 500;">
+                            查看详情
+                        </MudButton>
+                        @if (!string.IsNullOrEmpty(service.DocumentationUrl))
+                        {
+                            <MudButton Variant="Variant.Text" Color="Color.Secondary"
+                                       Href="@service.DocumentationUrl" Target="_blank"
+                                       Style="text-transform: none; font-weight: 500;">
+                                文档
+                            </MudButton>
+                        }
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
+
+    @if (!FilteredServices.Any())
+    {
+        <MudPaper Class="pa-8 text-center" Elevation="0" Style="background-color: var(--mud-palette-surface-container-low); border-radius: 16px; margin-top: 24px;">
+            <MudIcon Icon="@Icons.Material.Filled.SearchOff" Size="Size.Large" Color="Color.Secondary" />
+            <MudText Typo="Typo.h6" Class="mt-4" Style="font-weight: 500;">暂无服务</MudText>
+            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mt-2" Style="line-height: 1.6;">
+                @if (string.IsNullOrEmpty(_selectedCategory))
+                {
+                    <text>目前没有可用的 MCP 服务</text>
+                }
+                else
+                {
+                    <text>该分类下暂无服务</text>
+                }
+            </MudText>
+        </MudPaper>
+    }
+}
+
+@code {
+    private bool _loading = true;
+    private List<McpServiceDto> _services = [];
+    private List<McpCategoryDto> _categories = [];
+    private string? _selectedCategory;
+
+    private IEnumerable<McpServiceDto> FilteredServices => 
+        string.IsNullOrEmpty(_selectedCategory) 
+            ? _services 
+            : _services.Where(s => s.Category.Equals(_selectedCategory, StringComparison.OrdinalIgnoreCase));
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _services = await McpServiceClient.GetServicesAsync();
+            _categories = await McpServiceClient.GetCategoriesAsync();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"加载服务列表失败: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private string GetCategoryIcon(string category) => category.ToLower() switch
+    {
+        "image" => Icons.Material.Filled.Image,
+        "email" => Icons.Material.Filled.Email,
+        "document" => Icons.Material.Filled.Description,
+        "data" => Icons.Material.Filled.DataObject,
+        "ai" => Icons.Material.Filled.Psychology,
+        _ => Icons.Material.Filled.Extension
+    };
+}

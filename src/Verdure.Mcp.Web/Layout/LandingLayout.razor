@@ -1,0 +1,128 @@
+@using Verdure.Mcp.Web.Icons
+@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+
+<MudLayout>
+    <!-- 全宽顶部导航栏 - 透明背景，固定在顶部 -->
+    <MudAppBar Elevation="0" Style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,0,0,0.08);">
+        <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="d-flex align-center justify-space-between px-4" Style="width: 100%;">
+            <!-- Logo 和标题：窄屏时移除 gap 以节省空间 -->
+            <div class="d-flex align-center" style="gap: 0;">
+                <MudIcon Icon="@Icons.Material.Filled.Hub" Size="Size.Large" Style="color: #7C4DFF;" />
+                <!-- 平台标题：在手机等窄屏幕设备上隐藏，以节省空间 -->
+                <MudText Typo="Typo.h6" Class="d-none d-sm-block" Style="color: #7C4DFF; font-weight: 600; margin-left: 0.75rem;">
+                    Verdure MCP
+                </MudText>
+            </div>
+            
+            <!-- 右侧导航和操作 -->
+            <div class="d-flex align-center gap-4">
+                <!-- 导航链接：在平板以下设备隐藏 -->
+                <MudLink Href="/#features" Underline="Underline.None" Class="d-none d-md-block" Style="color: #424242; font-weight: 500;">
+                    功能特性
+                </MudLink>
+                <MudLink Href="/#architecture" Underline="Underline.None" Class="d-none d-md-block" Style="color: #424242; font-weight: 500;">
+                    技术架构
+                </MudLink>
+                <MudLink Href="/#community" Underline="Underline.None" Class="d-none d-md-block" Style="color: #424242; font-weight: 500;">
+                    社区
+                </MudLink>
+                
+                <!-- 分隔线：在平板以下设备隐藏 -->
+                <MudDivider Vertical="true" FlexItem="true" Class="d-none d-md-block" Style="height: 30px;" />
+                
+                <!-- 社区图标链接：在手机等窄屏幕设备上隐藏部分图标 -->
+                <MudTooltip Text="GitHub 创客社区">
+                    <MudIconButton Icon="@Icons.Material.Filled.Groups" 
+                                  Size="Size.Medium"
+                                  Class="d-none d-sm-inline-flex"
+                                  Style="color: #424242;"
+                                  Href="https://github.com/maker-community" 
+                                  Target="_blank" />
+                </MudTooltip>
+                <MudTooltip Text="项目源码">
+                    <MudIconButton Icon="@Icons.Custom.Brands.GitHub" 
+                                  Size="Size.Medium"
+                                  Style="color: #424242;"
+                                  Href="https://github.com/maker-community/verdure-mcp" 
+                                  Target="_blank" />
+                </MudTooltip>
+                <MudTooltip Text="B站频道">
+                    <MudIconButton Icon="@VerdureIcons.SocialMedia.Bilibili" 
+                                  Size="Size.Medium"
+                                  Class="d-none d-sm-inline-flex"
+                                  Style="color: #424242;"
+                                  Href="https://space.bilibili.com/25228512" 
+                                  Target="_blank" />
+                </MudTooltip>
+                
+                <!-- 分隔线：在手机等窄屏幕设备上隐藏 -->
+                <MudDivider Vertical="true" FlexItem="true" Class="d-none d-sm-block" Style="height: 30px;" />
+                
+                <!-- 登录/用户菜单 -->
+                <AuthorizeView>
+                    <Authorized>
+                        <!-- 控制台按钮：窄屏仅图标，宽屏带文字 -->
+                        <MudIconButton Icon="@Icons.Material.Filled.Dashboard"
+                                      Size="Size.Medium"
+                                      Color="Color.Primary"
+                                      Href="/dashboard"
+                                      Class="d-inline-flex d-sm-none mr-2" />
+                        <MudButton Href="/dashboard" 
+                                  Variant="Variant.Filled" 
+                                  Color="Color.Primary"
+                                  StartIcon="@Icons.Material.Filled.Dashboard"
+                                  Size="Size.Small"
+                                  Class="d-none d-sm-inline-flex mr-2">
+                            进入控制台
+                        </MudButton>
+                        
+                        <!-- 用户菜单 -->
+                        <MudMenu AnchorOrigin="Origin.BottomRight" 
+                                 TransformOrigin="Origin.TopRight">
+                            <ActivatorContent>
+                                <MudIconButton Icon="@Icons.Material.Filled.AccountCircle" 
+                                              Size="Size.Medium"
+                                              Style="color: #424242;" />
+                            </ActivatorContent>
+                            <ChildContent>
+                                <MudMenuItem>
+                                    <div class="d-flex flex-column pa-2">
+                                        <MudText Typo="Typo.body2" Style="font-weight: 600;">@context.User.Identity?.Name</MudText>
+                                        <MudText Typo="Typo.caption" Color="Color.Secondary">@context.User.GetEmail()</MudText>
+                                    </div>
+                                </MudMenuItem>
+                                <MudDivider />
+                                <MudMenuItem Href="/profile" Icon="@Icons.Material.Filled.Person">个人中心</MudMenuItem>
+                                <MudMenuItem Href="/tokens" Icon="@Icons.Material.Filled.Key">API 密钥</MudMenuItem>
+                                <MudMenuItem Href="authentication/logout" Icon="@Icons.Material.Filled.Logout">退出登录</MudMenuItem>
+                            </ChildContent>
+                        </MudMenu>
+                    </Authorized>
+                    <NotAuthorized>
+                        <!-- 登录按钮：窄屏仅图标，宽屏带文字 -->
+                        <MudIconButton Icon="@Icons.Material.Filled.Login"
+                                      Size="Size.Medium"
+                                      Color="Color.Primary"
+                                      Href="authentication/login"
+                                      Class="d-inline-flex d-sm-none" />
+                        <MudButton Href="authentication/login" 
+                                  Variant="Variant.Filled" 
+                                  Color="Color.Primary" 
+                                  StartIcon="@Icons.Material.Filled.Login"
+                                  Size="Size.Small"
+                                  Class="d-none d-sm-inline-flex">
+                            登录
+                        </MudButton>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </div>
+        </MudContainer>
+    </MudAppBar>
+    
+    <!-- 主内容区域 - 全宽，无侧边栏 -->
+    <MudMainContent Style="padding: 0; background: #FAFAFA;">
+        @Body
+        <Footer />
+    </MudMainContent>
+</MudLayout>
