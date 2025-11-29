@@ -1,10 +1,11 @@
 @page "/profile"
 @attribute [Authorize]
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IStringLocalizer<SharedResources> L
 
-<PageTitle>个人中心 - Verdure MCP 服务平台</PageTitle>
+<PageTitle>@L["Profile_PageTitle"]</PageTitle>
 
-<MudText Typo="Typo.h4" Class="mb-4">个人中心</MudText>
+<MudText Typo="Typo.h4" Class="mb-4">@L["Profile_Title"]</MudText>
 
 <AuthorizeView>
     <Authorized>
@@ -27,10 +28,10 @@
 
                     <MudList T="string">
                         <MudListItem Icon="@Icons.Material.Filled.Badge">
-                            <MudText>用户ID: @GetUserId(context.User)</MudText>
+                            <MudText>@string.Format(L["Profile_UserId"], GetUserId(context.User))</MudText>
                         </MudListItem>
                         <MudListItem Icon="@Icons.Material.Filled.Security">
-                            <MudText>角色: @GetRoles(context.User)</MudText>
+                            <MudText>@string.Format(L["Profile_Role"], GetRoles(context.User))</MudText>
                         </MudListItem>
                     </MudList>
                 </MudPaper>
@@ -38,24 +39,24 @@
 
             <MudItem xs="12" md="6">
                 <MudPaper Elevation="2" Class="pa-6">
-                    <MudText Typo="Typo.h6" Class="mb-4">快速操作</MudText>
+                    <MudText Typo="Typo.h6" Class="mb-4">@L["Profile_QuickActions"]</MudText>
                     
                     <MudButton Variant="Variant.Outlined" Color="Color.Primary" FullWidth="true" Class="mb-2"
                                Href="/tokens"
                                StartIcon="@Icons.Material.Filled.Key">
-                        管理 API 密钥
+                        @L["Profile_ManageApiKeys"]
                     </MudButton>
                     
                     <MudButton Variant="Variant.Outlined" Color="Color.Secondary" FullWidth="true" Class="mb-2"
                                Href="/"
                                StartIcon="@Icons.Material.Filled.Home">
-                        浏览 MCP 服务
+                        @L["Profile_BrowseMcpServices"]
                     </MudButton>
                     
                     <MudButton Variant="Variant.Outlined" Color="Color.Tertiary" FullWidth="true"
                                Href="/support"
                                StartIcon="@Icons.Material.Filled.Favorite">
-                        支持我们
+                        @L["Nav_SupportUs"]
                     </MudButton>
                 </MudPaper>
             </MudItem>
@@ -76,7 +77,7 @@
     private string GetUserEmail(System.Security.Claims.ClaimsPrincipal user)
     {
         var email = user.GetEmail();
-        return string.IsNullOrEmpty(email) ? "未设置邮箱" : email;
+        return string.IsNullOrEmpty(email) ? L["Profile_NoEmail"] : email;
     }
 
     private string GetUserId(System.Security.Claims.ClaimsPrincipal user)
@@ -87,13 +88,13 @@
         }
         catch
         {
-            return "未知";
+            return L["Profile_Unknown"];
         }
     }
 
     private string GetRoles(System.Security.Claims.ClaimsPrincipal user)
     {
         var roles = user.GetRoles();
-        return roles.Any() ? string.Join(", ", roles) : "普通用户";
+        return roles.Any() ? string.Join(", ", roles) : L["Profile_NormalUser"];
     }
 }

@@ -2,30 +2,31 @@
 @inject IMcpServiceClient McpServiceClient
 @inject ISnackbar Snackbar
 @inject IJSRuntime JSRuntime
+@inject IStringLocalizer<SharedResources> L
 @implements IAsyncDisposable
 
-<PageTitle>MCP 广场 - Verdure MCP 服务平台</PageTitle>
+<PageTitle>@L["Dashboard_PageTitle"]</PageTitle>
 
-<MudText Typo="Typo.h5" Class="mb-3" Style="font-weight: 500;">MCP 服务广场</MudText>
+<MudText Typo="Typo.h5" Class="mb-3" Style="font-weight: 500;">@L["Dashboard_Title"]</MudText>
 
 <MudText Typo="Typo.body2" Class="mb-4" Color="Color.Secondary">
-    探索和使用各种 MCP 服务，让 AI 助手更加强大
+    @L["Dashboard_Subtitle"]
 </MudText>
 
 <MudPaper Elevation="0" Class="pa-4 mb-4" Style="background: linear-gradient(135deg, #EDE7FF 0%, #F8F7FC 100%); border-left: 4px solid #7C4DFF; border-radius: 12px;">
     <MudGrid>
         <MudItem xs="12" md="8">
             <MudText Typo="Typo.h6" Style="font-weight: 500; margin-bottom: 8px; color: #5E35B1;">
-                无缝连接小智 MCP 转接平台
+                @L["Dashboard_XiaozhiIntegrationTitle"]
             </MudText>
             <MudText Typo="Typo.body2" Color="Color.Default" Class="mt-2" Style="line-height: 1.6;">
-                使用我们的 MCP 服务,配合小智 MCP 转接平台,轻松为您的小智 AI 助手添加更多能力
+                @L["Dashboard_XiaozhiIntegrationDesc"]
             </MudText>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" Size="Size.Small"
                        Href="https://xiaozhi.verdure-hiro.cn/" Target="_blank"
                        EndIcon="@Icons.Material.Filled.OpenInNew"
                        Style="border-radius: 16px; text-transform: none;">
-                前往小智 MCP 转接平台
+                @L["Dashboard_GoToXiaozhi"]
             </MudButton>
         </MudItem>
     </MudGrid>
@@ -44,7 +45,7 @@ else
                          Variant="@(string.IsNullOrEmpty(_selectedCategory) ? Variant.Filled : Variant.Outlined)"
                          Style="border-radius: 12px;"
                          OnClick="@OnCategoryChanged">
-                    全部 (@_totalCount)
+                    @L["All"] (@_totalCount)
                 </MudChip>
                 @foreach (var category in _categories)
                 {
@@ -78,13 +79,13 @@ else
                             <CardHeaderActions>
                                 @if (service.IsFree)
                                 {
-                                    <MudChip T="string" Size="Size.Small" Color="Color.Success" Style="border-radius: 12px; font-weight: 500;">免费</MudChip>
+                                    <MudChip T="string" Size="Size.Small" Color="Color.Success" Style="border-radius: 12px; font-weight: 500;">@L["Free"]</MudChip>
                                 }
                             </CardHeaderActions>
                         </MudCardHeader>
                         <MudCardContent Style="padding: 0 20px 16px;">
                             <MudText Typo="Typo.body2" Style="line-height: 1.6; color: rgba(0, 0, 0, 0.70);">
-                                @(service.Description ?? "暂无描述")
+                                @(service.Description ?? L["NoDescription"])
                             </MudText>
                             @if (!string.IsNullOrEmpty(service.Tags))
                             {
@@ -101,14 +102,14 @@ else
                             <MudButton Variant="Variant.Text" Color="Color.Primary" 
                                        Href="@($"/service/{service.Id}")"
                                        Style="text-transform: none; font-weight: 500;">
-                                查看详情
+                                @L["ViewDetails"]
                             </MudButton>
                             @if (!string.IsNullOrEmpty(service.DocumentationUrl))
                             {
                                 <MudButton Variant="Variant.Text" Color="Color.Secondary"
                                            Href="@service.DocumentationUrl" Target="_blank"
                                            Style="text-transform: none; font-weight: 500;">
-                                    文档
+                                    @L["Documentation"]
                                 </MudButton>
                             }
                         </MudCardActions>
@@ -142,7 +143,7 @@ else
                 <MudButton Variant="Variant.Text" Color="Color.Primary" 
                            OnClick="LoadMoreAsync"
                            Style="text-transform: none;">
-                    加载更多
+                    @L["LoadMore"]
                 </MudButton>
             </div>
         }
@@ -152,15 +153,15 @@ else
     {
         <MudPaper Class="pa-8 text-center" Elevation="0" Style="background-color: var(--mud-palette-surface-container-low); border-radius: 16px; margin-top: 24px;">
             <MudIcon Icon="@Icons.Material.Filled.SearchOff" Size="Size.Large" Color="Color.Secondary" />
-            <MudText Typo="Typo.h6" Class="mt-4" Style="font-weight: 500;">暂无服务</MudText>
+            <MudText Typo="Typo.h6" Class="mt-4" Style="font-weight: 500;">@L["Dashboard_NoServices"]</MudText>
             <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mt-2" Style="line-height: 1.6;">
                 @if (string.IsNullOrEmpty(_selectedCategory))
                 {
-                    <text>目前没有可用的 MCP 服务</text>
+                    <text>@L["Dashboard_NoServicesAll"]</text>
                 }
                 else
                 {
-                    <text>该分类下暂无服务</text>
+                    <text>@L["Dashboard_NoServicesCategory"]</text>
                 }
             </MudText>
         </MudPaper>
@@ -192,7 +193,7 @@ else
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"加载服务列表失败: {ex.Message}", Severity.Error);
+            Snackbar.Add(string.Format(L["Dashboard_LoadServicesFailed"], ex.Message), Severity.Error);
         }
         finally
         {
@@ -258,7 +259,7 @@ else
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"加载服务列表失败: {ex.Message}", Severity.Error);
+            Snackbar.Add(string.Format(L["Dashboard_LoadServicesFailed"], ex.Message), Severity.Error);
         }
     }
 
