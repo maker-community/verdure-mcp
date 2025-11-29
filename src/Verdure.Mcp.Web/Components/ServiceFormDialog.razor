@@ -1,74 +1,75 @@
 @inject IMcpServiceClient McpServiceClient
 @inject ISnackbar Snackbar
+@inject IStringLocalizer<SharedResources> L
 
 <MudDialog>
     <DialogContent>
         <MudForm @ref="_form" @bind-IsValid="@_formValid">
             <MudGrid>
                 <MudItem xs="12" md="6">
-                    <MudTextField @bind-Value="_model.Name" Label="服务名称" Required="true"
-                                  RequiredError="请输入服务名称"
-                                  HelperText="唯一标识符，如 generate_image" />
+                    <MudTextField @bind-Value="_model.Name" Label="@L["ServiceForm_Name"]" Required="true"
+                                  RequiredError="@L["ServiceForm_NameRequired"]"
+                                  HelperText="@L["ServiceForm_NameHelper"]" />
                 </MudItem>
                 <MudItem xs="12" md="6">
-                    <MudTextField @bind-Value="_model.DisplayName" Label="显示名称" Required="true"
-                                  RequiredError="请输入显示名称"
-                                  HelperText="用户看到的名称" />
+                    <MudTextField @bind-Value="_model.DisplayName" Label="@L["ServiceForm_DisplayName"]" Required="true"
+                                  RequiredError="@L["ServiceForm_DisplayNameRequired"]"
+                                  HelperText="@L["ServiceForm_DisplayNameHelper"]" />
                 </MudItem>
                 <MudItem xs="12">
-                    <MudTextField @bind-Value="_model.Description" Label="描述" Lines="3"
-                                  HelperText="服务的详细描述" />
+                    <MudTextField @bind-Value="_model.Description" Label="@L["ServiceForm_Description"]" Lines="3"
+                                  HelperText="@L["ServiceForm_DescriptionHelper"]" />
                 </MudItem>
                 <MudItem xs="12" md="6">
-                    <MudSelect @bind-Value="_model.Category" Label="分类" Required="true"
-                               RequiredError="请选择分类">
-                        <MudSelectItem Value="@("image")">图片生成</MudSelectItem>
-                        <MudSelectItem Value="@("email")">邮件服务</MudSelectItem>
-                        <MudSelectItem Value="@("document")">文档处理</MudSelectItem>
-                        <MudSelectItem Value="@("data")">数据服务</MudSelectItem>
-                        <MudSelectItem Value="@("ai")">AI 服务</MudSelectItem>
-                        <MudSelectItem Value="@("other")">其他</MudSelectItem>
+                    <MudSelect @bind-Value="_model.Category" Label="@L["ServiceForm_Category"]" Required="true"
+                               RequiredError="@L["ServiceForm_CategoryRequired"]">
+                        <MudSelectItem Value="@("image")">@L["ServiceForm_CategoryImage"]</MudSelectItem>
+                        <MudSelectItem Value="@("email")">@L["ServiceForm_CategoryEmail"]</MudSelectItem>
+                        <MudSelectItem Value="@("document")">@L["ServiceForm_CategoryDocument"]</MudSelectItem>
+                        <MudSelectItem Value="@("data")">@L["ServiceForm_CategoryData"]</MudSelectItem>
+                        <MudSelectItem Value="@("ai")">@L["ServiceForm_CategoryAI"]</MudSelectItem>
+                        <MudSelectItem Value="@("other")">@L["ServiceForm_CategoryOther"]</MudSelectItem>
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="12" md="6">
-                    <MudTextField @bind-Value="_model.EndpointRoute" Label="端点路由" Required="true"
-                                  RequiredError="请输入端点路由"
-                                  HelperText="如 /image/mcp" />
+                    <MudTextField @bind-Value="_model.EndpointRoute" Label="@L["ServiceForm_EndpointRoute"]" Required="true"
+                                  RequiredError="@L["ServiceForm_EndpointRequired"]"
+                                  HelperText="@L["ServiceForm_EndpointHelper"]" />
                 </MudItem>
                 <MudItem xs="12" md="6">
-                    <MudTextField @bind-Value="_model.Version" Label="版本"
-                                  HelperText="如 1.0.0" />
+                    <MudTextField @bind-Value="_model.Version" Label="@L["ServiceForm_Version"]"
+                                  HelperText="@L["ServiceForm_VersionHelper"]" />
                 </MudItem>
                 <MudItem xs="12" md="6">
-                    <MudTextField @bind-Value="_model.Author" Label="作者" />
+                    <MudTextField @bind-Value="_model.Author" Label="@L["ServiceForm_Author"]" />
                 </MudItem>
                 <MudItem xs="12" md="6">
-                    <MudTextField @bind-Value="_model.DocumentationUrl" Label="文档链接"
-                                  HelperText="外部文档 URL" />
+                    <MudTextField @bind-Value="_model.DocumentationUrl" Label="@L["ServiceForm_DocsUrl"]"
+                                  HelperText="@L["ServiceForm_DocsHelper"]" />
                 </MudItem>
                 <MudItem xs="12" md="6">
-                    <MudTextField @bind-Value="_model.IconUrl" Label="图标链接"
-                                  HelperText="图标 URL 或图标名称" />
+                    <MudTextField @bind-Value="_model.IconUrl" Label="@L["ServiceForm_IconUrl"]"
+                                  HelperText="@L["ServiceForm_IconHelper"]" />
                 </MudItem>
                 <MudItem xs="12">
-                    <MudTextField @bind-Value="_model.Tags" Label="标签"
-                                  HelperText="逗号分隔的标签，如: AI, 图片, 创意" />
+                    <MudTextField @bind-Value="_model.Tags" Label="@L["ServiceForm_Tags"]"
+                                  HelperText="@L["ServiceForm_TagsHelper"]" />
                 </MudItem>
                 <MudItem xs="12" md="4">
-                    <MudNumericField @bind-Value="_model.DisplayOrder" Label="排序" Min="0"
-                                     HelperText="数字越小越靠前" />
+                    <MudNumericField @bind-Value="_model.DisplayOrder" Label="@L["ServiceForm_DisplayOrder"]" Min="0"
+                                     HelperText="@L["ServiceForm_OrderHelper"]" />
                 </MudItem>
                 <MudItem xs="12" md="4">
-                    <MudCheckBox @bind-Value="_model.IsEnabled" Label="启用服务" Color="Color.Primary" />
+                    <MudCheckBox @bind-Value="_model.IsEnabled" Label="@L["ServiceForm_EnableService"]" Color="Color.Primary" />
                 </MudItem>
                 <MudItem xs="12" md="4">
-                    <MudCheckBox @bind-Value="_model.IsFree" Label="免费服务" Color="Color.Success" />
+                    <MudCheckBox @bind-Value="_model.IsFree" Label="@L["ServiceForm_FreeService"]" Color="Color.Success" />
                 </MudItem>
             </MudGrid>
         </MudForm>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">取消</MudButton>
+        <MudButton OnClick="Cancel">@L["Cancel"]</MudButton>
         <MudButton Color="Color.Primary" OnClick="Save" Disabled="@(!_formValid || _saving)">
             @if (_saving)
             {
@@ -76,7 +77,7 @@
             }
             else
             {
-                <text>保存</text>
+                <text>@L["Save"]</text>
             }
         </MudButton>
     </DialogActions>
@@ -138,18 +139,18 @@
             if (Service != null)
             {
                 await McpServiceClient.UpdateServiceAsync(Service.Id, _model);
-                Snackbar.Add("服务更新成功", Severity.Success);
+                Snackbar.Add(L["ServiceForm_UpdateSuccess"], Severity.Success);
             }
             else
             {
                 await McpServiceClient.CreateServiceAsync(_model);
-                Snackbar.Add("服务创建成功", Severity.Success);
+                Snackbar.Add(L["ServiceForm_CreateSuccess"], Severity.Success);
             }
             MudDialog?.Close(DialogResult.Ok(true));
         }
         catch (Exception ex)
         {
-            Snackbar.Add($"保存失败: {ex.Message}", Severity.Error);
+            Snackbar.Add(string.Format(L["ServiceForm_SaveFailed"], ex.Message), Severity.Error);
         }
         finally
         {

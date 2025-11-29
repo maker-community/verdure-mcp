@@ -1,11 +1,12 @@
 @page "/support"
+@inject IStringLocalizer<SharedResources> L
 
-<PageTitle>支持我们 - Verdure MCP 服务平台</PageTitle>
+<PageTitle>@L["Support_PageTitle"]</PageTitle>
 
-<MudText Typo="Typo.h4" Class="mb-6" Style="font-weight: 500;">支持我们</MudText>
+<MudText Typo="Typo.h4" Class="mb-6" Style="font-weight: 500;">@L["Support_Title"]</MudText>
 
 <MudText Typo="Typo.body1" Class="mb-8" Color="Color.Secondary" Style="line-height: 1.75; max-width: 800px;">
-    感谢您使用 Verdure MCP 服务平台！我们提供免费的 MCP 服务，如果您觉得有帮助，欢迎通过以下方式支持我们的开发工作。
+    @L["Support_Subtitle"]
 </MudText>
 
 <MudGrid Spacing="4">
@@ -18,13 +19,13 @@
                     </MudAvatar>
                 </CardHeaderAvatar>
                 <CardHeaderContent>
-                    <MudText Typo="Typo.h6" Style="font-weight: 500;">关注 B站</MudText>
-                    <MudText Typo="Typo.body2" Color="Color.Secondary">订阅我的视频</MudText>
+                    <MudText Typo="Typo.h6" Style="font-weight: 500;">@L["Support_FollowBilibili"]</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">@L["Support_SubscribeVideos"]</MudText>
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent Style="padding: 0 20px 16px;">
                 <MudText Typo="Typo.body2" Style="line-height: 1.6; color: rgba(0, 0, 0, 0.70);">
-                    在 Bilibili 关注我，获取最新的技术分享、教程和项目更新。一键三连是对我最大的支持！
+                    @L["Support_BilibiliDesc"]
                 </MudText>
             </MudCardContent>
             <MudCardActions Style="padding: 12px 20px 20px;">
@@ -32,7 +33,7 @@
                            Href="https://space.bilibili.com/" Target="_blank"
                            StartIcon="@Icons.Material.Filled.PlayArrow"
                            Style="border-radius: 20px; text-transform: none; height: 44px;">
-                    前往 B站
+                    @L["Support_GoToBilibili"]
                 </MudButton>
             </MudCardActions>
         </MudCard>
@@ -47,13 +48,13 @@
                     </MudAvatar>
                 </CardHeaderAvatar>
                 <CardHeaderContent>
-                    <MudText Typo="Typo.h6" Style="font-weight: 500;">B站充电</MudText>
-                    <MudText Typo="Typo.body2" Color="Color.Secondary">支持创作</MudText>
+                    <MudText Typo="Typo.h6" Style="font-weight: 500;">@L["Support_BilibiliCharge"]</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">@L["Support_SupportCreation"]</MudText>
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent Style="padding: 0 20px 16px;">
                 <MudText Typo="Typo.body2" Style="line-height: 1.6; color: rgba(0, 0, 0, 0.70);">
-                    如果您觉得我的内容对您有帮助，可以通过 B站充电功能支持我的创作，让我有更多动力输出优质内容。
+                    @L["Support_ChargeDesc"]
                 </MudText>
             </MudCardContent>
             <MudCardActions Style="padding: 12px 20px 20px;">
@@ -61,7 +62,7 @@
                            Href="https://space.bilibili.com/" Target="_blank"
                            StartIcon="@Icons.Material.Filled.FlashOn"
                            Style="border-radius: 20px; text-transform: none; height: 44px;">
-                    去充电
+                    @L["Support_GoCharge"]
                 </MudButton>
             </MudCardActions>
         </MudCard>
@@ -76,13 +77,13 @@
                     </MudAvatar>
                 </CardHeaderAvatar>
                 <CardHeaderContent>
-                    <MudText Typo="Typo.h6" Style="font-weight: 500;">扫码赞助</MudText>
-                    <MudText Typo="Typo.body2" Color="Color.Secondary">直接支持</MudText>
+                    <MudText Typo="Typo.h6" Style="font-weight: 500;">@L["Support_ScanDonate"]</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">@L["Support_DirectSupport"]</MudText>
                 </CardHeaderContent>
             </MudCardHeader>
             <MudCardContent Style="padding: 0 20px 16px;">
                 <MudText Typo="Typo.body2" Style="line-height: 1.6; color: rgba(0, 0, 0, 0.70);">
-                    扫描下方二维码直接赞助，您的支持将用于服务器维护、功能开发和更多优质内容的创作。
+                    @L["Support_DonateDesc"]
                 </MudText>
             </MudCardContent>
             <MudCardActions Style="padding: 12px 20px 20px;">
@@ -90,7 +91,7 @@
                            OnClick="@ShowQrCode"
                            StartIcon="@Icons.Material.Filled.QrCode"
                            Style="border-radius: 20px; text-transform: none; height: 44px;">
-                    显示二维码
+                    @L["Support_ShowQrCode"]
                 </MudButton>
             </MudCardActions>
         </MudCard>
@@ -99,7 +100,7 @@
 
 <MudDivider Class="my-8" Style="margin-top: 48px; margin-bottom: 48px;" />
 
-<MudText Typo="Typo.h5" Class="mb-6" Style="font-weight: 500;">其他支持方式</MudText>
+<MudText Typo="Typo.h5" Class="mb-6" Style="font-weight: 500;">@L["Support_OtherWays"]</MudText>
 
 <MudGrid Spacing="4">
     <MudItem xs="12" md="6">
@@ -109,9 +110,9 @@
                     <MudIcon Icon="@Icons.Material.Filled.Star" Size="Size.Large" />
                 </MudAvatar>
                 <MudStack Spacing="1">
-                    <MudText Typo="Typo.h6" Style="font-weight: 500;">Star 项目</MudText>
+                    <MudText Typo="Typo.h6" Style="font-weight: 500;">@L["Support_StarProject"]</MudText>
                     <MudText Typo="Typo.body2" Color="Color.Secondary" Style="line-height: 1.6;">
-                        在 GitHub 上给我们的项目点个 Star，让更多人发现这个项目
+                        @L["Support_StarDesc"]
                     </MudText>
                 </MudStack>
             </MudStack>
@@ -125,9 +126,9 @@
                     <MudIcon Icon="@Icons.Material.Filled.Share" Size="Size.Large" />
                 </MudAvatar>
                 <MudStack Spacing="1">
-                    <MudText Typo="Typo.h6" Style="font-weight: 500;">分享推荐</MudText>
+                    <MudText Typo="Typo.h6" Style="font-weight: 500;">@L["Support_Share"]</MudText>
                     <MudText Typo="Typo.body2" Color="Color.Secondary" Style="line-height: 1.6;">
-                        把这个服务分享给您的朋友，让更多人受益
+                        @L["Support_ShareDesc"]
                     </MudText>
                 </MudStack>
             </MudStack>
@@ -141,9 +142,9 @@
                     <MudIcon Icon="@Icons.Material.Filled.BugReport" Size="Size.Large" />
                 </MudAvatar>
                 <MudStack Spacing="1">
-                    <MudText Typo="Typo.h6" Style="font-weight: 500;">反馈问题</MudText>
+                    <MudText Typo="Typo.h6" Style="font-weight: 500;">@L["Support_ReportBug"]</MudText>
                     <MudText Typo="Typo.body2" Color="Color.Secondary" Style="line-height: 1.6;">
-                        发现 Bug 或有改进建议？欢迎提交 Issue
+                        @L["Support_BugDesc"]
                     </MudText>
                 </MudStack>
             </MudStack>
@@ -157,9 +158,9 @@
                     <MudIcon Icon="@Icons.Material.Filled.Code" Size="Size.Large" />
                 </MudAvatar>
                 <MudStack Spacing="1">
-                    <MudText Typo="Typo.h6" Style="font-weight: 500;">贡献代码</MudText>
+                    <MudText Typo="Typo.h6" Style="font-weight: 500;">@L["Support_ContributeCode"]</MudText>
                     <MudText Typo="Typo.body2" Color="Color.Secondary" Style="line-height: 1.6;">
-                        欢迎提交 PR，一起让项目变得更好
+                        @L["Support_ContributeDesc"]
                     </MudText>
                 </MudStack>
             </MudStack>
@@ -169,9 +170,9 @@
 
 <MudPaper Class="pa-8 mt-8 text-center" Elevation="0" Style="background: linear-gradient(135deg, #EDE7FF 0%, #F8F7FC 100%); border-radius: 20px; border: 3px solid #7C4DFF;">
     <MudIcon Icon="@Icons.Material.Filled.Favorite" Color="Color.Primary" Size="Size.Large" Class="mb-3" />
-    <MudText Typo="Typo.h5" Color="Color.Default" Class="mt-4" Style="font-weight: 500;">感谢您的支持！</MudText>
+    <MudText Typo="Typo.h5" Color="Color.Default" Class="mt-4" Style="font-weight: 500;">@L["Support_ThanksTitle"]</MudText>
     <MudText Typo="Typo.body1" Color="Color.Default" Class="mt-3" Style="line-height: 1.75; max-width: 600px; margin: 12px auto 0;">
-        每一份支持都是我们前进的动力，让我们一起打造更好的 MCP 服务生态！
+        @L["Support_ThanksDesc"]
     </MudText>
 </MudPaper>
 
@@ -182,6 +183,6 @@
     {
         var parameters = new DialogParameters<QrCodeDialog>();
         var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small };
-        await DialogService.ShowAsync<QrCodeDialog>("扫码赞助", parameters, options);
+        await DialogService.ShowAsync<QrCodeDialog>(L["QrCode_DialogTitle"], parameters, options);
     }
 }
