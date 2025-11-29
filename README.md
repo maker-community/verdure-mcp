@@ -104,17 +104,17 @@ Configure the application using `appsettings.json`:
    ```
 
 5. **Access the server**
-   - MCP endpoint (all tools): `http://localhost:5000/` or `http://localhost:5000/all`
-   - MCP endpoint (image tools only): `http://localhost:5000/image`
-   - MCP endpoint (email tools only): `http://localhost:5000/email`
+   - MCP endpoint (all tools): `http://localhost:5000/mcp` or `http://localhost:5000/all/mcp`
+   - MCP endpoint (image tools only): `http://localhost:5000/image/mcp`
+   - MCP endpoint (email tools only): `http://localhost:5000/email/mcp`
    - Health check: `http://localhost:5000/health`
    - Hangfire dashboard (dev only): `http://localhost:5000/hangfire`
 
 ## MCP Tools
 
-The server provides different sets of tools based on the endpoint you connect to:
+The server provides different sets of tools based on the endpoint you connect to. All MCP endpoints end with `/mcp` to clearly identify them as Streamable HTTP protocol endpoints.
 
-### All Tools (Endpoint: `/` or `/all`)
+### All Tools (Endpoint: `/mcp` or `/all/mcp`)
 
 **generate_image** - Generates an image based on a text prompt using Azure OpenAI DALL-E.
 
@@ -143,11 +143,11 @@ The server provides different sets of tools based on the endpoint you connect to
 - `imageBase64` (optional): Base64-encoded image data to attach
 - `imageName` (optional): Image filename (default: image.png)
 
-### Image Tools Only (Endpoint: `/image`)
+### Image Tools Only (Endpoint: `/image/mcp`)
 
 Only `generate_image` and `get_image_task_status` tools are available.
 
-### Email Tools Only (Endpoint: `/email`)
+### Email Tools Only (Endpoint: `/email/mcp`)
 
 Only `send_email` tool is available.
 
@@ -162,7 +162,7 @@ curl -X POST "http://localhost:5000/admin/tokens?name=my-token"
 
 Use the token in requests:
 ```bash
-curl -H "Authorization: Bearer <your-token>" http://localhost:5000/all
+curl -H "Authorization: Bearer <your-token>" http://localhost:5000/all/mcp
 ```
 
 ## MCP Client Configuration
@@ -175,7 +175,7 @@ To connect to this server from a Claude Desktop or other MCP client:
     "verdure-all-tools": {
       "transport": {
         "type": "http",
-        "url": "http://localhost:5000/all",
+        "url": "http://localhost:5000/all/mcp",
         "headers": {
           "Authorization": "Bearer YOUR_TOKEN_HERE"
         }
@@ -184,7 +184,7 @@ To connect to this server from a Claude Desktop or other MCP client:
     "verdure-image-only": {
       "transport": {
         "type": "http",
-        "url": "http://localhost:5000/image",
+        "url": "http://localhost:5000/image/mcp",
         "headers": {
           "Authorization": "Bearer YOUR_TOKEN_HERE"
         }
@@ -193,7 +193,7 @@ To connect to this server from a Claude Desktop or other MCP client:
     "verdure-email-only": {
       "transport": {
         "type": "http",
-        "url": "http://localhost:5000/email",
+        "url": "http://localhost:5000/email/mcp",
         "headers": {
           "Authorization": "Bearer YOUR_TOKEN_HERE"
         }
