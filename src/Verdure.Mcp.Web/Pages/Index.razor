@@ -203,7 +203,7 @@
                                           FullWidth="true"
                                           StartIcon="@Icons.Material.Filled.Group"
                                           Style="background-color: #FFFFFF; color: #7C4DFF; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15);"
-                                          OnClick="@(() => _showQQGroup = true)">
+                                          OnClick="@ToggleQQGroup">
                                     QQ 交流群
                                 </MudButton>
                             </MudItem>
@@ -268,4 +268,9 @@
 
 @code {
     private bool _showQQGroup = false;
+    
+    private void ToggleQQGroup()
+    {
+        _showQQGroup = true;
+    }
 }
