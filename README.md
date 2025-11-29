@@ -1,21 +1,22 @@
-# Verdure Image MCP Server
+# Verdure MCP Server
 
-An MCP (Model Context Protocol) server for image generation using Azure OpenAI DALL-E. This server implements the [MCP specification](https://modelcontextprotocol.io/) and provides a tool for generating images with support for email notifications and asynchronous processing.
+A comprehensive MCP (Model Context Protocol) server that provides multiple tools and capabilities through a unified service. This server implements the [MCP specification](https://modelcontextprotocol.io/) and supports extensible tool sets with different functionalities.
 
 ## Features
 
+- **Extensible Tool System**: Modular architecture supporting multiple MCP tools
 - **Image Generation**: Generate images using Azure OpenAI DALL-E with customizable size, quality, and style
-- **Email Notifications**: Optionally send generated images to email addresses
+- **Email Notifications**: Optionally send generated content to email addresses
 - **Async Processing**: Background job processing with Hangfire for long-running tasks
 - **Bearer Token Authentication**: Secure API access with token-based authentication
-- **PostgreSQL Storage**: Persist image generation tasks and API tokens
+- **PostgreSQL Storage**: Persist tasks and API tokens
 - **MCP Protocol Support**: Full compliance with the Model Context Protocol
 
 ## Project Structure
 
 ```
 src/
-├── Verdure.ImageMcp.Server/          # Main MCP Server application
+├── Verdure.Mcp.Server/               # Main MCP Server application
 │   ├── Tools/                        # MCP Tools implementation
 │   │   ├── GenerateImageTool.cs      # Image generation tool
 │   │   └── ImageGenerationBackgroundJob.cs
@@ -23,15 +24,15 @@ src/
 │   │   └── BearerTokenAuthenticationMiddleware.cs
 │   ├── Settings/                     # Configuration settings
 │   └── Program.cs                    # Application entry point
-├── Verdure.ImageMcp.Domain/          # Domain models and entities
+├── Verdure.Mcp.Domain/               # Domain models and entities
 │   ├── Entities/
 │   │   ├── ImageGenerationTask.cs
 │   │   └── ApiToken.cs
 │   └── Enums/
 │       └── ImageTaskStatus.cs
-└── Verdure.ImageMcp.Infrastructure/  # Infrastructure services
+└── Verdure.Mcp.Infrastructure/       # Infrastructure services
     ├── Data/
-    │   └── ImageMcpDbContext.cs      # EF Core DbContext
+    │   └── McpDbContext.cs           # EF Core DbContext
     └── Services/
         ├── ImageGenerationService.cs  # Azure OpenAI integration
         ├── EmailService.cs            # MailKit email service
@@ -42,7 +43,7 @@ src/
 
 - .NET 9.0 SDK or later
 - PostgreSQL database
-- Azure OpenAI resource with DALL-E deployment
+- Azure OpenAI resource with DALL-E deployment (for image generation)
 
 ## Configuration
 
@@ -51,7 +52,7 @@ Configure the application using `appsettings.json`:
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Database=verdure_image_mcp;Username=postgres;Password=postgres"
+    "DefaultConnection": "Host=localhost;Database=verdure_mcp;Username=postgres;Password=postgres"
   },
   "AzureOpenAI": {
     "Endpoint": "https://your-resource.openai.azure.com/",
@@ -66,7 +67,7 @@ Configure the application using `appsettings.json`:
     "SmtpPassword": "your-password",
     "UseSsl": true,
     "FromEmail": "noreply@example.com",
-    "FromName": "Verdure Image MCP"
+    "FromName": "Verdure MCP"
   },
   "Authentication": {
     "RequireToken": true
@@ -85,7 +86,7 @@ Configure the application using `appsettings.json`:
 2. **Set up the database**
    ```bash
    # Create PostgreSQL database
-   createdb verdure_image_mcp
+   createdb verdure_mcp
    ```
 
 3. **Configure Azure OpenAI credentials**
@@ -98,7 +99,7 @@ Configure the application using `appsettings.json`:
 
 4. **Run the application**
    ```bash
-   cd src/Verdure.ImageMcp.Server
+   cd src/Verdure.Mcp.Server
    dotnet run
    ```
 
