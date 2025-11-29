@@ -1,5 +1,5 @@
 @page "/admin/services"
-@attribute [Authorize(Roles = "admin")]
+@attribute [Authorize(Policy = "AdminPolicy")]
 @inject IMcpServiceClient McpServiceClient
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar

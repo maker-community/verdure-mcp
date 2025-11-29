@@ -28,6 +28,16 @@ builder.Services.AddOidcAuthentication(options =>
 })
 .AddAccountClaimsPrincipalFactory<KeycloakRoleClaimsPrincipalFactory>();
 
+// Configure authorization with case-insensitive admin policy
+builder.Services.AddAuthorizationCore(options =>
+{
+    options.AddPolicy("AdminPolicy", policy =>
+        policy.RequireAssertion(context =>
+            context.User.Claims.Any(c =>
+                c.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role" &&
+                c.Value.Equals("admin", StringComparison.OrdinalIgnoreCase))));
+});
+
 // Register custom authorization message handler for automatic token attachment
 builder.Services.AddScoped<CustomAuthorizationMessageHandler>();
 

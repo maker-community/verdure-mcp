@@ -93,7 +93,7 @@ public static class ApiEndpoints
             });
         })
         .WithName("CreateMcpService")
-        .RequireAuthorization(policy => policy.RequireRole("admin"));
+        .RequireAuthorization("AdminPolicy");
 
         // Update service (admin only)
         group.MapPut("/{id:guid}", async (
@@ -118,7 +118,7 @@ public static class ApiEndpoints
             });
         })
         .WithName("UpdateMcpService")
-        .RequireAuthorization(policy => policy.RequireRole("admin"));
+        .RequireAuthorization("AdminPolicy");
 
         // Delete service (admin only)
         group.MapDelete("/{id:guid}", async (
@@ -142,7 +142,7 @@ public static class ApiEndpoints
             });
         })
         .WithName("DeleteMcpService")
-        .RequireAuthorization(policy => policy.RequireRole("admin"));
+        .RequireAuthorization("AdminPolicy");
     }
 
     private static void MapTokenEndpoints(this WebApplication app)
