@@ -1,5 +1,6 @@
 @inherits LayoutComponentBase
 @inject NavigationManager Navigation
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
 <MudLayout>
     <MudAppBar Elevation="0" Style="border-bottom: 1px solid rgba(0, 0, 0, 0.12);">
@@ -22,7 +23,7 @@
                         API 密钥
                     </MudMenuItem>
                     <MudDivider />
-                    <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="@(() => Navigation.NavigateTo("authentication/logout"))">
+                    <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="@HandleLogout">
                         退出登录
                     </MudMenuItem>
                 </MudMenu>
@@ -69,5 +70,10 @@
     private void NavigateToXiaozhi()
     {
         Navigation.NavigateTo("https://xiaozhi.verdure-hiro.cn/", forceLoad: true);
+    }
+
+    private void HandleLogout()
+    {
+        Navigation.NavigateToLogout("authentication/logout");
     }
 }

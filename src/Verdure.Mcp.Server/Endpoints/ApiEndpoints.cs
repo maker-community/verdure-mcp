@@ -37,6 +37,52 @@ public static class ApiEndpoints
         .WithName("GetMcpServices")
         .AllowAnonymous();
 
+        // Get paginated services (public) - for scroll loading
+        group.MapGet("/paged", async (
+            int page,
+            int pageSize,
+            string? category,
+            IMcpServiceService service,
+            CancellationToken cancellationToken) =>
+        {
+            // Validate pagination parameters
+            if (page < 1) page = 1;
+            if (pageSize < 1) pageSize = 10;
+            if (pageSize > 100) pageSize = 100;
+
+            var result = await service.GetServicesPagedAsync(page, pageSize, category, true, cancellationToken);
+            return Results.Ok(new ApiResponse<PagedResult<McpServiceDto>>
+            {
+                Success = true,
+                Data = result
+            });
+        })
+        .WithName("GetMcpServicesPaged")
+        .AllowAnonymous();
+
+        // Get all services for admin (includes disabled) with pagination
+        group.MapGet("/admin/paged", async (
+            int page,
+            int pageSize,
+            string? category,
+            IMcpServiceService service,
+            CancellationToken cancellationToken) =>
+        {
+            // Validate pagination parameters
+            if (page < 1) page = 1;
+            if (pageSize < 1) pageSize = 10;
+            if (pageSize > 100) pageSize = 100;
+
+            var result = await service.GetServicesPagedAsync(page, pageSize, category, false, cancellationToken);
+            return Results.Ok(new ApiResponse<PagedResult<McpServiceDto>>
+            {
+                Success = true,
+                Data = result
+            });
+        })
+        .WithName("GetMcpServicesPagedAdmin")
+        .RequireAuthorization("AdminPolicy");
+
         // Get categories (public)
         group.MapGet("/categories", async (
             IMcpServiceService service,
