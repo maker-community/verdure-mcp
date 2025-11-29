@@ -1,0 +1,49 @@
+@inject NavigationManager Navigation
+
+<MudNavMenu>
+    <MudText Typo="Typo.subtitle2" Class="px-4 mt-4 mb-2" Color="Color.Primary">导航</MudText>
+    
+    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
+        MCP 广场
+    </MudNavLink>
+    
+    <MudNavLink Href="/support" Icon="@Icons.Material.Filled.Favorite">
+        支持我们
+    </MudNavLink>
+    
+    <AuthorizeView>
+        <Authorized>
+            <MudText Typo="Typo.subtitle2" Class="px-4 mt-4 mb-2" Color="Color.Primary">个人中心</MudText>
+            
+            <MudNavLink Href="/tokens" Icon="@Icons.Material.Filled.Key">
+                API 密钥
+            </MudNavLink>
+            
+            <MudNavLink Href="/profile" Icon="@Icons.Material.Filled.Person">
+                个人信息
+            </MudNavLink>
+        </Authorized>
+    </AuthorizeView>
+    
+    <AuthorizeView Roles="admin">
+        <Authorized>
+            <MudText Typo="Typo.subtitle2" Class="px-4 mt-4 mb-2" Color="Color.Secondary">管理</MudText>
+            
+            <MudNavLink Href="/admin/services" Icon="@Icons.Material.Filled.Settings">
+                MCP 服务管理
+            </MudNavLink>
+            
+            <MudNavLink Href="/admin/users" Icon="@Icons.Material.Filled.People">
+                用户管理
+            </MudNavLink>
+        </Authorized>
+    </AuthorizeView>
+    
+    <MudDivider Class="my-2" />
+    
+    <MudText Typo="Typo.subtitle2" Class="px-4 mt-2 mb-2" Color="Color.Primary">外部链接</MudText>
+    
+    <MudNavLink Href="https://xiaozhi.verdure-hiro.cn/" Target="_blank" Icon="@Icons.Material.Filled.Link">
+        小智 MCP 转接平台
+    </MudNavLink>
+</MudNavMenu>

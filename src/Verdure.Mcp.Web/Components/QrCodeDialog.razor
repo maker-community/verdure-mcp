@@ -1,0 +1,27 @@
+<MudDialog>
+    <DialogContent>
+        <MudStack AlignItems="AlignItems.Center" Spacing="4">
+            <MudText Typo="Typo.body1" Class="text-center">
+                使用微信或支付宝扫描下方二维码进行赞助
+            </MudText>
+            
+            <MudPaper Elevation="0" Class="pa-4" Style="background-color: #f5f5f5;">
+                <MudIcon Icon="@Icons.Material.Filled.QrCode2" Size="Size.Large" Style="font-size: 150px;" />
+            </MudPaper>
+            
+            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="text-center">
+                感谢您的支持！您的每一份赞助都将用于服务器维护和功能开发。
+            </MudText>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">关闭</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] 
+    private IMudDialogInstance? MudDialog { get; set; }
+
+    private void Cancel() => MudDialog?.Close(DialogResult.Cancel());
+}
