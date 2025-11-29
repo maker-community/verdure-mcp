@@ -48,10 +48,71 @@ builder.Services.AddScoped<ITokenValidationService, TokenValidationService>();
 // Add background job
 builder.Services.AddScoped<ImageGenerationBackgroundJob>();
 
-// Add MCP Server with HTTP transport
+// Add MCP Server with HTTP transport and route-based tool filtering
 builder.Services.AddMcpServer()
-    .WithHttpTransport()
-    .WithTools<GenerateImageTool>();
+    .WithHttpTransport(options =>
+    {
+        // Configure per-session options to filter tools based on route
+        options.ConfigureSessionOptions = async (httpContext, mcpOptions, cancellationToken) =>
+        {
+            var logger = httpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+            
+            // Get the tool category from route parameter
+            var toolCategory = httpContext.Request.RouteValues["toolCategory"]?.ToString()?.ToLower() ?? "all";
+            
+            logger.LogInformation("MCP session starting for tool category: {Category}", toolCategory);
+            
+            // Get all registered tools
+            var allTools = mcpOptions.ToolCollection?.ToList() ?? new List<ModelContextProtocol.Server.McpServerTool>();
+            
+            if (allTools.Count == 0)
+            {
+                logger.LogWarning("No tools registered in the MCP server");
+                return;
+            }
+            
+            // Filter tools based on category
+            var filteredTools = new List<ModelContextProtocol.Server.McpServerTool>();
+            
+            switch (toolCategory)
+            {
+                case "image":
+                    // Only image generation tools
+                    filteredTools = allTools.Where(t => 
+                        t.ProtocolTool.Name.Contains("image", StringComparison.OrdinalIgnoreCase)).ToList();
+                    logger.LogInformation("Filtered to {Count} image tools", filteredTools.Count);
+                    break;
+                    
+                case "email":
+                    // Only email tools
+                    filteredTools = allTools.Where(t => 
+                        t.ProtocolTool.Name.Contains("email", StringComparison.OrdinalIgnoreCase)).ToList();
+                    logger.LogInformation("Filtered to {Count} email tools", filteredTools.Count);
+                    break;
+                    
+                case "all":
+                default:
+                    // All tools
+                    filteredTools = allTools;
+                    logger.LogInformation("Using all {Count} tools", filteredTools.Count);
+                    break;
+            }
+            
+            // Clear and re-add filtered tools
+            mcpOptions.ToolCollection?.Clear();
+            if (mcpOptions.ToolCollection != null)
+            {
+                foreach (var tool in filteredTools)
+                {
+                    mcpOptions.ToolCollection.Add(tool);
+                }
+            }
+            
+            await Task.CompletedTask;
+        };
+    })
+    .WithTools<GenerateImageTool>()
+    .WithTools<EmailTool>();
 
 // Add OpenAPI
 builder.Services.AddEndpointsApiExplorer();
@@ -97,8 +158,12 @@ if (app.Environment.IsDevelopment())
 // Use Bearer token authentication middleware
 app.UseBearerTokenAuthentication();
 
-// Map MCP endpoints
-app.MapMcp();
+// Map MCP endpoints with route parameter for tool filtering
+// Supported routes:
+// - /image     : Only image generation tools
+// - /email     : Only email tools
+// - /all or /  : All tools (default)
+app.MapMcp("/{toolCategory?}");
 
 // Map Hangfire dashboard (only in development)
 if (app.Environment.IsDevelopment())
