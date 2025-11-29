@@ -12,8 +12,15 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 // Configure API base address
 var apiBaseAddress = builder.HostEnvironment.BaseAddress.TrimEnd('/');
 
-// Add MudBlazor
-builder.Services.AddMudServices();
+// Add MudBlazor with Material Design 3 theme configuration
+builder.Services.AddMudServices(config =>
+{
+    config.SnackbarConfiguration.PositionClass = MudBlazor.Defaults.Classes.Position.BottomRight;
+    config.SnackbarConfiguration.PreventDuplicates = false;
+    config.SnackbarConfiguration.NewestOnTop = true;
+    config.SnackbarConfiguration.ShowCloseIcon = true;
+    config.SnackbarConfiguration.VisibleStateDuration = 4000;
+});
 
 // Add authentication with OIDC
 builder.Services.AddOidcAuthentication(options =>

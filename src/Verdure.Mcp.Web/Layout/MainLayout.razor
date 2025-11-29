@@ -2,9 +2,9 @@
 @inject NavigationManager Navigation
 
 <MudLayout>
-    <MudAppBar Elevation="1">
+    <MudAppBar Elevation="0" Style="border-bottom: 1px solid rgba(0, 0, 0, 0.12);">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@DrawerToggle" />
-        <MudText Typo="Typo.h6" Class="ml-3">Verdure MCP 服务平台</MudText>
+        <MudText Typo="Typo.h6" Class="ml-3" Style="font-weight: 500;">Verdure MCP 服务平台</MudText>
         <MudSpacer />
         
         <MudTooltip Text="小智 MCP 转接平台">
@@ -29,7 +29,8 @@
             </Authorized>
             <NotAuthorized>
                 <MudButton Variant="Variant.Text" Color="Color.Inherit" 
-                           OnClick="@(() => Navigation.NavigateTo("authentication/login"))">
+                           OnClick="@(() => Navigation.NavigateTo("authentication/login"))"
+                           Style="text-transform: none; font-weight: 500;">
                     登录
                 </MudButton>
             </NotAuthorized>
@@ -39,12 +40,13 @@
                        Color="Color.Inherit" OnClick="@ToggleDarkMode" /> *@
     </MudAppBar>
     
-    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="0" 
+               Style="border-right: 1px solid rgba(0, 0, 0, 0.12);">
         <NavMenu />
     </MudDrawer>
     
-    <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.Large" Class="my-4 pt-4">
+    <MudMainContent Style="background-color: var(--mud-palette-surface, #FAFAFA);">
+        <MudContainer MaxWidth="MaxWidth.Large" Class="my-6 pt-6">
             @Body
         </MudContainer>
     </MudMainContent>
