@@ -10,6 +10,7 @@ using Scalar.AspNetCore;
 using Verdure.Mcp.Infrastructure.Data;
 using Verdure.Mcp.Infrastructure.Services;
 using Verdure.Mcp.Server.Endpoints;
+using Verdure.Mcp.Server.Extensions;
 using Verdure.Mcp.Server.Filters;
 using Verdure.Mcp.Server.Services;
 using Verdure.Mcp.Server.Settings;
@@ -109,47 +110,35 @@ if (keycloakSettings != null && !string.IsNullOrEmpty(keycloakSettings.Authority
                 ValidateIssuerSigningKey = true
             };
             
-            // Handle Keycloak roles from realm_access.roles claim
+            // Handle Keycloak roles from both realm_access and resource_access claims
+            // Reference: https://github.com/maker-community/verdure-mcp-for-xiaozhi
             options.Events = new JwtBearerEvents
             {
                 OnTokenValidated = context =>
                 {
-                    // Extract roles from Keycloak realm_access claim
-                    var realmAccessClaim = context.Principal?.FindFirst("realm_access");
-                    if (realmAccessClaim != null)
-                    {
-                        try
-                        {
-                            var realmAccess = System.Text.Json.JsonDocument.Parse(realmAccessClaim.Value);
-                            if (realmAccess.RootElement.TryGetProperty("roles", out var rolesElement))
-                            {
-                                var claims = new List<System.Security.Claims.Claim>();
-                                foreach (var role in rolesElement.EnumerateArray())
-                                {
-                                    var roleValue = role.GetString();
-                                    if (!string.IsNullOrEmpty(roleValue))
-                                    {
-                                        claims.Add(new System.Security.Claims.Claim(
-                                            System.Security.Claims.ClaimTypes.Role, roleValue));
-                                    }
-                                }
-                                
-                                if (claims.Count > 0 && context.Principal?.Identity is System.Security.Claims.ClaimsIdentity identity)
-                                {
-                                    identity.AddClaims(claims);
-                                }
-                            }
-                        }
-                        catch
-                        {
-                            // Ignore parsing errors
-                        }
-                    }
-                    return Task.CompletedTask;
+                    var logger = context.HttpContext.RequestServices
+                        .GetRequiredService<ILogger<Program>>();
+                    
+                    // Map roles from both resource_access (client roles) and realm_access (realm roles)
+                    return AuthenticationExtensions.MapKeycloakRolesToStandardRoles(
+                        context,
+                        clientId: keycloakSettings.ClientId,
+                        logger: logger);
                 }
             };
         });
-    builder.Services.AddAuthorization();
+    
+    // Configure authorization with case-insensitive role policy
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy("AdminPolicy", policy =>
+            policy.RequireAssertion(context =>
+                context.User.IsInRole("admin") || 
+                context.User.IsInRole("Admin") ||
+                context.User.Claims.Any(c => 
+                    c.Type == System.Security.Claims.ClaimTypes.Role && 
+                    c.Value.Equals("admin", StringComparison.OrdinalIgnoreCase))));
+    });
 }
 
 // Add OpenTelemetry

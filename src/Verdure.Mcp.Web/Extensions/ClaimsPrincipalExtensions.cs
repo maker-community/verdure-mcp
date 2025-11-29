@@ -75,11 +75,15 @@ public static class ClaimsPrincipalExtensions
     }
 
     /// <summary>
-    /// Check if user is an Admin
+    /// Check if user is an Admin (case-insensitive)
     /// </summary>
     public static bool IsAdmin(this ClaimsPrincipal user)
     {
-        return user.IsInRole("admin") || user.IsInRole("Admin");
+        if (user == null || !user.Identity?.IsAuthenticated == true)
+            return false;
+
+        var roles = user.GetRoles();
+        return roles.Any(role => role.Equals("admin", StringComparison.OrdinalIgnoreCase));
     }
 
     /// <summary>
