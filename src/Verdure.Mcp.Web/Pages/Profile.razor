@@ -75,26 +75,25 @@
 
     private string GetUserEmail(System.Security.Claims.ClaimsPrincipal user)
     {
-        return user.FindFirst("email")?.Value ?? 
-               user.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? 
-               "未设置邮箱";
+        var email = user.GetEmail();
+        return string.IsNullOrEmpty(email) ? "未设置邮箱" : email;
     }
 
     private string GetUserId(System.Security.Claims.ClaimsPrincipal user)
     {
-        return user.FindFirst("sub")?.Value ?? 
-               user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? 
-               "未知";
+        try
+        {
+            return user.GetUserId();
+        }
+        catch
+        {
+            return "未知";
+        }
     }
 
     private string GetRoles(System.Security.Claims.ClaimsPrincipal user)
     {
-        var roles = user.FindAll("role")
-            .Concat(user.FindAll(System.Security.Claims.ClaimTypes.Role))
-            .Select(c => c.Value)
-            .Distinct()
-            .ToList();
-        
+        var roles = user.GetRoles();
         return roles.Any() ? string.Join(", ", roles) : "普通用户";
     }
 }

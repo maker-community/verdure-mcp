@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using MudBlazor.Services;
 using Verdure.Mcp.Web;
 using Verdure.Mcp.Web.Services;
@@ -24,7 +25,8 @@ builder.Services.AddOidcAuthentication(options =>
     options.ProviderOptions.DefaultScopes.Add("email");
     // Add offline_access scope to get refresh token
     options.ProviderOptions.DefaultScopes.Add("offline_access");
-});
+})
+.AddAccountClaimsPrincipalFactory<KeycloakRoleClaimsPrincipalFactory>();
 
 // Register custom authorization message handler for automatic token attachment
 builder.Services.AddScoped<CustomAuthorizationMessageHandler>();
