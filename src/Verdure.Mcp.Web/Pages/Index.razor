@@ -10,10 +10,10 @@
     探索和使用各种 MCP 服务，让 AI 助手更加强大
 </MudText>
 
-<MudPaper Elevation="0" Class="pa-6 mb-6" Style="background-color: var(--mud-palette-primary-container, #E3F2FD); border-left: 4px solid var(--mud-palette-primary);">
+<MudPaper Elevation="0" Class="pa-6 mb-6" Style="background: linear-gradient(135deg, #EDE7FF 0%, #F8F7FC 100%); border-left: 4px solid #7C4DFF; border-radius: 16px;">
     <MudGrid>
         <MudItem xs="12" md="8">
-            <MudText Typo="Typo.h5" Style="font-weight: 500; margin-bottom: 12px;" Color="Color.Primary">
+            <MudText Typo="Typo.h5" Style="font-weight: 500; margin-bottom: 12px; color: #5E35B1;">
                 无缝连接小智 MCP 转接平台
             </MudText>
             <MudText Typo="Typo.body1" Color="Color.Default" Class="mt-3" Style="line-height: 1.75;">
@@ -59,7 +59,7 @@ else
         @foreach (var service in FilteredServices)
         {
             <MudItem xs="12" sm="6" md="4">
-                <MudCard Elevation="1" Class="h-100" Style="border-radius: 16px; transition: all 280ms cubic-bezier(0.4, 0, 0.2, 1);">
+                <MudCard Elevation="0" Class="h-100" Style="border-radius: 16px; background-color: #FFFFFF; border: 1px solid rgba(124, 77, 255, 0.12); box-shadow: 0 2px 8px rgba(124, 77, 255, 0.06);">
                     <MudCardHeader Style="padding: 20px 20px 16px;">
                         <CardHeaderAvatar>
                             <MudAvatar Color="Color.Primary" Size="Size.Large" Style="border-radius: 12px;">

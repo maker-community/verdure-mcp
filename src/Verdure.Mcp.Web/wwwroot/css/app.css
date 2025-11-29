@@ -8,13 +8,18 @@ html, body {
 
 /* Material Design 3 Color System - Tone-based surfaces */
 :root {
-    /* Light theme surface colors based on M3 tone system */
-    --mud-palette-surface: rgb(252, 252, 252);
-    --mud-palette-surface-container-lowest: rgb(255, 255, 255);
-    --mud-palette-surface-container-low: rgb(247, 247, 247);
-    --mud-palette-surface-container: rgb(242, 242, 242);
-    --mud-palette-surface-container-high: rgb(236, 236, 236);
-    --mud-palette-surface-container-highest: rgb(230, 230, 230);
+    /* Light theme surface colors with purple tint */
+    --mud-palette-surface: #FFFFFF;
+    --mud-palette-surface-container-lowest: #FFFFFF;
+    --mud-palette-surface-container-low: #F8F7FC;
+    --mud-palette-surface-container: #F3F1F8;
+    --mud-palette-surface-container-high: #EBE8F5;
+    --mud-palette-surface-container-highest: #E4E0F0;
+    
+    /* Primary color with variations */
+    --mud-palette-primary: #7C4DFF;
+    --mud-palette-primary-container: #EDE7FF;
+    --mud-palette-on-primary-container: #21005D;
     
     /* Improved contrast for better readability (WCAG AAA compliant) */
     --mud-palette-text-primary: rgba(0, 0, 0, 0.87);
@@ -69,12 +74,17 @@ html, body {
 
 /* Material Design 3 inspired styles */
 .mud-card {
-    transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 12px;
+    transition: all 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 16px;
+    background-color: #FFFFFF !important;
+    border: 1px solid rgba(124, 77, 255, 0.08);
+    box-shadow: 0 2px 8px rgba(124, 77, 255, 0.04);
 }
 
 .mud-card:hover {
-    box-shadow: var(--elevation-3);
+    border-color: rgba(124, 77, 255, 0.16);
+    box-shadow: 0 4px 16px rgba(124, 77, 255, 0.12);
+    transform: translateY(-2px);
 }
 
 /* Material Design 3 surface containers for better hierarchy */
