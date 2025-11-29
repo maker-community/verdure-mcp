@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Net;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using ModelContextProtocol.Server;
@@ -132,10 +133,12 @@ public class GenerateImageTool
                         try
                         {
                             var imageBytes = Convert.FromBase64String(result.ImageBase64);
+                            var encodedPrompt = WebUtility.HtmlEncode(prompt);
+                            var encodedRevisedPrompt = WebUtility.HtmlEncode(result.RevisedPrompt ?? "N/A");
                             await _emailService.SendImageEmailAsync(
                                 email,
                                 "Your Generated Image",
-                                $"<h1>Your image has been generated!</h1><p>Prompt: {prompt}</p><p>Revised prompt: {result.RevisedPrompt ?? "N/A"}</p>",
+                                $"<h1>Your image has been generated!</h1><p>Prompt: {encodedPrompt}</p><p>Revised prompt: {encodedRevisedPrompt}</p>",
                                 imageBytes,
                                 $"image_{task.Id}.png");
                             
