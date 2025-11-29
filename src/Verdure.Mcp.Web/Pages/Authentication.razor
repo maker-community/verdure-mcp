@@ -2,37 +2,38 @@
 @layout LandingLayout
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResources> L
 
 <RemoteAuthenticatorView Action="@Action">
     <LoggingIn>
         <div class="d-flex flex-column align-center justify-center" style="min-height: 80vh;">
             <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
-            <MudText Typo="Typo.h6" Class="mt-4" Style="color: #5E35B1;">正在登录</MudText>
-            <MudText Typo="Typo.body2" Color="Color.Secondary">请稍候，正在进行身份验证...</MudText>
+            <MudText Typo="Typo.h6" Class="mt-4" Style="color: #5E35B1;">@L["Auth_LoggingIn"]</MudText>
+            <MudText Typo="Typo.body2" Color="Color.Secondary">@L["Auth_PleaseWait"]</MudText>
         </div>
     </LoggingIn>
     
     <CompletingLoggingIn>
         <div class="d-flex flex-column align-center justify-center" style="min-height: 80vh;">
             <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
-            <MudText Typo="Typo.h6" Class="mt-4" Style="color: #5E35B1;">完成登录</MudText>
-            <MudText Typo="Typo.body2" Color="Color.Secondary">即将跳转...</MudText>
+            <MudText Typo="Typo.h6" Class="mt-4" Style="color: #5E35B1;">@L["Auth_CompletingLogin"]</MudText>
+            <MudText Typo="Typo.body2" Color="Color.Secondary">@L["Auth_Redirecting"]</MudText>
         </div>
     </CompletingLoggingIn>
     
     <LogOut>
         <div class="d-flex flex-column align-center justify-center" style="min-height: 80vh;">
             <MudProgressCircular Color="Color.Warning" Size="Size.Large" Indeterminate="true" />
-            <MudText Typo="Typo.h6" Class="mt-4" Style="color: #5E35B1;">正在退出</MudText>
-            <MudText Typo="Typo.body2" Color="Color.Secondary">正在安全退出您的账号...</MudText>
+            <MudText Typo="Typo.h6" Class="mt-4" Style="color: #5E35B1;">@L["Auth_LoggingOut"]</MudText>
+            <MudText Typo="Typo.body2" Color="Color.Secondary">@L["Auth_SafelyLoggingOut"]</MudText>
         </div>
     </LogOut>
     
     <CompletingLogOut>
         <div class="d-flex flex-column align-center justify-center" style="min-height: 80vh;">
             <MudProgressCircular Color="Color.Warning" Size="Size.Large" Indeterminate="true" />
-            <MudText Typo="Typo.h6" Class="mt-4" Style="color: #5E35B1;">完成退出</MudText>
-            <MudText Typo="Typo.body2" Color="Color.Secondary">即将跳转...</MudText>
+            <MudText Typo="Typo.h6" Class="mt-4" Style="color: #5E35B1;">@L["Auth_CompletingLogout"]</MudText>
+            <MudText Typo="Typo.body2" Color="Color.Secondary">@L["Auth_Redirecting"]</MudText>
         </div>
     </CompletingLogOut>
     
@@ -41,15 +42,15 @@
             <MudCard Elevation="4" Style="max-width: 500px; width: 100%;">
                 <MudCardContent Class="pa-8 text-center">
                     <MudIcon Icon="@Icons.Material.Filled.Error" Color="Color.Error" Size="Size.Large" />
-                    <MudText Typo="Typo.h5" Class="mt-4 mb-2">登录失败</MudText>
+                    <MudText Typo="Typo.h5" Class="mt-4 mb-2">@L["Auth_LoginFailed"]</MudText>
                     <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-4">
-                        登录过程中出现错误，请重试
+                        @L["Auth_LoginErrorMessage"]
                     </MudText>
                     <MudButton Variant="Variant.Filled" 
                               Color="Color.Primary" 
                               Href="authentication/login"
                               StartIcon="@Icons.Material.Filled.Refresh">
-                        重新登录
+                        @L["Auth_RetryLogin"]
                     </MudButton>
                 </MudCardContent>
             </MudCard>
@@ -61,15 +62,15 @@
             <MudCard Elevation="4" Style="max-width: 500px; width: 100%;">
                 <MudCardContent Class="pa-8 text-center">
                     <MudIcon Icon="@Icons.Material.Filled.Error" Color="Color.Error" Size="Size.Large" />
-                    <MudText Typo="Typo.h5" Class="mt-4 mb-2">退出失败</MudText>
+                    <MudText Typo="Typo.h5" Class="mt-4 mb-2">@L["Auth_LogoutFailed"]</MudText>
                     <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-4">
-                        退出过程中出现错误
+                        @L["Auth_LogoutErrorMessage"]
                     </MudText>
                     <MudButton Variant="Variant.Filled" 
                               Color="Color.Primary" 
                               Href="/"
                               StartIcon="@Icons.Material.Filled.Home">
-                        返回首页
+                        @L["Auth_BackToHome"]
                     </MudButton>
                 </MudCardContent>
             </MudCard>
@@ -81,15 +82,15 @@
             <MudCard Elevation="4" Style="max-width: 500px; width: 100%;">
                 <MudCardContent Class="pa-8 text-center">
                     <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Size="Size.Large" />
-                    <MudText Typo="Typo.h5" Class="mt-4 mb-2">已成功退出</MudText>
+                    <MudText Typo="Typo.h5" Class="mt-4 mb-2">@L["Auth_LogoutSuccess"]</MudText>
                     <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-4">
-                        您已安全退出账号
+                        @L["Auth_SafelyLoggedOut"]
                     </MudText>
                     <MudButton Variant="Variant.Filled" 
                               Color="Color.Primary" 
                               Href="authentication/login"
                               StartIcon="@Icons.Material.Filled.Login">
-                        重新登录
+                        @L["Auth_RetryLogin"]
                     </MudButton>
                 </MudCardContent>
             </MudCard>
