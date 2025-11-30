@@ -1,0 +1,9 @@
+# 忽略所有生成的图片文件
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+
+# 但保留 README.md
+!README.md

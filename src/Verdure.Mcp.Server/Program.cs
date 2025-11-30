@@ -30,6 +30,8 @@ builder.Services.Configure<KeycloakSettings>(
     builder.Configuration.GetSection(KeycloakSettings.SectionName));
 builder.Services.Configure<TokenValidationSettings>(
     builder.Configuration.GetSection(TokenValidationSettings.SectionName));
+builder.Services.Configure<ImageStorageSettings>(
+    builder.Configuration.GetSection(ImageStorageSettings.SectionName));
 
 // Add database context
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -55,6 +57,7 @@ builder.Services.AddScoped<IImageGenerationService, ImageGenerationService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ITokenValidationService, TokenValidationService>();
 builder.Services.AddScoped<IMcpServiceService, McpServiceService>();
+builder.Services.AddScoped<IImageStorageService, ImageStorageService>();
 
 // Add MCP tool filter service
 builder.Services.AddSingleton<McpToolFilterService>();
@@ -194,6 +197,18 @@ if (app.Environment.IsDevelopment())
 // Serve Blazor WASM static files
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
+
+// Ensure generated-images directory exists and serve it
+var imageStorageSettings = builder.Configuration.GetSection(ImageStorageSettings.SectionName).Get<ImageStorageSettings>();
+if (imageStorageSettings != null)
+{
+    var imagePath = Path.Combine(app.Environment.WebRootPath ?? app.Environment.ContentRootPath, imageStorageSettings.StoragePath);
+    if (!Directory.Exists(imagePath))
+    {
+        Directory.CreateDirectory(imagePath);
+        app.Logger.LogInformation("创建图片存储目录: {ImagePath}", imagePath);
+    }
+}
 
 // Use authentication and authorization
 // Note: The order matters:
