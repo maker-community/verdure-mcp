@@ -47,7 +47,7 @@ else
                     }
                     <MudChip T="string" Color="Color.Primary" Size="Size.Small" Variant="Variant.Outlined"
                              Style="border-radius: 12px;">
-                        @_service.Category
+                        @GetCategoryDisplayName(_service.Category)
                     </MudChip>
                     @if (!string.IsNullOrEmpty(_service.Version))
                     {
@@ -167,6 +167,17 @@ else
             _loading = false;
         }
     }
+
+    private string GetCategoryDisplayName(string categoryKey) => categoryKey.ToLower() switch
+    {
+        "image" => L["Category_Image"],
+        "email" => L["Category_Email"],
+        "document" => L["Category_Document"],
+        "data" => L["Category_Data"],
+        "ai" => L["Category_AI"],
+        "other" => L["Category_Other"],
+        _ => categoryKey
+    };
 
     private string GetCategoryIcon(string category) => category.ToLower() switch
     {

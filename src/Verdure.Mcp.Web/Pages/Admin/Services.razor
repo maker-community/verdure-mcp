@@ -51,7 +51,7 @@
         </MudTd>
         <MudTd DataLabel="@L["AdminServices_Category"]">
             <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Outlined">
-                @context.Category
+                @GetCategoryDisplayName(context.Category)
             </MudChip>
         </MudTd>
         <MudTd DataLabel="@L["AdminServices_Endpoint"]">
@@ -197,4 +197,15 @@
             }
         }
     }
+
+    private string GetCategoryDisplayName(string categoryKey) => categoryKey.ToLower() switch
+    {
+        "image" => L["Category_Image"],
+        "email" => L["Category_Email"],
+        "document" => L["Category_Document"],
+        "data" => L["Category_Data"],
+        "ai" => L["Category_AI"],
+        "other" => L["Category_Other"],
+        _ => categoryKey
+    };
 }

@@ -53,7 +53,7 @@ else
                              Variant="@(_selectedCategory == category.Name ? Variant.Filled : Variant.Outlined)"
                              Style="border-radius: 12px;"
                              OnClick="@OnCategoryChanged">
-                        @category.DisplayName (@category.ServiceCount)
+                        @GetCategoryDisplayName(category.Name) (@category.ServiceCount)
                     </MudChip>
                 }
             </MudChipSet>
@@ -74,7 +74,7 @@ else
                             </CardHeaderAvatar>
                             <CardHeaderContent>
                                 <MudText Typo="Typo.h6" Style="font-weight: 500; line-height: 1.4;">@service.DisplayName</MudText>
-                                <MudText Typo="Typo.body2" Color="Color.Secondary" Style="margin-top: 4px;">@service.Category</MudText>
+                                <MudText Typo="Typo.body2" Color="Color.Secondary" Style="margin-top: 4px;">@GetCategoryDisplayName(service.Category)</MudText>
                             </CardHeaderContent>
                             <CardHeaderActions>
                                 @if (service.IsFree)
@@ -301,6 +301,17 @@ else
             StateHasChanged();
         }
     }
+
+    private string GetCategoryDisplayName(string categoryKey) => categoryKey.ToLower() switch
+    {
+        "image" => L["Category_Image"],
+        "email" => L["Category_Email"],
+        "document" => L["Category_Document"],
+        "data" => L["Category_Data"],
+        "ai" => L["Category_AI"],
+        "other" => L["Category_Other"],
+        _ => categoryKey
+    };
 
     private string GetCategoryIcon(string category) => category.ToLower() switch
     {
