@@ -13,7 +13,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 // Configure API base address
 var apiBaseAddress = builder.HostEnvironment.BaseAddress.TrimEnd('/');
 
-// Add localization services with Chinese as default culture
+// Add localization services
 builder.Services.AddLocalization();
 
 // Add MudBlazor with Material Design 3 theme configuration
@@ -69,6 +69,8 @@ builder.Services.AddScoped<ITokenServiceClient, TokenServiceClient>();
 builder.Services.AddScoped<IClipboardService, ClipboardService>();
 
 // Set default culture to Chinese
+// Note: User's language preference is read via JS interop and applied in CultureSelector component
+// For initial load, we default to Chinese. The browser will persist the user's choice.
 var culture = new CultureInfo("zh-CN");
 CultureInfo.DefaultThreadCurrentCulture = culture;
 CultureInfo.DefaultThreadCurrentUICulture = culture;

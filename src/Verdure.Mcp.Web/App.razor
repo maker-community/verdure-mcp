@@ -1,4 +1,5 @@
 @using Microsoft.AspNetCore.Components.Authorization
+@inject IStringLocalizer<SharedResources> L
 
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
@@ -6,10 +7,10 @@
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
                     <MudContainer Class="mt-16">
-                        <MudText Typo="Typo.h5" Class="mb-4">请先登录</MudText>
-                        <MudText>您需要登录才能访问此页面。</MudText>
+                        <MudText Typo="Typo.h5" Class="mb-4">@L["Auth_LoginRequired"]</MudText>
+                        <MudText>@L["Auth_LoginRequiredMessage"]</MudText>
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="authentication/login" Class="mt-4">
-                            登录
+                            @L["Login"]
                         </MudButton>
                     </MudContainer>
                 </NotAuthorized>
@@ -20,13 +21,13 @@
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />
         </Found>
         <NotFound>
-            <PageTitle>未找到页面</PageTitle>
+            <PageTitle>@L["NotFound_PageTitle"]</PageTitle>
             <LayoutView Layout="@typeof(MainLayout)">
                 <MudContainer Class="mt-16 text-center">
-                    <MudText Typo="Typo.h4" Class="mb-4">404 - 页面未找到</MudText>
-                    <MudText>抱歉，您访问的页面不存在。</MudText>
+                    <MudText Typo="Typo.h4" Class="mb-4">@L["NotFound_Title"]</MudText>
+                    <MudText>@L["NotFound_Message"]</MudText>
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/" Class="mt-4">
-                        返回首页
+                        @L["Home"]
                     </MudButton>
                 </MudContainer>
             </LayoutView>
