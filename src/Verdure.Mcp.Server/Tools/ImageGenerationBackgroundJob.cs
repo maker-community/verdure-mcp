@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Verdure.Mcp.Domain.Enums;
 using Verdure.Mcp.Infrastructure.Data;
 using Verdure.Mcp.Infrastructure.Services;
+using Verdure.Mcp.Server.Services;
 
 namespace Verdure.Mcp.Server.Tools;
 
@@ -14,17 +15,20 @@ public class ImageGenerationBackgroundJob
     private readonly IImageGenerationService _imageGenerationService;
     private readonly IEmailService _emailService;
     private readonly McpDbContext _dbContext;
+    private readonly IImageStorageService _imageStorageService;
     private readonly ILogger<ImageGenerationBackgroundJob> _logger;
 
     public ImageGenerationBackgroundJob(
         IImageGenerationService imageGenerationService,
         IEmailService emailService,
         McpDbContext dbContext,
+        IImageStorageService imageStorageService,
         ILogger<ImageGenerationBackgroundJob> logger)
     {
         _imageGenerationService = imageGenerationService;
         _emailService = emailService;
         _dbContext = dbContext;
+        _imageStorageService = imageStorageService;
         _logger = logger;
     }
 
@@ -57,9 +61,28 @@ public class ImageGenerationBackgroundJob
             {
                 task.Status = ImageTaskStatus.Completed;
                 task.ImageData = result.ImageBase64;
-                task.ImageUrl = result.ImageUrl;
                 task.CompletedAt = DateTime.UtcNow;
                 task.UpdatedAt = DateTime.UtcNow;
+
+                // 保存图片到本地文件系统并生成 URL
+                if (!string.IsNullOrEmpty(result.ImageBase64))
+                {
+                    try
+                    {
+                        var imageUrl = await _imageStorageService.SaveImageAsync(
+                            result.ImageBase64, 
+                            task.Id, 
+                            cancellationToken);
+                        task.ImageUrl = imageUrl;
+                        _logger.LogInformation("图片已保存到本地，URL: {ImageUrl}", imageUrl);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "保存图片到本地失败，任务 {TaskId}", taskId);
+                        // 即使保存失败，仍然继续流程
+                    }
+                }
+
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
                 _logger.LogInformation("任务 {TaskId} 成功完成", taskId);
