@@ -7,7 +7,7 @@ using Verdure.Mcp.Infrastructure.Services;
 namespace Verdure.Mcp.Server.Tools;
 
 /// <summary>
-/// Background job for processing image generation tasks asynchronously
+/// 异步处理图片生成任务的后台作业
 /// </summary>
 public class ImageGenerationBackgroundJob
 {
@@ -30,13 +30,13 @@ public class ImageGenerationBackgroundJob
 
     public async Task ExecuteAsync(Guid taskId, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Starting background image generation for task {TaskId}", taskId);
+        _logger.LogInformation("开始后台生成图片，任务 {TaskId}", taskId);
 
         var task = await _dbContext.ImageGenerationTasks.FindAsync(new object[] { taskId }, cancellationToken);
         
         if (task == null)
         {
-            _logger.LogWarning("Task {TaskId} not found", taskId);
+            _logger.LogWarning("未找到任务 {TaskId}", taskId);
             return;
         }
 
@@ -62,20 +62,20 @@ public class ImageGenerationBackgroundJob
                 task.UpdatedAt = DateTime.UtcNow;
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
-                _logger.LogInformation("Task {TaskId} completed successfully", taskId);
+                _logger.LogInformation("任务 {TaskId} 成功完成", taskId);
 
-                // Send email if provided
+                // 如果提供了邮箱，发送邮件
                 if (!string.IsNullOrEmpty(task.Email) && !string.IsNullOrEmpty(result.ImageBase64))
                 {
                     try
                     {
                         var imageBytes = Convert.FromBase64String(result.ImageBase64);
                         var encodedPrompt = WebUtility.HtmlEncode(task.Prompt);
-                        var encodedRevisedPrompt = WebUtility.HtmlEncode(result.RevisedPrompt ?? "N/A");
+                        var encodedRevisedPrompt = WebUtility.HtmlEncode(result.RevisedPrompt ?? "无");
                         await _emailService.SendImageEmailAsync(
                             task.Email,
-                            "Your Generated Image",
-                            $"<h1>Your image has been generated!</h1><p>Prompt: {encodedPrompt}</p><p>Revised prompt: {encodedRevisedPrompt}</p>",
+                            "您的图片已生成",
+                            $"<h1>您的图片已成功生成！</h1><p>提示词：{encodedPrompt}</p><p>修订后的提示词：{encodedRevisedPrompt}</p>",
                             imageBytes,
                             $"image_{task.Id}.png",
                             cancellationToken);
@@ -83,11 +83,11 @@ public class ImageGenerationBackgroundJob
                         task.EmailSent = true;
                         await _dbContext.SaveChangesAsync(cancellationToken);
                         
-                        _logger.LogInformation("Email sent for task {TaskId}", taskId);
+                        _logger.LogInformation("邮件已发送，任务 {TaskId}", taskId);
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, "Failed to send email for task {TaskId}", taskId);
+                        _logger.LogError(ex, "发送邮件失败，任务 {TaskId}", taskId);
                     }
                 }
             }
@@ -98,12 +98,12 @@ public class ImageGenerationBackgroundJob
                 task.UpdatedAt = DateTime.UtcNow;
                 await _dbContext.SaveChangesAsync(cancellationToken);
 
-                _logger.LogWarning("Task {TaskId} failed: {Error}", taskId, result.ErrorMessage);
+                _logger.LogWarning("任务 {TaskId} 失败：{Error}", taskId, result.ErrorMessage);
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error processing task {TaskId}", taskId);
+            _logger.LogError(ex, "处理任务 {TaskId} 时出错", taskId);
             
             task.Status = ImageTaskStatus.Failed;
             task.ErrorMessage = ex.Message;

@@ -11,7 +11,7 @@ using Verdure.Mcp.Infrastructure.Services;
 namespace Verdure.Mcp.Server.Tools;
 
 /// <summary>
-/// MCP Tool for generating images using Azure OpenAI DALL-E
+/// 使用 Azure OpenAI DALL-E 生成图片的 MCP 工具
 /// </summary>
 [McpServerToolType]
 public class GenerateImageTool
@@ -40,36 +40,37 @@ public class GenerateImageTool
     }
 
     /// <summary>
-    /// Generates an image based on the provided prompt using Azure OpenAI DALL-E.
-    /// If email is provided, sends the generated image to the specified email address.
-    /// If user information is present in the request header, the task runs asynchronously.
+    /// 使用 Azure OpenAI DALL-E 根据提示词生成图片。
+    /// 如果提供邮箱地址，会将生成的图片发送到指定邮箱。
+    /// 如果请求头中包含用户信息（X-User-Email 和 X-User-Id），任务将异步运行。
     /// </summary>
-    /// <param name="prompt">The text prompt describing the image to generate</param>
-    /// <param name="size">Image size: "1024x1024", "1792x1024", or "1024x1792". Default is "1024x1024"</param>
-    /// <param name="quality">Image quality: "standard" or "hd". Default is "standard"</param>
-    /// <param name="style">Image style: "vivid" or "natural". Default is "vivid"</param>
-    /// <returns>A JSON object containing the task information and image data (if sync mode)</returns>
+    /// <param name="prompt">描述要生成图片的文本提示词</param>
+    /// <param name="size">图片尺寸："1024x1024"、"1792x1024" 或 "1024x1792"，默认为 "1024x1024"</param>
+    /// <param name="quality">图片质量："standard" 或 "hd"，默认为 "standard"</param>
+    /// <param name="style">图片风格："vivid" 或 "natural"，默认为 "vivid"</param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>包含任务信息和图片数据的 JSON 对象（同步模式下）</returns>
     [McpServerTool(Name = "generate_image")]
-    [Description("Generates an image based on the provided text prompt using Azure OpenAI DALL-E. Supports email notification and async processing.")]
+    [Description("使用 DALL-E 模型，根据文本提示词生成图片。支持邮件通知和异步处理。")]
     public async Task<ImageGenerationResponse> GenerateImage(
-        [Description("The text prompt describing the image to generate")] string prompt,
-        [Description("Image size: '1024x1024', '1792x1024', or '1024x1792'. Default is '1024x1024'")] string? size = null,
-        [Description("Image quality: 'standard' or 'hd'. Default is 'standard'")] string? quality = null,
-        [Description("Image style: 'vivid' or 'natural'. Default is 'vivid'")] string? style = null,
+        [Description("描述要生成图片的文本提示词")] string prompt,
+        [Description("图片尺寸：'1024x1024'、'1792x1024' 或 '1024x1792'，默认为 '1024x1024'")] string? size = null,
+        [Description("图片质量：'standard' 或 'hd'，默认为 'standard'")] string? quality = null,
+        [Description("图片风格：'vivid' 或 'natural'，默认为 'vivid'")] string? style = null,
         CancellationToken cancellationToken = default)
     {
         var httpContext = _httpContextAccessor.HttpContext;
         
-        // Extract email from request header (X-User-Email)
+        // 从请求头提取邮箱地址 (X-User-Email)
         var email = httpContext?.Request.Headers["X-User-Email"].FirstOrDefault();
         
-        // Extract user ID from request header (X-User-Id)
+        // 从请求头提取用户 ID (X-User-Id)
         var userId = httpContext?.Request.Headers["X-User-Id"].FirstOrDefault();
 
-        _logger.LogInformation("Image generation requested. Prompt: {Prompt}, Email: {Email}, UserId: {UserId}", 
-            prompt, email ?? "none", userId ?? "none");
+        _logger.LogInformation("收到图片生成请求。提示词: {Prompt}, 邮箱: {Email}, 用户ID: {UserId}", 
+            prompt, email ?? "无", userId ?? "无");
 
-        // Create task record
+        // 创建任务记录
         var task = new ImageGenerationTask
         {
             Id = Guid.NewGuid(),
@@ -86,10 +87,10 @@ public class GenerateImageTool
         _dbContext.ImageGenerationTasks.Add(task);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        // If user info is present, use async processing with Hangfire
-        if (!string.IsNullOrEmpty(userId))
+        // 如果存在用户信息（X-User-Email 和 X-User-Id），使用 Hangfire 异步处理
+        if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(userId))
         {
-            _logger.LogInformation("User ID present, using async processing for task {TaskId}", task.Id);
+            _logger.LogInformation("检测到用户信息，使用异步处理任务 {TaskId}", task.Id);
             
             var jobId = _backgroundJobClient.Enqueue<ImageGenerationBackgroundJob>(
                 job => job.ExecuteAsync(task.Id, CancellationToken.None));
@@ -101,15 +102,15 @@ public class GenerateImageTool
             return new ImageGenerationResponse
             {
                 TaskId = task.Id,
-                Status = "processing",
-                Message = "Image generation task has been queued. You will receive the result via email if provided.",
+                Status = "处理中",
+                Message = "图片生成任务已加入队列。如果您提供了邮箱地址，稍后会收到生成结果。",
                 IsAsync = true
             };
         }
         else
         {
-            // Sync processing
-            _logger.LogInformation("No user ID, using sync processing for task {TaskId}", task.Id);
+            // 同步处理
+            _logger.LogInformation("未检测到完整用户信息，使用同步处理任务 {TaskId}", task.Id);
             
             task.Status = ImageTaskStatus.Processing;
             await _dbContext.SaveChangesAsync(cancellationToken);
@@ -128,18 +129,18 @@ public class GenerateImageTool
                     task.UpdatedAt = DateTime.UtcNow;
                     await _dbContext.SaveChangesAsync(cancellationToken);
 
-                    // Send email if provided
+                    // 如果提供了邮箱，发送邮件
                     if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(result.ImageBase64))
                     {
                         try
                         {
                             var imageBytes = Convert.FromBase64String(result.ImageBase64);
                             var encodedPrompt = WebUtility.HtmlEncode(prompt);
-                            var encodedRevisedPrompt = WebUtility.HtmlEncode(result.RevisedPrompt ?? "N/A");
+                            var encodedRevisedPrompt = WebUtility.HtmlEncode(result.RevisedPrompt ?? "无");
                             await _emailService.SendImageEmailAsync(
                                 email,
-                                "Your Generated Image",
-                                $"<h1>Your image has been generated!</h1><p>Prompt: {encodedPrompt}</p><p>Revised prompt: {encodedRevisedPrompt}</p>",
+                                "您的图片已生成",
+                                $"<h1>您的图片已成功生成！</h1><p>提示词：{encodedPrompt}</p><p>修订后的提示词：{encodedRevisedPrompt}</p>",
                                 imageBytes,
                                 $"image_{task.Id}.png",
                                 cancellationToken);
@@ -149,16 +150,16 @@ public class GenerateImageTool
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError(ex, "Failed to send email for task {TaskId}", task.Id);
+                            _logger.LogError(ex, "发送邮件失败，任务 {TaskId}", task.Id);
                         }
                     }
 
+                    // 同步模式：只返回 URL，不返回 base64 数据
                     return new ImageGenerationResponse
                     {
                         TaskId = task.Id,
-                        Status = "completed",
-                        Message = "Image generated successfully",
-                        ImageBase64 = result.ImageBase64,
+                        Status = "已完成",
+                        Message = "图片生成成功",
                         ImageUrl = result.ImageUrl,
                         RevisedPrompt = result.RevisedPrompt,
                         IsAsync = false
@@ -174,15 +175,15 @@ public class GenerateImageTool
                     return new ImageGenerationResponse
                     {
                         TaskId = task.Id,
-                        Status = "failed",
-                        Message = result.ErrorMessage ?? "Image generation failed",
+                        Status = "失败",
+                        Message = result.ErrorMessage ?? "图片生成失败",
                         IsAsync = false
                     };
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during sync image generation for task {TaskId}", task.Id);
+                _logger.LogError(ex, "同步生成图片时出错，任务 {TaskId}", task.Id);
                 
                 task.Status = ImageTaskStatus.Failed;
                 task.ErrorMessage = ex.Message;
@@ -192,7 +193,7 @@ public class GenerateImageTool
                 return new ImageGenerationResponse
                 {
                     TaskId = task.Id,
-                    Status = "failed",
+                    Status = "失败",
                     Message = ex.Message,
                     IsAsync = false
                 };
@@ -201,22 +202,22 @@ public class GenerateImageTool
     }
 
     /// <summary>
-    /// Gets the status of an image generation task
+    /// 获取图片生成任务的状态
     /// </summary>
-    /// <param name="taskId">The ID of the task to check</param>
-    /// <returns>Task status and result if completed</returns>
+    /// <param name="taskId">要查询的任务 ID</param>
+    /// <returns>任务状态和结果（如果已完成）</returns>
     [McpServerTool(Name = "get_image_task_status")]
-    [Description("Gets the status of an image generation task")]
+    [Description("获取图片生成任务的状态")]
     public async Task<ImageGenerationResponse> GetImageTaskStatus(
-        [Description("The ID of the task to check")] string taskId,
+        [Description("要查询的任务 ID")] string taskId,
         CancellationToken cancellationToken = default)
     {
         if (!Guid.TryParse(taskId, out var id))
         {
             return new ImageGenerationResponse
             {
-                Status = "error",
-                Message = "Invalid task ID format"
+                Status = "错误",
+                Message = "任务 ID 格式无效"
             };
         }
 
@@ -226,8 +227,8 @@ public class GenerateImageTool
         {
             return new ImageGenerationResponse
             {
-                Status = "error",
-                Message = "Task not found"
+                Status = "错误",
+                Message = "未找到任务"
             };
         }
 
@@ -246,18 +247,18 @@ public class GenerateImageTool
     {
         return status switch
         {
-            ImageTaskStatus.Pending => "Task is pending",
-            ImageTaskStatus.Processing => "Task is being processed",
-            ImageTaskStatus.Completed => "Image generated successfully",
-            ImageTaskStatus.Failed => "Image generation failed",
-            ImageTaskStatus.Cancelled => "Task was cancelled",
-            _ => "Unknown status"
+            ImageTaskStatus.Pending => "任务等待中",
+            ImageTaskStatus.Processing => "任务处理中",
+            ImageTaskStatus.Completed => "图片生成成功",
+            ImageTaskStatus.Failed => "图片生成失败",
+            ImageTaskStatus.Cancelled => "任务已取消",
+            _ => "未知状态"
         };
     }
 }
 
 /// <summary>
-/// Response model for image generation
+/// 图片生成响应模型
 /// </summary>
 public class ImageGenerationResponse
 {
