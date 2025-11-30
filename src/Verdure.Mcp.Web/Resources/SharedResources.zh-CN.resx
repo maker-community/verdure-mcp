@@ -921,4 +921,44 @@
     <value>抱歉，您访问的页面不存在。</value>
   </data>
 
+  <!-- Category Localization -->
+  <data name="Category_Image" xml:space="preserve">
+    <value>图片生成</value>
+  </data>
+  <data name="Category_Email" xml:space="preserve">
+    <value>邮件服务</value>
+  </data>
+  <data name="Category_Document" xml:space="preserve">
+    <value>文档处理</value>
+  </data>
+  <data name="Category_Data" xml:space="preserve">
+    <value>数据服务</value>
+  </data>
+  <data name="Category_AI" xml:space="preserve">
+    <value>AI 服务</value>
+  </data>
+  <data name="Category_Other" xml:space="preserve">
+    <value>其他</value>
+  </data>
+
+  <!-- QR Code Dialog Additional -->
+  <data name="QrCode_Wechat" xml:space="preserve">
+    <value>微信支付</value>
+  </data>
+  <data name="QrCode_WechatQRCode" xml:space="preserve">
+    <value>微信收款码</value>
+  </data>
+  <data name="QrCode_WechatHint" xml:space="preserve">
+    <value>打开微信扫一扫</value>
+  </data>
+  <data name="QrCode_Alipay" xml:space="preserve">
+    <value>支付宝</value>
+  </data>
+  <data name="QrCode_AlipayQRCode" xml:space="preserve">
+    <value>支付宝收款码</value>
+  </data>
+  <data name="QrCode_AlipayHint" xml:space="preserve">
+    <value>打开支付宝扫一扫</value>
+  </data>
+
 </root>

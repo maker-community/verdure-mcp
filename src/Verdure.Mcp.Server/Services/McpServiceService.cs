@@ -103,7 +103,7 @@ public class McpServiceService : IMcpServiceService
             .Select(g => new McpCategoryDto
             {
                 Name = g.Key,
-                DisplayName = GetCategoryDisplayName(g.Key),
+                DisplayName = g.Key, // Frontend will handle localization
                 IconName = GetCategoryIcon(g.Key),
                 ServiceCount = g.Count()
             })
@@ -208,16 +208,6 @@ public class McpServiceService : IMcpServiceService
             Tags = service.Tags
         };
     }
-
-    private static string GetCategoryDisplayName(string category) => category.ToLower() switch
-    {
-        "image" => "图片生成",
-        "email" => "邮件服务",
-        "document" => "文档处理",
-        "data" => "数据服务",
-        "ai" => "AI 服务",
-        _ => category
-    };
 
     private static string GetCategoryIcon(string category) => category.ToLower() switch
     {

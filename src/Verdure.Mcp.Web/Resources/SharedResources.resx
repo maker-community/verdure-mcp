@@ -921,4 +921,44 @@
     <value>Sorry, the page you are looking for does not exist.</value>
   </data>
 
+  <!-- Category Localization -->
+  <data name="Category_Image" xml:space="preserve">
+    <value>Image Generation</value>
+  </data>
+  <data name="Category_Email" xml:space="preserve">
+    <value>Email Service</value>
+  </data>
+  <data name="Category_Document" xml:space="preserve">
+    <value>Document Processing</value>
+  </data>
+  <data name="Category_Data" xml:space="preserve">
+    <value>Data Service</value>
+  </data>
+  <data name="Category_AI" xml:space="preserve">
+    <value>AI Service</value>
+  </data>
+  <data name="Category_Other" xml:space="preserve">
+    <value>Other</value>
+  </data>
+
+  <!-- QR Code Dialog Additional -->
+  <data name="QrCode_Wechat" xml:space="preserve">
+    <value>WeChat Pay</value>
+  </data>
+  <data name="QrCode_WechatQRCode" xml:space="preserve">
+    <value>WeChat QR Code</value>
+  </data>
+  <data name="QrCode_WechatHint" xml:space="preserve">
+    <value>Open WeChat and scan</value>
+  </data>
+  <data name="QrCode_Alipay" xml:space="preserve">
+    <value>Alipay</value>
+  </data>
+  <data name="QrCode_AlipayQRCode" xml:space="preserve">
+    <value>Alipay QR Code</value>
+  </data>
+  <data name="QrCode_AlipayHint" xml:space="preserve">
+    <value>Open Alipay and scan</value>
+  </data>
+
 </root>
