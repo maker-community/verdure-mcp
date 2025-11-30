@@ -68,11 +68,13 @@ public class EmailService : IEmailService
             message.Body = builder.ToMessageBody();
 
             using var client = new SmtpClient();
-            
-            var secureSocketOptions = _settings.UseSsl 
-                ? SecureSocketOptions.StartTls 
-                : SecureSocketOptions.None;
-            
+
+            client.Timeout = 10000; // 10 seconds timeout
+
+            var secureSocketOptions = _settings.UseSsl
+                 ? SecureSocketOptions.SslOnConnect
+                 : SecureSocketOptions.StartTlsWhenAvailable;
+
             await client.ConnectAsync(_settings.SmtpHost, _settings.SmtpPort, secureSocketOptions, cancellationToken);
             
             if (!string.IsNullOrEmpty(_settings.SmtpUsername))
