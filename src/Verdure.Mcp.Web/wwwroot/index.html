@@ -27,6 +27,18 @@
         <a class="dismiss">🗙</a>
     </div>
 
+    <!-- Culture script must load before Blazor -->
+    <script src="js/culture.js"></script>
+    <script>
+        // Set the culture from localStorage before Blazor starts
+        // Blazor WASM will pick up the culture from HTML lang attribute
+        (function() {
+            var culture = window.blazorCulture.get();
+            if (culture) {
+                document.documentElement.lang = culture === 'zh-CN' ? 'zh-CN' : 'en';
+            }
+        })();
+    </script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
     <script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js"></script>
     <script src="js/scroll-helper.js"></script>

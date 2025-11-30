@@ -1,30 +1,34 @@
 @inherits LayoutComponentBase
 @inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResources> L
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
-<MudLayout>
+<MudLayout Style="min-height: 100vh; display: flex; flex-direction: column;">
     <MudAppBar Elevation="0" Style="border-bottom: 1px solid rgba(0, 0, 0, 0.12);">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@DrawerToggle" />
-        <MudText Typo="Typo.h6" Class="ml-3" Style="font-weight: 500;">Verdure MCP 服务平台</MudText>
+        <MudText Typo="Typo.h6" Class="ml-3 d-none d-sm-block" Style="font-weight: 500;">@L["PlatformName"]</MudText>
+        <MudText Typo="Typo.h6" Class="ml-3 d-block d-sm-none" Style="font-weight: 500;">@L["AppName"]</MudText>
         <MudSpacer />
         
-        <MudTooltip Text="小智 MCP 转接平台">
+        <MudTooltip Text="@L["Nav_XiaozhiPlatform"]">
             <MudIconButton Icon="@Icons.Material.Filled.Link" Color="Color.Inherit" 
                            OnClick="@(() => NavigateToXiaozhi())" />
         </MudTooltip>
+        
+        <CultureSelector TextColor="#FFFFFF" />
         
         <AuthorizeView>
             <Authorized>
                 <MudMenu Icon="@Icons.Material.Filled.Person" Color="Color.Inherit">
                     <MudMenuItem Icon="@Icons.Material.Filled.AccountCircle" OnClick="@(() => Navigation.NavigateTo("/profile"))">
-                        个人中心
+                        @L["Nav_PersonalCenter"]
                     </MudMenuItem>
                     <MudMenuItem Icon="@Icons.Material.Filled.Key" OnClick="@(() => Navigation.NavigateTo("/tokens"))">
-                        API 密钥
+                        @L["Nav_ApiKey"]
                     </MudMenuItem>
                     <MudDivider />
                     <MudMenuItem Icon="@Icons.Material.Filled.Logout" OnClick="@HandleLogout">
-                        退出登录
+                        @L["Logout"]
                     </MudMenuItem>
                 </MudMenu>
             </Authorized>
@@ -32,13 +36,10 @@
                 <MudButton Variant="Variant.Text" Color="Color.Inherit" 
                            OnClick="@(() => Navigation.NavigateTo("authentication/login"))"
                            Style="text-transform: none; font-weight: 500;">
-                    登录
+                    @L["Login"]
                 </MudButton>
             </NotAuthorized>
         </AuthorizeView>
-        
-@*         <MudIconButton Icon="@(_isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)" 
-                       Color="Color.Inherit" OnClick="@ToggleDarkMode" /> *@
     </MudAppBar>
     
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="0" 
@@ -46,10 +47,14 @@
         <NavMenu />
     </MudDrawer>
     
-    <MudMainContent Style="background-color: #F5F5F9;">
-        <MudContainer MaxWidth="MaxWidth.Large" Class="my-6 pt-6">
-            @Body
-        </MudContainer>
+    <MudMainContent Style="display: flex; flex-direction: column; flex: 1; min-height: 0; background-color: #F5F5F9;">
+        <div style="flex: 1; padding: 1rem;">
+            <MudContainer MaxWidth="MaxWidth.Large" Class="my-6 pt-6">
+                @Body
+            </MudContainer>
+        </div>
+        
+        <Footer IsCompact="true" />
     </MudMainContent>
 </MudLayout>
 
