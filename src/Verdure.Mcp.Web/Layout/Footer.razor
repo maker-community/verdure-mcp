@@ -1,4 +1,5 @@
 @using Verdure.Mcp.Web.Icons
+@using Verdure.Mcp.Web.Utils
 @inject IStringLocalizer<SharedResources> L
 
 @if (IsCompact)
@@ -14,6 +15,25 @@
                 <MudText Typo="Typo.caption" Color="Color.Secondary" Class="mt-1">
                     @L["Footer_Description"]
                 </MudText>
+                
+                <!-- Version Information -->
+                @if (!string.IsNullOrEmpty(VersionHelpers.WebDisplayVersion))
+                {
+                    <div class="d-flex justify-center align-center gap-2 mt-2">
+                        <MudChip T="string" Size="Size.Small" Color="Color.Default" Variant="Variant.Text">
+                            @($"v{VersionHelpers.WebDisplayVersion}")
+                        </MudChip>
+                        @if (!string.IsNullOrEmpty(VersionHelpers.RuntimeVersion))
+                        {
+                            <MudChip T="string" Size="Size.Small" Color="Color.Default" Variant="Variant.Text">
+                                @($".NET {VersionHelpers.RuntimeVersion}")
+                            </MudChip>
+                        }
+                        <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Text">
+                            Blazor WebAssembly
+                        </MudChip>
+                    </div>
+                }
             </div>
             
             <!-- 社交链接 -->
@@ -143,9 +163,32 @@ else
 
             <!-- 版权信息 -->
             <div class="d-flex justify-space-between align-center flex-wrap gap-4">
-                <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.5);">
-                    @string.Format(L["Footer_Copyright"], DateTime.Now.Year)
-                </MudText>
+                <div>
+                    <MudText Typo="Typo.body2" Style="color: rgba(255,255,255,0.5);">
+                        @string.Format(L["Footer_Copyright"], DateTime.Now.Year)
+                    </MudText>
+                    
+                    <!-- Version Information -->
+                    @if (!string.IsNullOrEmpty(VersionHelpers.WebDisplayVersion))
+                    {
+                        <div class="d-flex align-center gap-2 mt-2">
+                            <MudChip T="string" Size="Size.Small" Color="Color.Default" Variant="Variant.Text" 
+                                     Style="color: rgba(255,255,255,0.5);">
+                                @($"v{VersionHelpers.WebDisplayVersion}")
+                            </MudChip>
+                            @if (!string.IsNullOrEmpty(VersionHelpers.RuntimeVersion))
+                            {
+                                <MudChip T="string" Size="Size.Small" Color="Color.Default" Variant="Variant.Text"
+                                         Style="color: rgba(255,255,255,0.5);">
+                                    @($".NET {VersionHelpers.RuntimeVersion}")
+                                </MudChip>
+                            }
+                            <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Text">
+                                Blazor WebAssembly
+                            </MudChip>
+                        </div>
+                    }
+                </div>
                 <div class="d-flex gap-4">
                     <MudLink Href="https://github.com/maker-community/verdure-mcp/blob/main/LICENSE" Target="_blank" 
                              Style="color: rgba(255,255,255,0.5);" Underline="Underline.Hover">
