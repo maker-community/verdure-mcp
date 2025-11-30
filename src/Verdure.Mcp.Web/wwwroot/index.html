@@ -29,19 +29,31 @@
 
     <!-- Culture script must load before Blazor -->
     <script src="js/culture.js"></script>
-    <script>
-        // Set the culture from localStorage before Blazor starts
-        // Blazor WASM will pick up the culture from HTML lang attribute
-        (function() {
-            var culture = window.blazorCulture.get();
-            if (culture) {
-                document.documentElement.lang = culture === 'zh-CN' ? 'zh-CN' : 'en';
-            }
-        })();
-    </script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
     <script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js"></script>
     <script src="js/scroll-helper.js"></script>
-    <script src="_framework/blazor.webassembly.js"></script>
+    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    
+    <!-- Blazor startup with culture configuration -->
+    <script>
+        // Microsoft Official Approach: Set culture before Blazor starts
+        // Reference: https://github.com/dotnet/aspnetcore/tree/main/src/Components/test/testassets/GlobalizationWasmApp
+        (function() {
+            const savedCulture = window.blazorCulture.get() || 'zh-CN';
+            console.log('🌐 Starting Blazor with culture:', savedCulture);
+            
+            // Update HTML lang attribute
+            document.documentElement.lang = savedCulture;
+            
+            // Start Blazor with the specified culture
+            Blazor.start({
+                applicationCulture: savedCulture
+            }).then(() => {
+                console.log('✅ Blazor started successfully with culture:', savedCulture);
+            }).catch((error) => {
+                console.error('❌ Failed to start Blazor:', error);
+            });
+        })();
+    </script>
 </body>
 </html>

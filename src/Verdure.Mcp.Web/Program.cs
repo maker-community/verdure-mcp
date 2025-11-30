@@ -68,11 +68,10 @@ builder.Services.AddScoped<IMcpServiceClient, McpServiceClient>();
 builder.Services.AddScoped<ITokenServiceClient, TokenServiceClient>();
 builder.Services.AddScoped<IClipboardService, ClipboardService>();
 
-// Set default culture to Chinese
-// Note: User's language preference is read via JS interop and applied in CultureSelector component
-// For initial load, we default to Chinese. The browser will persist the user's choice.
-var culture = new CultureInfo("zh-CN");
-CultureInfo.DefaultThreadCurrentCulture = culture;
-CultureInfo.DefaultThreadCurrentUICulture = culture;
-
+// Build and run the host
+// Note: Application culture is set in index.html via Blazor.start({ applicationCulture })
+// The Blazor framework will automatically:
+// 1. Set CultureInfo.CurrentCulture and CultureInfo.CurrentUICulture
+// 2. Load the appropriate satellite assemblies (e.g., zh-CN\Verdure.Mcp.Web.resources.dll)
+// 3. Make IStringLocalizer work with the loaded resources
 await builder.Build().RunAsync();

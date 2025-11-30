@@ -8,12 +8,7 @@
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@DrawerToggle" />
         <MudText Typo="Typo.h6" Class="ml-3 d-none d-sm-block" Style="font-weight: 500;">@L["PlatformName"]</MudText>
         <MudText Typo="Typo.h6" Class="ml-3 d-block d-sm-none" Style="font-weight: 500;">@L["AppName"]</MudText>
-        <MudSpacer />
-        
-        <MudTooltip Text="@L["Nav_XiaozhiPlatform"]">
-            <MudIconButton Icon="@Icons.Material.Filled.Link" Color="Color.Inherit" 
-                           OnClick="@(() => NavigateToXiaozhi())" />
-        </MudTooltip>
+        <MudSpacer />       
         
         <CultureSelector TextColor="#FFFFFF" />
         
@@ -70,11 +65,6 @@
     private void ToggleDarkMode()
     {
         _isDarkMode = !_isDarkMode;
-    }
-
-    private void NavigateToXiaozhi()
-    {
-        Navigation.NavigateTo("https://xiaozhi.verdure-hiro.cn/", forceLoad: true);
     }
 
     private void HandleLogout()
