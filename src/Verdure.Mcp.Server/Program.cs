@@ -15,6 +15,7 @@ using Verdure.Mcp.Server.Filters;
 using Verdure.Mcp.Server.Services;
 using Verdure.Mcp.Server.Settings;
 using Verdure.Mcp.Server.Tools;
+using Verdure.Mcp.Server.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -155,6 +156,17 @@ builder.Services.AddOpenTelemetry()
 
 var app = builder.Build();
 
+// Log version information at startup
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+if (VersionHelpers.ApiDisplayVersion is string version)
+{
+    logger.LogInformation("Verdure MCP Server version: {Version}", version);
+    if (VersionHelpers.RuntimeVersion is string runtimeVersion)
+    {
+        logger.LogInformation(".NET Runtime version: {RuntimeVersion}", runtimeVersion);
+    }
+}
+
 // Apply database migrations
 using (var scope = app.Services.CreateScope())
 {
@@ -225,6 +237,9 @@ app.MapGet("/health", () => Results.Ok(new
 
 // Map API endpoints
 app.MapApiEndpoints();
+
+// Map version endpoint
+app.MapVersionEndpoint();
 
 // Token management endpoints (for admin purposes - only available in development)
 if (app.Environment.IsDevelopment())
