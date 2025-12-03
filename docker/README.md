@@ -8,14 +8,14 @@
 
 ```powershell
 # 从项目根目录构建
-docker build -f docker/Dockerfile -t verdure-mcp-server:latest .
+docker build -f docker/Dockerfile -t gilzhang/verdure-mcp-server:alpine-v1.0.2 .
 ```
 
 ### 使用构建参数
 
 ```powershell
 # 指定构建配置（默认为 Release）
-docker build -f docker/Dockerfile --build-arg BUILD_CONFIGURATION=Release -t verdure-mcp-server:latest .
+docker build -f docker/Dockerfile --build-arg BUILD_CONFIGURATION=Release -t gilzhang/verdure-mcp-server:alpine-v1.0.2 .
 ```
 
 ## 🚀 运行容器
@@ -27,7 +27,7 @@ docker run -d `
   --name verdure-mcp `
   -p 8080:8080 `
   -e ConnectionStrings__DefaultConnection="Host=postgres;Database=verdure_mcp;Username=postgres;Password=yourpassword" `
-  verdure-mcp-server:latest
+  gilzhang/verdure-mcp-server:alpine-v1.0.2
 ```
 
 ### 完整配置示例
@@ -42,7 +42,7 @@ docker run -d `
   -e AzureOpenAI__ApiKey="your-api-key" `
   -e Email__SmtpServer="smtp.gmail.com" `
   -e Email__SmtpPort=587 `
-  verdure-mcp-server:latest
+  gilzhang/verdure-mcp-server:alpine-v1.0.2
 ```
 
 ## 🔧 配置文件挂载
@@ -165,7 +165,7 @@ docker run -d `
   --memory=512m `
   --cpus=1.0 `
   -p 8080:8080 `
-  verdure-mcp-server:latest
+  gilzhang/verdure-mcp-server:alpine-v1.0.2
 ```
 
 ### 持久化存储
@@ -177,7 +177,7 @@ docker run -d `
   --name verdure-mcp `
   -v verdure-data:/app/data `
   -p 8080:8080 `
-  verdure-mcp-server:latest
+  gilzhang/verdure-mcp-server:alpine-v1.0.2
 ```
 
 ## 🆘 故障排查
