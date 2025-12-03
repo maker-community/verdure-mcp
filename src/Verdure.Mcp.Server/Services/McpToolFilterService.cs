@@ -14,6 +14,7 @@ public class McpToolFilterService
     {
         ["image"] = toolName => toolName.Contains("image", StringComparison.OrdinalIgnoreCase),
         ["email"] = toolName => toolName.Contains("email", StringComparison.OrdinalIgnoreCase),
+        ["debug"] = toolName => toolName.Contains("debug", StringComparison.OrdinalIgnoreCase),
         ["all"] = _ => true // Accept all tools
     };
     
