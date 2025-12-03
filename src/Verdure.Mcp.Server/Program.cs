@@ -226,7 +226,8 @@ app.UseBearerTokenAuthentication();
 // All endpoints end with /mcp to clearly identify them as Streamable HTTP endpoints
 // Supported routes:
 // - /image/mcp : Only image generation tools
-// - /email/mcp : Only email tools  
+// - /email/mcp : Only email tools
+// - /debug/mcp : Only debug tools (for troubleshooting)
 // - /all/mcp   : All tools
 app.MapMcp("/{toolCategory}/mcp");
 
