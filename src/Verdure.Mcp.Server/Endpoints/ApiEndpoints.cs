@@ -14,6 +14,7 @@ public static class ApiEndpoints
     {
         app.MapMcpServiceEndpoints();
         app.MapTokenEndpoints();
+        app.MapDeviceEndpoints();
     }
 
     private static void MapMcpServiceEndpoints(this WebApplication app)

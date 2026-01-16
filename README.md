@@ -11,6 +11,7 @@ A comprehensive MCP (Model Context Protocol) server that provides multiple tools
 - **Bearer Token Authentication**: Secure API access with token-based authentication
 - **PostgreSQL Storage**: Persist tasks and API tokens
 - **MCP Protocol Support**: Full compliance with the Model Context Protocol
+- **SignalR Device Hub**: Real-time communication with ESP32 and IoT devices (see [SignalR Device Hub Documentation](docs/SIGNALR_DEVICE_HUB.md))
 
 ## Project Structure
 
