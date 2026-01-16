@@ -12,6 +12,7 @@ using Verdure.Mcp.Infrastructure.Services;
 using Verdure.Mcp.Server.Endpoints;
 using Verdure.Mcp.Server.Extensions;
 using Verdure.Mcp.Server.Filters;
+using Verdure.Mcp.Server.Hubs;
 using Verdure.Mcp.Server.Services;
 using Verdure.Mcp.Server.Settings;
 using Verdure.Mcp.Server.Tools;
@@ -58,6 +59,12 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ITokenValidationService, TokenValidationService>();
 builder.Services.AddScoped<IMcpServiceService, McpServiceService>();
 builder.Services.AddScoped<IImageStorageService, ImageStorageService>();
+
+// Add SignalR for device hub
+builder.Services.AddSignalR();
+
+// Add device push service
+builder.Services.AddScoped<IDevicePushService, DevicePushServiceImpl>();
 
 // Add MCP tool filter service
 builder.Services.AddSingleton<McpToolFilterService>();
@@ -256,6 +263,9 @@ app.MapApiEndpoints();
 
 // Map version endpoint
 app.MapVersionEndpoint();
+
+// Map SignalR Device Hub
+app.MapHub<DeviceHub>("/hub/device");
 
 // Token management endpoints (for admin purposes - only available in development)
 if (app.Environment.IsDevelopment())
