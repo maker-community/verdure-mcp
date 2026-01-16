@@ -5,6 +5,12 @@
 
 ---
 
+esp32设备端 参考代码如下：
+https://github.com/maker-community/xiaozhi-esp32/blob/signalr/main/signalr_client.cc
+
+signalr服务端参考代码如下：
+https://github.com/maker-community/esp-signalr-example/tree/main/signalr-server
+
 ## 现有实现分析（ESP32 端）
 
 ### SignalR 客户端实现概述
