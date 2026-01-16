@@ -27,6 +27,21 @@ public class McpDbContext : DbContext
     /// </summary>
     public DbSet<McpService> McpServices { get; set; } = null!;
 
+    /// <summary>
+    /// IoT devices (e.g., ESP32) that can connect to SignalR hub
+    /// </summary>
+    public DbSet<Device> Devices { get; set; } = null!;
+
+    /// <summary>
+    /// Active SignalR connections from devices
+    /// </summary>
+    public DbSet<DeviceConnection> DeviceConnections { get; set; } = null!;
+
+    /// <summary>
+    /// Device binding relationships for social features
+    /// </summary>
+    public DbSet<DeviceBinding> DeviceBindings { get; set; } = null!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -244,6 +259,137 @@ public class McpDbContext : DbContext
             entity.HasIndex(e => e.Name).IsUnique();
             entity.HasIndex(e => e.Category);
             entity.HasIndex(e => e.IsEnabled);
+        });
+
+        // Configure Device entity
+        modelBuilder.Entity<Device>(entity =>
+        {
+            entity.ToTable("devices");
+            
+            entity.HasKey(e => e.Id);
+            
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .HasDefaultValueSql("gen_random_uuid()");
+            
+            entity.Property(e => e.MacAddress)
+                .HasColumnName("mac_address")
+                .IsRequired()
+                .HasMaxLength(100);
+            
+            entity.Property(e => e.OwnerUserId)
+                .HasColumnName("owner_user_id")
+                .HasMaxLength(255);
+            
+            entity.Property(e => e.LastSeenAt)
+                .HasColumnName("last_seen_at");
+            
+            entity.Property(e => e.Status)
+                .HasColumnName("status")
+                .IsRequired();
+            
+            entity.Property(e => e.Metadata)
+                .HasColumnName("metadata")
+                .HasColumnType("jsonb");
+            
+            entity.Property(e => e.CreatedAt)
+                .HasColumnName("created_at")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnName("updated_at");
+
+            // Indexes
+            entity.HasIndex(e => e.MacAddress).IsUnique();
+            entity.HasIndex(e => e.OwnerUserId);
+            entity.HasIndex(e => e.Status);
+        });
+
+        // Configure DeviceConnection entity
+        modelBuilder.Entity<DeviceConnection>(entity =>
+        {
+            entity.ToTable("device_connections");
+            
+            entity.HasKey(e => e.ConnectionId);
+            
+            entity.Property(e => e.ConnectionId)
+                .HasColumnName("connection_id")
+                .IsRequired()
+                .HasMaxLength(100);
+            
+            entity.Property(e => e.DeviceId)
+                .HasColumnName("device_id")
+                .IsRequired();
+            
+            entity.Property(e => e.UserId)
+                .HasColumnName("user_id")
+                .HasMaxLength(255);
+            
+            entity.Property(e => e.ConnectedAt)
+                .HasColumnName("connected_at")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            
+            entity.Property(e => e.LastHeartbeatAt)
+                .HasColumnName("last_heartbeat_at");
+
+            // Foreign key relationship
+            entity.HasOne(e => e.Device)
+                .WithMany()
+                .HasForeignKey(e => e.DeviceId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Indexes
+            entity.HasIndex(e => e.DeviceId);
+            entity.HasIndex(e => e.UserId);
+        });
+
+        // Configure DeviceBinding entity
+        modelBuilder.Entity<DeviceBinding>(entity =>
+        {
+            entity.ToTable("device_bindings");
+            
+            entity.HasKey(e => e.Id);
+            
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .HasDefaultValueSql("gen_random_uuid()");
+            
+            entity.Property(e => e.OwnerUserId)
+                .HasColumnName("owner_user_id")
+                .IsRequired()
+                .HasMaxLength(255);
+            
+            entity.Property(e => e.TargetUserId)
+                .HasColumnName("target_user_id")
+                .IsRequired()
+                .HasMaxLength(255);
+            
+            entity.Property(e => e.DeviceId)
+                .HasColumnName("device_id")
+                .IsRequired();
+            
+            entity.Property(e => e.Status)
+                .HasColumnName("status")
+                .IsRequired();
+            
+            entity.Property(e => e.CreatedAt)
+                .HasColumnName("created_at")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnName("updated_at");
+
+            // Foreign key relationship
+            entity.HasOne(e => e.Device)
+                .WithMany()
+                .HasForeignKey(e => e.DeviceId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Indexes
+            entity.HasIndex(e => e.DeviceId);
+            entity.HasIndex(e => e.OwnerUserId);
+            entity.HasIndex(e => e.TargetUserId);
+            entity.HasIndex(e => new { e.DeviceId, e.TargetUserId }).IsUnique();
         });
     }
 }
