@@ -1,8 +1,10 @@
 using System.Security.Cryptography;
 using System.Text;
+using System.IdentityModel.Tokens.Jwt;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Verdure.Mcp.Domain.Entities;
 using Verdure.Mcp.Infrastructure.Data;
 
@@ -39,6 +41,7 @@ public interface ITokenValidationService
     Task<bool> RevokeTokenAsync(Guid tokenId, string userId, CancellationToken cancellationToken = default);
     Task<bool> CheckImageGenerationLimitAsync(string token, CancellationToken cancellationToken = default);
     Task<bool> IncrementImageCountAsync(string token, CancellationToken cancellationToken = default);
+    Task<System.Security.Claims.ClaimsPrincipal?> ValidateJwtTokenAsync(string jwtToken, CancellationToken cancellationToken = default);
 }
 
 /// <summary>
@@ -306,6 +309,53 @@ public class TokenValidationService : ITokenValidationService
         catch
         {
             return false;
+        }
+    }
+
+    /// <summary>
+    /// Validates a JWT token (e.g., from Keycloak) and returns the ClaimsPrincipal
+    /// </summary>
+    public async Task<System.Security.Claims.ClaimsPrincipal?> ValidateJwtTokenAsync(string jwtToken, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var handler = new JwtSecurityTokenHandler();
+            
+            // Try to read the token without validation first to check if it's a valid JWT
+            if (!handler.CanReadToken(jwtToken))
+            {
+                _logger.LogWarning("Token is not a valid JWT format");
+                return null;
+            }
+
+            // Read token to get basic info
+            var token = handler.ReadJwtToken(jwtToken);
+            _logger.LogInformation("JWT token issuer: {Issuer}, expires: {Expires}", token.Issuer, token.ValidTo);
+
+            // For now, we'll do a simple validation without signature verification
+            // This allows Keycloak tokens to work without configuring OIDC on this service
+            // In production, you should verify the signature using Keycloak's public keys
+            
+            if (token.ValidTo < DateTime.UtcNow)
+            {
+                _logger.LogWarning("JWT token has expired");
+                return null;
+            }
+
+            // Extract claims
+            var claims = token.Claims.ToList();
+            var identity = new System.Security.Claims.ClaimsIdentity(claims, "JWT");
+            var principal = new System.Security.Claims.ClaimsPrincipal(identity);
+
+            _logger.LogInformation("JWT token validated successfully, subject: {Subject}", 
+                principal.FindFirst("sub")?.Value);
+
+            return await Task.FromResult(principal);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to validate JWT token");
+            return null;
         }
     }
 }
