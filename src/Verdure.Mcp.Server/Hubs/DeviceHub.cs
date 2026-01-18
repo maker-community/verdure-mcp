@@ -52,24 +52,52 @@ public class DeviceHub : Hub
             return;
         }
 
-        // Validate the token and get user information
+        _logger.LogInformation("Device connecting with token (length: {Length})", accessToken.Length);
+
+        // Try to validate as API token first
         var apiToken = await _tokenValidationService.GetTokenAsync(accessToken);
+        string? userId = null;
+
+        if (apiToken != null && apiToken.IsActive)
+        {
+            // Valid API token from database
+            if (apiToken.ExpiresAt.HasValue && apiToken.ExpiresAt.Value < DateTime.UtcNow)
+            {
+                _logger.LogWarning("Expired API token for connection {ConnectionId}", Context.ConnectionId);
+                Context.Abort();
+                return;
+            }
+            userId = apiToken.UserId;
+            _logger.LogInformation("Authenticated via API token, UserId: {UserId}", userId);
+        }
+        else
+        {
+            // Try to validate as JWT token (Keycloak)
+            try
+            {
+                var claimsPrincipal = await _tokenValidationService.ValidateJwtTokenAsync(accessToken);
+                if (claimsPrincipal != null)
+                {
+                    userId = claimsPrincipal.FindFirst("sub")?.Value;
+                    if (string.IsNullOrEmpty(userId))
+                    {
+                        userId = claimsPrincipal.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                    }
+                    _logger.LogInformation("Authenticated via JWT token, UserId: {UserId}", userId);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "JWT token validation failed for connection {ConnectionId}", Context.ConnectionId);
+            }
+        }
         
-        if (apiToken == null || !apiToken.IsActive)
+        if (string.IsNullOrEmpty(userId))
         {
-            _logger.LogWarning("Invalid or inactive token for connection {ConnectionId}", Context.ConnectionId);
+            _logger.LogWarning("Token validation failed or no userId found for connection {ConnectionId}", Context.ConnectionId);
             Context.Abort();
             return;
         }
-
-        if (apiToken.ExpiresAt.HasValue && apiToken.ExpiresAt.Value < DateTime.UtcNow)
-        {
-            _logger.LogWarning("Expired token for connection {ConnectionId}", Context.ConnectionId);
-            Context.Abort();
-            return;
-        }
-
-        var userId = apiToken.UserId;
         
         if (string.IsNullOrEmpty(userId))
         {
@@ -90,13 +118,9 @@ public class DeviceHub : Hub
             "Device connected: ConnectionId={ConnectionId}, UserId={UserId}", 
             Context.ConnectionId, userId);
 
-        // Send welcome notification to the device
-        await Clients.Caller.SendAsync("Notification", new 
-        { 
-            message = "Connected to Verdure MCP Device Hub",
-            timestamp = DateTime.UtcNow,
-            connectionId = Context.ConnectionId
-        });
+        // Send welcome notification to the device (ESP32 expects a string, not an object)
+        await Clients.Caller.SendAsync("Notification", 
+            $"Connected to Verdure MCP Device Hub. ConnectionId: {Context.ConnectionId}");
 
         await base.OnConnectedAsync();
     }

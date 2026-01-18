@@ -1,6 +1,7 @@
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OpenTelemetry;
@@ -281,6 +282,55 @@ if (app.Environment.IsDevelopment())
     })
     .WithName("CreateToken")
     .WithTags("Admin");
+
+    // Device testing endpoints
+    app.MapPost("/admin/device/send-message", async (
+        SendMessageRequest request,
+        IHubContext<DeviceHub> hubContext) =>
+    {
+        var userGroup = $"Users:{request.UserId}";
+        var messageJson = System.Text.Json.JsonSerializer.Serialize(request.Message);
+        await hubContext.Clients.Group(userGroup).SendAsync("CustomMessage", messageJson);
+        return Results.Ok(new { success = true, sentTo = userGroup, message = request.Message });
+    })
+    .WithName("SendMessageToUser")
+    .WithTags("Admin");
+
+    app.MapPost("/admin/device/send-to-connection", async (
+        SendToConnectionRequest request,
+        IHubContext<DeviceHub> hubContext) =>
+    {
+        var messageJson = System.Text.Json.JsonSerializer.Serialize(request.Message);
+        await hubContext.Clients.Client(request.ConnectionId).SendAsync("CustomMessage", messageJson);
+        return Results.Ok(new { success = true, connectionId = request.ConnectionId, message = request.Message });
+    })
+    .WithName("SendMessageToConnection")
+    .WithTags("Admin");
+
+    app.MapGet("/admin/device/connections", async (McpDbContext dbContext) =>
+    {
+        var connections = await dbContext.DeviceConnections
+            .Include(c => c.Device)
+            .Select(c => new
+            {
+                c.ConnectionId,
+                c.UserId,
+                c.ConnectedAt,
+                c.LastHeartbeatAt,
+                Device = c.Device != null ? new
+                {
+                    c.Device.Id,
+                    c.Device.MacAddress,
+                    c.Device.Status,
+                    c.Device.Metadata,
+                    c.Device.LastSeenAt
+                } : null
+            })
+            .ToListAsync();
+        return Results.Ok(connections);
+    })
+    .WithName("GetAllDeviceConnections")
+    .WithTags("Admin");
 }
 
 // Fallback to index.html for SPA routing
@@ -289,3 +339,7 @@ app.MapFallbackToFile("index.html");
 app.Logger.LogInformation("Verdure MCP Server started");
 
 app.Run();
+
+// Request models for admin endpoints
+public record SendMessageRequest(string UserId, object Message);
+public record SendToConnectionRequest(string ConnectionId, object Message);
