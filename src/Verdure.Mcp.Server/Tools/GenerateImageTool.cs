@@ -23,6 +23,7 @@ public class GenerateImageTool
     private readonly IBackgroundJobClient _backgroundJobClient;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IImageStorageService _imageStorageService;
+    private readonly IDevicePushService _devicePushService;
     private readonly ILogger<GenerateImageTool> _logger;
 
     public GenerateImageTool(
@@ -32,6 +33,7 @@ public class GenerateImageTool
         IBackgroundJobClient backgroundJobClient,
         IHttpContextAccessor httpContextAccessor,
         IImageStorageService imageStorageService,
+        IDevicePushService devicePushService,
         ILogger<GenerateImageTool> logger)
     {
         _imageGenerationService = imageGenerationService;
@@ -40,6 +42,7 @@ public class GenerateImageTool
         _backgroundJobClient = backgroundJobClient;
         _httpContextAccessor = httpContextAccessor;
         _imageStorageService = imageStorageService;
+        _devicePushService = devicePushService;
         _logger = logger;
     }
 
@@ -131,18 +134,20 @@ public class GenerateImageTool
                     task.CompletedAt = DateTime.UtcNow;
                     task.UpdatedAt = DateTime.UtcNow;
 
-                    // 保存图片到本地文件系统并生成 URL
-                    string? imageUrl = null;
+                    // 保存图片到本地文件系统（PNG + JPEG）
+                    ImageStorageResult? storageResult = null;
                     if (!string.IsNullOrEmpty(result.ImageBase64))
                     {
                         try
                         {
-                            imageUrl = await _imageStorageService.SaveImageAsync(
+                            storageResult = await _imageStorageService.SaveImageAsync(
                                 result.ImageBase64, 
                                 task.Id, 
                                 cancellationToken);
-                            task.ImageUrl = imageUrl;
-                            _logger.LogInformation("图片已保存到本地，URL: {ImageUrl}", imageUrl);
+                            task.ImageUrl = storageResult.PngUrl; // 数据库保存 PNG URL
+                            _logger.LogInformation(
+                                "图片已保存 - PNG: {PngUrl}, JPEG: {JpegUrl}, 压缩率: {CompressionRatio:F1}%",
+                                storageResult.PngUrl, storageResult.JpegUrl, storageResult.CompressionRatio);
                         }
                         catch (Exception ex)
                         {
@@ -178,13 +183,53 @@ public class GenerateImageTool
                         }
                     }
 
-                    // 同步模式：只返回 URL，不返回 base64 数据
+                    // 如果有用户 ID，推送到用户设备（使用 JPEG 版本，符合 xiaozhi 协议）
+                    if (!string.IsNullOrEmpty(userId) && storageResult != null)
+                    {
+                        try
+                        {
+                            // 1. 先发送通知消息
+                            var notificationMessage = new
+                            {
+                                action = "notification",
+                                title = "图片生成完成",
+                                content = $"您的图片已生成：{prompt.Substring(0, Math.Min(30, prompt.Length))}...",
+                                emotion = "happy",
+                                sound = "success"
+                            };
+                            await _devicePushService.SendCustomMessageAsync(userId, notificationMessage, cancellationToken);
+                            
+                            // 2. 再发送图片消息（ESP32 期望的格式 - xiaozhi 协议）
+                            var imageMessage = new
+                            {
+                                action = "image",
+                                url = storageResult.JpegUrl,  // 使用 JPEG URL（体积小）
+                                // 扩展信息（可选，ESP32 可以忽略）
+                                taskId = task.Id.ToString(),
+                                pngUrl = storageResult.PngUrl,
+                                prompt = prompt,
+                                jpegSize = storageResult.JpegSize,
+                                timestamp = DateTime.UtcNow
+                            };
+
+                            await _devicePushService.SendCustomMessageAsync(userId, imageMessage, cancellationToken);
+                            _logger.LogInformation(
+                                "已推送图片到用户 {UserId} 的设备，任务 {TaskId}，JPEG URL: {JpegUrl} ({JpegSize} bytes)", 
+                                userId, task.Id, storageResult.JpegUrl, storageResult.JpegSize);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "推送消息到设备失败，用户 {UserId}，任务 {TaskId}", userId, task.Id);
+                        }
+                    }
+
+                    // 同步模式：返回 PNG URL（完整质量）
                     return new ImageGenerationResponse
                     {
                         TaskId = task.Id,
                         Status = "已完成",
                         Message = "图片生成成功",
-                        ImageUrl = imageUrl ?? result.ImageUrl,
+                        ImageUrl = storageResult?.PngUrl ?? result.ImageUrl,
                         RevisedPrompt = result.RevisedPrompt,
                         IsAsync = false
                     };

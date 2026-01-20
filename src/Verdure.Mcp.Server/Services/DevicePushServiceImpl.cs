@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.SignalR;
+using System.Text.Json;
 using Verdure.Mcp.Infrastructure.Services;
 using Verdure.Mcp.Server.Hubs;
 
@@ -38,7 +39,9 @@ public class DevicePushServiceImpl : IDevicePushService
 
     public async Task SendCustomMessageAsync(string userId, object message, CancellationToken cancellationToken = default)
     {
-        await SendToUserAsync(userId, "CustomMessage", message, cancellationToken);
+        // ESP32 expects CustomMessage to receive a JSON string, not an object
+        var jsonString = JsonSerializer.Serialize(message);
+        await SendToUserAsync(userId, "CustomMessage", jsonString, cancellationToken);
     }
 
     public async Task SendNotificationAsync(string userId, string message, CancellationToken cancellationToken = default)
