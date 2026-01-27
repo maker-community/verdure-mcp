@@ -1,0 +1,21 @@
+<Solution>
+  <Folder Name="/solution/">
+    <File Path=".dockerignore" />
+    <File Path=".gitignore" />
+    <File Path="agents.md" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+    <File Path="test-send-message.ps1" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Verdure.Mcp.AppHost/Verdure.Mcp.AppHost.AppHost/Verdure.Mcp.AppHost.AppHost.csproj" />
+    <Project Path="src/Verdure.Mcp.AppHost/Verdure.Mcp.AppHost.ServiceDefaults/Verdure.Mcp.AppHost.ServiceDefaults.csproj" />
+    <Project Path="src/Verdure.Mcp.Domain/Verdure.Mcp.Domain.csproj" />
+    <Project Path="src/Verdure.Mcp.Infrastructure/Verdure.Mcp.Infrastructure.csproj" />
+    <Project Path="src/Verdure.Mcp.Server/Verdure.Mcp.Server.csproj" />
+    <Project Path="src/Verdure.Mcp.Shared/Verdure.Mcp.Shared.csproj" />
+    <Project Path="src/Verdure.Mcp.Web/Verdure.Mcp.Web.csproj" />
+  </Folder>
+</Solution>
