@@ -8,7 +8,7 @@ namespace Verdure.Mcp.Server.Tools;
 /// MCP 调试工具，用于打印请求头等调试信息
 /// </summary>
 [McpServerToolType]
-public partial class DebugTool
+public class DebugTool
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILogger<DebugTool> _logger;
@@ -27,7 +27,7 @@ public partial class DebugTool
     /// <returns>包含所有请求头的响应对象</returns>
     [McpServerTool(Name = "debug_print_headers")]
     [Description("打印当前请求的所有请求头信息，用于调试")]
-    public partial Task<DebugHeadersResponse> PrintRequestHeaders()
+    public Task<DebugHeadersResponse> PrintRequestHeaders()
     {
         var httpContext = _httpContextAccessor.HttpContext;
         
@@ -71,7 +71,7 @@ public partial class DebugTool
     /// <returns>包含请求详细信息的响应对象</returns>
     [McpServerTool(Name = "debug_print_request")]
     [Description("打印当前请求的详细信息，包括请求头、方法、路径等")]
-    public partial Task<DebugRequestResponse> PrintRequestDetails()
+    public Task<DebugRequestResponse> PrintRequestDetails()
     {
         var httpContext = _httpContextAccessor.HttpContext;
         
