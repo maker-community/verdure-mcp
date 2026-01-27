@@ -27,10 +27,10 @@
 		<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.1" />
 		<PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.1.0" />
 		<!-- Model Context Protocol packages -->
-		<PackageVersion Include="ModelContextProtocol" Version="0.4.0-verdure.4" />
-		<PackageVersion Include="ModelContextProtocol.AspNetCore" Version="0.4.0-verdure.4" />
+		<PackageVersion Include="ModelContextProtocol" Version="0.6.0-preview.1" />
+		<PackageVersion Include="ModelContextProtocol.AspNetCore" Version="0.6.0-preview.1" />
 		<!-- Azure OpenAI -->
-		<PackageVersion Include="Azure.AI.OpenAI" Version="2.1.0" />
+		<PackageVersion Include="Azure.AI.OpenAI" Version="2.8.0-beta.1" />
 		<!-- Email - MailKit is the most modern and recommended library for .NET -->
 		<PackageVersion Include="MailKit" Version="4.14.1" />
 		<!-- Background Jobs - Hangfire -->
