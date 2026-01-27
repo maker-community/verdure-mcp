@@ -8,14 +8,54 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
     <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
+    <style>
+        /* Smooth CSS-based spinner (fallback for browsers without SMIL) */
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            display: block;
+            animation: spin 1s linear infinite;
+            transform-origin: 50% 50%;
+            will-change: transform;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+
+        /* Make the arc smooth and continuous */
+        .loading-spinner circle {
+            stroke-linecap: round;
+            stroke-dasharray: 90 150;
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 0.3s linear;
+        }
+
+        /* Fix loading container so it doesn't reflow during SPA navigation */
+        .initial-loading {
+            position: fixed; /* stays in viewport when DOM changes */
+            inset: 0; /* top:0; right:0; bottom:0; left:0 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background: transparent;
+            z-index: 9999;
+            pointer-events: none; /* allow clicks to pass through if needed */
+        }
+
+        /* Ensure spinner itself can be interactive if needed */
+        .initial-loading * { pointer-events: auto; }
+    </style>
 </head>
 <body>
     <div id="app">
-        <div style="display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column;">
+        <div class="initial-loading" style="display:flex; justify-content:center; align-items:center; flex-direction:column;">
             <svg class="loading-spinner" viewBox="0 0 50 50" style="width: 50px; height: 50px;">
-                <circle cx="25" cy="25" r="20" fill="none" stroke="#6750A4" stroke-width="4" stroke-dasharray="31.4 31.4">
-                    <animateTransform attributeName="transform" type="rotate" values="0 25 25;360 25 25" dur="1s" repeatCount="indefinite"/>
-                </circle>
+                <!-- Use CSS rotation instead of SMIL animateTransform for broader compatibility -->
+                <circle cx="25" cy="25" r="20" fill="none" stroke="#6750A4" stroke-width="4"
+                        stroke-dasharray="90 150" stroke-linecap="round"/>
             </svg>
             <p style="margin-top: 20px; color: #6750A4; font-family: Roboto, sans-serif;">正在加载...</p>
         </div>
@@ -50,6 +90,16 @@
                 applicationCulture: savedCulture
             }).then(() => {
                 console.log('✅ Blazor started successfully with culture:', savedCulture);
+                // Remove initial loading placeholder to avoid leaving fixed overlay
+                try {
+                    const loader = document.querySelector('.initial-loading');
+                    if (loader && loader.parentNode) {
+                        loader.parentNode.removeChild(loader);
+                        console.log('Loader removed');
+                    }
+                } catch (e) {
+                    console.warn('Failed to remove initial loader:', e);
+                }
             }).catch((error) => {
                 console.error('❌ Failed to start Blazor:', error);
             });

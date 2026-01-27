@@ -14,7 +14,7 @@ public static class VersionHelpers
     private static readonly Lazy<string?> _runtimeVersion = new(() =>
     {
         // Extract .NET version from RuntimeInformation.FrameworkDescription
-        // Example: ".NET 9.0.0" -> "9.0.0"
+        // Example: ".NET 10.0.0" -> "9.0.0"
         var frameworkDesc = RuntimeInformation.FrameworkDescription;
         var parts = frameworkDesc.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         return parts.Length >= 2 ? parts[1] : frameworkDesc;

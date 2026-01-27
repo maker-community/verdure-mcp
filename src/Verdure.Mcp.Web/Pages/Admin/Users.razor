@@ -1,4 +1,5 @@
 @page "/admin/users"
+@layout MainLayout
 @attribute [Authorize(Policy = "AdminPolicy")]
 @inject ISnackbar Snackbar
 @inject IStringLocalizer<SharedResources> L
