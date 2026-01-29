@@ -194,7 +194,7 @@
     <value>Technical Architecture</value>
   </data>
   <data name="Index_ArchItem1" xml:space="preserve">
-    <value>Built on .NET 9.0 and MCP protocol</value>
+    <value>Built on .NET 10.0 and MCP protocol</value>
   </data>
   <data name="Index_ArchItem2" xml:space="preserve">
     <value>Blazor WebAssembly frontend + Web API backend separation architecture</value>

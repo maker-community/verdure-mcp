@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<Sdk Name="Aspire.AppHost.Sdk" Version="9.5.2" />
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<UserSecretsId>7f90743a-a538-4cf1-9d23-c7b59ce41425</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.Hosting.AppHost" />
+		<PackageReference Include="Aspire.Hosting.PostgreSQL" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Verdure.Mcp.Server\Verdure.Mcp.Server.csproj" />
+	  <ProjectReference Include="..\Verdure.Mcp.AppHost.ServiceDefaults\Verdure.Mcp.AppHost.ServiceDefaults.csproj" />
+	</ItemGroup>
+
+</Project>

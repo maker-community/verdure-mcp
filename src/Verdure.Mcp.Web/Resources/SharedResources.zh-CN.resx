@@ -194,7 +194,7 @@
     <value>技术架构</value>
   </data>
   <data name="Index_ArchItem1" xml:space="preserve">
-    <value>基于 .NET 9.0 和 MCP 协议实现</value>
+    <value>基于 .NET 10.0 和 MCP 协议实现</value>
   </data>
   <data name="Index_ArchItem2" xml:space="preserve">
     <value>Blazor WebAssembly 前端 + Web API 后端分离架构</value>

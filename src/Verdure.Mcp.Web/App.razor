@@ -4,7 +4,7 @@
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(App).Assembly">
         <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(LandingLayout)">
                 <NotAuthorized>
                     <MudContainer Class="mt-16">
                         <MudText Typo="Typo.h5" Class="mb-4">@L["Auth_LoginRequired"]</MudText>
@@ -22,7 +22,7 @@
         </Found>
         <NotFound>
             <PageTitle>@L["NotFound_PageTitle"]</PageTitle>
-            <LayoutView Layout="@typeof(MainLayout)">
+            <LayoutView Layout="@typeof(LandingLayout)">
                 <MudContainer Class="mt-16 text-center">
                     <MudText Typo="Typo.h4" Class="mb-4">@L["NotFound_Title"]</MudText>
                     <MudText>@L["NotFound_Message"]</MudText>

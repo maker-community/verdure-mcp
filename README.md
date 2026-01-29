@@ -42,7 +42,7 @@ src/
 
 ## Prerequisites
 
-- .NET 9.0 SDK or later
+- .NET 10.0 SDK or later
 - PostgreSQL database
 - Azure OpenAI resource with DALL-E deployment (for image generation)
 
