@@ -49,10 +49,10 @@ public class ApiTokenAuthenticationHandler : AuthenticationHandler<Authenticatio
                 return AuthenticateResult.Fail("Invalid API token");
             }
 
-            if (apiToken.ExpiresAt.HasValue && apiToken.ExpiresAt.Value < DateTime.UtcNow)
-            {
-                return AuthenticateResult.Fail("API token expired");
-            }
+            //if (apiToken.ExpiresAt.HasValue && apiToken.ExpiresAt.Value < DateTime.UtcNow)
+            //{
+            //    return AuthenticateResult.Fail("API token expired");
+            //}
 
             var claims = new List<Claim>
             {
