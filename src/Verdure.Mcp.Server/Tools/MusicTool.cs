@@ -12,6 +12,7 @@ using Verdure.Mcp.Server.Settings;
 using ModelContextProtocol.Server;
 using Verdure.Mcp.Infrastructure.Services;
 using Verdure.Mcp.Server.Services;
+using Hangfire;
 
 namespace Verdure.Mcp.Server.Tools;
 
@@ -25,6 +26,7 @@ public class MusicTool
     private readonly IWebHostEnvironment _env;
     private readonly IDevicePushService _devicePushService;
     private readonly ILogger<MusicTool> _logger;
+    private readonly IBackgroundJobClient _backgroundJobClient;
     private readonly ImageStorageSettings _imageStorageSettings;
 
     public MusicTool(
@@ -32,12 +34,14 @@ public class MusicTool
         IWebHostEnvironment env,
         IDevicePushService devicePushService,
         ILogger<MusicTool> logger,
+        IBackgroundJobClient backgroundJobClient,
         IOptions<ImageStorageSettings>? imageSettings = null)
     {
         _httpContextAccessor = httpContextAccessor;
         _env = env;
         _devicePushService = devicePushService;
         _logger = logger;
+        _backgroundJobClient = backgroundJobClient;
         _imageStorageSettings = imageSettings?.Value ?? new ImageStorageSettings();
     }
 
@@ -101,17 +105,35 @@ public class MusicTool
                     : $"{hostBase}/{folder}/{Uri.EscapeDataString(fileName)}";
             }
 
+            var title = Path.GetFileNameWithoutExtension(fileName);
+
             var message = new
             {
                 action = "audio",
                 url,
-                title = Path.GetFileNameWithoutExtension(fileName)
+                title
             };
 
-            _logger.LogInformation("Pushing audio to user {UserId}: {Url}", effectiveUserId, url);
-            await _devicePushService.SendCustomMessageAsync(effectiveUserId, message, cancellationToken);
+            // Schedule push as a delayed background job so device can play result first.
+            try
+            {
 
-            return new MusicResponse { Success = true, Message = "Audio pushed", Url = url, FileName = fileName };
+                var jobDelay = TimeSpan.FromSeconds(5);
+
+                _logger.LogInformation("Scheduling audio push to user {UserId} after {Delay}s: {Url}",
+                    effectiveUserId, jobDelay.TotalSeconds, url);
+
+                _backgroundJobClient.Schedule<MusicPushBackgroundJob>(
+                    job => job.ExecuteAsync(effectiveUserId, url, title, CancellationToken.None),
+                    jobDelay);
+
+                return new MusicResponse { Success = true, Message = "Audio scheduled", Url = url, FileName = fileName };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to schedule audio push for user {UserId}", effectiveUserId);
+                return new MusicResponse { Success = false, Message = ex.Message };
+            }
         }
         catch (Exception ex)
         {
