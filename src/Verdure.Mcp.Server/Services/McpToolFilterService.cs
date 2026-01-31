@@ -15,6 +15,10 @@ public class McpToolFilterService
         ["image"] = toolName => toolName.Contains("image", StringComparison.OrdinalIgnoreCase),
         ["email"] = toolName => toolName.Contains("email", StringComparison.OrdinalIgnoreCase),
         ["debug"] = toolName => toolName.Contains("debug", StringComparison.OrdinalIgnoreCase),
+        ["music"] = toolName =>
+            toolName.Contains("music", StringComparison.OrdinalIgnoreCase)
+            || toolName.Contains("audio", StringComparison.OrdinalIgnoreCase)
+            || toolName.Contains("play", StringComparison.OrdinalIgnoreCase),
         ["all"] = _ => true // Accept all tools
     };
     

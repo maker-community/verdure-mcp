@@ -3,7 +3,7 @@
 # Optimized for minimal image size using Alpine Linux
 
 # Stage 1: Base runtime image (Alpine for minimal size)
-FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS base
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS base
 WORKDIR /app
 EXPOSE 8080
 
@@ -16,12 +16,12 @@ EXPOSE 8080
 RUN apk add --no-cache curl brotli gzip icu-libs tzdata
 
 # Stage 2: Build image
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 # Copy solution file and build configuration
-COPY ["Verdure.Mcp.sln", "."]
+COPY ["Verdure.Mcp.slnx", "."]
 COPY ["Directory.Build.props", "."]
 COPY ["Directory.Packages.props", "."]
 
