@@ -102,14 +102,16 @@ public class AgentOrchestrationService
         List<ChatMessage> recentMessages,
         string userMessage)
     {
-        // Check capabilities for keyword matching
+        // Normalize user message for comparison
         var userMessageLower = userMessage.ToLower();
         
         // Priority: match capabilities to user message
         foreach (var agent in agents)
         {
             var capabilities = JsonSerializer.Deserialize<List<string>>(agent.Capabilities) ?? new List<string>();
-            if (capabilities.Any(cap => userMessageLower.Contains(cap)))
+            // Check if any capability keyword appears in the user message
+            // Note: Chinese text comparison is case-insensitive inherently as Chinese has no case
+            if (capabilities.Any(cap => userMessageLower.Contains(cap.ToLower())))
             {
                 return agent;
             }
@@ -164,6 +166,7 @@ public class AgentOrchestrationService
             // Add current user message
             messages.Add(new { role = "user", content = userMessage });
 
+            // TODO: Integrate with Azure OpenAI Chat Completions API
             // For now, return a simple response indicating Azure OpenAI would be called
             // In production, this would call Azure OpenAI Chat Completions API
             var responseContent = $"[{agent.Name}] 我理解了您的消息。这是一个基于 {agent.Personality} 的回复。";
