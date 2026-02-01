@@ -178,7 +178,7 @@ src/
 | 层级 | 技术 |
 |------|------|
 | **后端** | ASP.NET Core 10.0, SignalR, Minimal APIs |
-| **前端** | Blazor WebAssembly, Bootstrap 5 |
+| **前端** | Blazor WebAssembly, MudBlazor (Material Design) |
 | **数据库** | PostgreSQL, Entity Framework Core |
 | **身份验证** | Keycloak, JWT Bearer Tokens |
 | **后台作业** | Hangfire |
@@ -735,7 +735,6 @@ curl -X POST http://localhost:5000/mcp \
 - [模型上下文协议](https://modelcontextprotocol.io/) - 协议规范
 - [Azure OpenAI](https://azure.microsoft.com/zh-cn/products/ai-services/openai-service) - AI 服务
 - [Anthropic Claude](https://www.anthropic.com/) - MCP 客户端参考
-- [ESP32 社区](https://github.com/maker-community) - 物联网设备支持
 - [Microsoft .NET](https://dotnet.microsoft.com/) - 强大的跨平台开发框架
 - [Keycloak](https://www.keycloak.org/) - 开源的身份认证和访问管理解决方案
 - [Entity Framework Core](https://docs.microsoft.com/ef/core/) - 现代化的 ORM 框架

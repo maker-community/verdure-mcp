@@ -178,7 +178,7 @@ src/
 | Layer | Technologies |
 |-------|-------------|
 | **Backend** | ASP.NET Core 10.0, SignalR, Minimal APIs |
-| **Frontend** | Blazor WebAssembly, Bootstrap 5 |
+| **Frontend** | Blazor WebAssembly, MudBlazor (Material Design) |
 | **Database** | PostgreSQL, Entity Framework Core |
 | **Authentication** | Keycloak, JWT Bearer Tokens |
 | **Background Jobs** | Hangfire |
@@ -735,7 +735,6 @@ Thanks to the following open source projects and technologies:
 - [Model Context Protocol](https://modelcontextprotocol.io/) - Protocol specification
 - [Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service) - AI services
 - [Anthropic Claude](https://www.anthropic.com/) - MCP client reference
-- [ESP32 Community](https://github.com/maker-community) - IoT device support
 - [Microsoft .NET](https://dotnet.microsoft.com/) - Powerful cross-platform development framework
 - [Keycloak](https://www.keycloak.org/) - Open source identity and access management solution
 - [Entity Framework Core](https://docs.microsoft.com/ef/core/) - Modern ORM framework
