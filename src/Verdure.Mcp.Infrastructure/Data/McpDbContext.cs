@@ -42,6 +42,26 @@ public class McpDbContext : DbContext
     /// </summary>
     public DbSet<DeviceBinding> DeviceBindings { get; set; } = null!;
 
+    /// <summary>
+    /// AI chat rooms for group conversations
+    /// </summary>
+    public DbSet<ChatRoom> ChatRooms { get; set; } = null!;
+
+    /// <summary>
+    /// Messages in chat rooms (from users and agents)
+    /// </summary>
+    public DbSet<ChatMessage> ChatMessages { get; set; } = null!;
+
+    /// <summary>
+    /// User memberships in chat rooms
+    /// </summary>
+    public DbSet<UserChatRoomMembership> UserChatRoomMemberships { get; set; } = null!;
+
+    /// <summary>
+    /// AI agent profiles/configurations
+    /// </summary>
+    public DbSet<AgentProfile> AgentProfiles { get; set; } = null!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -390,6 +410,181 @@ public class McpDbContext : DbContext
             entity.HasIndex(e => e.OwnerUserId);
             entity.HasIndex(e => e.TargetUserId);
             entity.HasIndex(e => new { e.DeviceId, e.TargetUserId }).IsUnique();
+        });
+
+        // Configure ChatRoom entity
+        modelBuilder.Entity<ChatRoom>(entity =>
+        {
+            entity.ToTable("chat_rooms");
+            
+            entity.HasKey(e => e.Id);
+            
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .HasDefaultValueSql("gen_random_uuid()");
+            
+            entity.Property(e => e.Name)
+                .HasColumnName("name")
+                .IsRequired()
+                .HasMaxLength(200);
+            
+            entity.Property(e => e.Description)
+                .HasColumnName("description")
+                .HasMaxLength(1000);
+            
+            entity.Property(e => e.AvatarUrl)
+                .HasColumnName("avatar_url")
+                .HasMaxLength(500);
+            
+            entity.Property(e => e.AgentIds)
+                .HasColumnName("agent_ids")
+                .HasColumnType("jsonb")
+                .IsRequired();
+            
+            entity.Property(e => e.CreatedAt)
+                .HasColumnName("created_at")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnName("updated_at");
+
+            // Indexes
+            entity.HasIndex(e => e.Name);
+        });
+
+        // Configure ChatMessage entity
+        modelBuilder.Entity<ChatMessage>(entity =>
+        {
+            entity.ToTable("chat_messages");
+            
+            entity.HasKey(e => e.Id);
+            
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .HasDefaultValueSql("gen_random_uuid()");
+            
+            entity.Property(e => e.ChatRoomId)
+                .HasColumnName("chat_room_id")
+                .IsRequired();
+            
+            entity.Property(e => e.SenderId)
+                .HasColumnName("sender_id")
+                .IsRequired()
+                .HasMaxLength(255);
+            
+            entity.Property(e => e.IsAgent)
+                .HasColumnName("is_agent")
+                .IsRequired();
+            
+            entity.Property(e => e.Content)
+                .HasColumnName("content")
+                .IsRequired();
+            
+            entity.Property(e => e.Metadata)
+                .HasColumnName("metadata")
+                .HasColumnType("jsonb");
+            
+            entity.Property(e => e.CreatedAt)
+                .HasColumnName("created_at")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            // Foreign key relationship
+            entity.HasOne(e => e.ChatRoom)
+                .WithMany()
+                .HasForeignKey(e => e.ChatRoomId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Indexes
+            entity.HasIndex(e => e.ChatRoomId);
+            entity.HasIndex(e => e.SenderId);
+            entity.HasIndex(e => e.CreatedAt);
+        });
+
+        // Configure UserChatRoomMembership entity
+        modelBuilder.Entity<UserChatRoomMembership>(entity =>
+        {
+            entity.ToTable("user_chat_room_memberships");
+            
+            entity.HasKey(e => e.Id);
+            
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .HasDefaultValueSql("gen_random_uuid()");
+            
+            entity.Property(e => e.UserId)
+                .HasColumnName("user_id")
+                .IsRequired()
+                .HasMaxLength(255);
+            
+            entity.Property(e => e.ChatRoomId)
+                .HasColumnName("chat_room_id")
+                .IsRequired();
+            
+            entity.Property(e => e.IsDefault)
+                .HasColumnName("is_default")
+                .HasDefaultValue(false);
+            
+            entity.Property(e => e.JoinedAt)
+                .HasColumnName("joined_at")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            // Foreign key relationship
+            entity.HasOne(e => e.ChatRoom)
+                .WithMany()
+                .HasForeignKey(e => e.ChatRoomId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Indexes
+            entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => e.ChatRoomId);
+            entity.HasIndex(e => new { e.UserId, e.ChatRoomId }).IsUnique();
+        });
+
+        // Configure AgentProfile entity
+        modelBuilder.Entity<AgentProfile>(entity =>
+        {
+            entity.ToTable("agent_profiles");
+            
+            entity.HasKey(e => e.Id);
+            
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .HasDefaultValueSql("gen_random_uuid()");
+            
+            entity.Property(e => e.AgentId)
+                .HasColumnName("agent_id")
+                .IsRequired()
+                .HasMaxLength(100);
+            
+            entity.Property(e => e.Name)
+                .HasColumnName("name")
+                .IsRequired()
+                .HasMaxLength(100);
+            
+            entity.Property(e => e.Avatar)
+                .HasColumnName("avatar")
+                .HasMaxLength(500);
+            
+            entity.Property(e => e.Personality)
+                .HasColumnName("personality")
+                .IsRequired()
+                .HasMaxLength(1000);
+            
+            entity.Property(e => e.SystemPrompt)
+                .HasColumnName("system_prompt")
+                .IsRequired();
+            
+            entity.Property(e => e.Capabilities)
+                .HasColumnName("capabilities")
+                .HasColumnType("jsonb")
+                .IsRequired();
+            
+            entity.Property(e => e.CreatedAt)
+                .HasColumnName("created_at")
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            // Indexes
+            entity.HasIndex(e => e.AgentId).IsUnique();
         });
     }
 }
