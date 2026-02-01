@@ -16,6 +16,20 @@
 
 ---
 
+## 🌐 Online Services
+
+You can directly access our running Verdure MCP services:
+
+- **🚀 Verdure MCP Service**: [https://mcp.verdure-hiro.cn/](https://mcp.verdure-hiro.cn/)
+  - MCP protocol server with AI tool integration
+  - Supports image generation, email sending, audio playback, and more
+
+- **🤖 XiaoZhi Bridge Service**: [https://xiaozhi.verdure-hiro.cn/](https://xiaozhi.verdure-hiro.cn/)
+  - ESP32 device bridge service
+  - SignalR real-time communication hub
+
+---
+
 ## 📸 Screenshots
 
 <div align="center">

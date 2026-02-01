@@ -16,6 +16,20 @@
 
 ---
 
+## 🌐 在线服务
+
+您可以直接访问我们正在运行的 Verdure MCP 服务：
+
+- **🚀 Verdure MCP 服务**：[https://mcp.verdure-hiro.cn/](https://mcp.verdure-hiro.cn/)
+  - MCP 协议服务器，提供 AI 工具集成
+  - 支持图像生成、邮件发送、音频播放等功能
+
+- **🤖 小智转接服务**：[https://xiaozhi.verdure-hiro.cn/](https://xiaozhi.verdure-hiro.cn/)
+  - ESP32 设备转接服务
+  - SignalR 实时通信中心
+
+---
+
 ## 📸 项目展示
 
 <div align="center">
