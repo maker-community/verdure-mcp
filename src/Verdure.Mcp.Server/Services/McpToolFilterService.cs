@@ -19,6 +19,9 @@ public class McpToolFilterService
             toolName.Contains("music", StringComparison.OrdinalIgnoreCase)
             || toolName.Contains("audio", StringComparison.OrdinalIgnoreCase)
             || toolName.Contains("play", StringComparison.OrdinalIgnoreCase),
+        ["chat"] = toolName =>
+            toolName.Contains("chat", StringComparison.OrdinalIgnoreCase)
+            || toolName.Contains("group", StringComparison.OrdinalIgnoreCase),
         ["all"] = _ => true // Accept all tools
     };
     

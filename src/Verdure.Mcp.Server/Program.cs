@@ -70,10 +70,16 @@ builder.Services.AddScoped<IDevicePushService, DevicePushServiceImpl>();
 // Add MCP tool filter service
 builder.Services.AddSingleton<McpToolFilterService>();
 
+// Add AI Group Chat services
+builder.Services.AddScoped<AgentOrchestrationService>();
+builder.Services.AddScoped<ChatRoomSeeder>();
+
 // Add background job
 builder.Services.AddScoped<ImageGenerationBackgroundJob>();
 // Background job for delayed music/audio pushes
 builder.Services.AddScoped<MusicPushBackgroundJob>();
+// Background job for chat message processing
+builder.Services.AddScoped<ChatMessageBackgroundJob>();
 
 // Add MCP Server with HTTP transport and route-based tool filtering
 builder.Services.AddMcpServer()
@@ -210,6 +216,10 @@ using (var scope = app.Services.CreateScope())
     {
         await dbContext.Database.MigrateAsync();
         app.Logger.LogInformation("Database migrations applied successfully");
+        
+        // Seed chat rooms and agent profiles
+        var seeder = scope.ServiceProvider.GetRequiredService<ChatRoomSeeder>();
+        await seeder.SeedDataAsync();
     }
     catch (Exception ex)
     {
