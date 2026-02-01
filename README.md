@@ -705,20 +705,52 @@ curl -X POST http://localhost:5000/mcp \
 
 ---
 
+## � 社区与支持
+
+### 加入我们的社区，获取帮助和分享经验！
+
+<div align="center">
+
+| 💬 **QQ 交流群** | 📺 **B站 UP主** | 🐙 **GitHub 社区** |
+|:---:|:---:|:---:|
+| **绿荫DIY硬件交流群** | **绿荫阿广** | **Maker Community** |
+| 群号：**1023487000** | [访问主页](https://space.bilibili.com/25228512) | [访问组织](https://github.com/maker-community) |
+| 讨论 AI、MCP 和硬件 DIY | 获取更多 AI 和创客教程 | 贡献代码，参与开发 |
+
+</div>
+
+### 📮 联系方式
+
+- **📧 问题反馈**: [GitHub Issues](https://github.com/maker-community/verdure-mcp/issues)
+- **💡 功能建议**: [GitHub Discussions](https://github.com/maker-community/verdure-mcp/discussions)
+- **🎥 视频教程**: [B站 @绿荫阿广](https://space.bilibili.com/25228512)
+- **🔗 小智转接平台**: [Verdure MCP for XiaoZhi](https://github.com/maker-community/verdure-mcp-for-xiaozhi) - 专为小智 AI 助手设计的 MCP 转接服务，提供在线平台和多租户 SaaS 解决方案
+
+---
+
 ## 🌟 致谢
+
+感谢以下开源项目和技术：
 
 - [模型上下文协议](https://modelcontextprotocol.io/) - 协议规范
 - [Azure OpenAI](https://azure.microsoft.com/zh-cn/products/ai-services/openai-service) - AI 服务
 - [Anthropic Claude](https://www.anthropic.com/) - MCP 客户端参考
 - [ESP32 社区](https://github.com/maker-community) - 物联网设备支持
+- [Microsoft .NET](https://dotnet.microsoft.com/) - 强大的跨平台开发框架
+- [Keycloak](https://www.keycloak.org/) - 开源的身份认证和访问管理解决方案
+- [Entity Framework Core](https://docs.microsoft.com/ef/core/) - 现代化的 ORM 框架
+
+特别感谢所有支持和使用本项目的开发者和创客！
+
+⭐ **如果这个项目对你有帮助，请给我们一个 Star！** ⭐
 
 ---
 
 <div align="center">
 
-**由 Verdure MCP 团队用 🌿 精心打造**
+**Made with ❤️ by [绿荫阿广](https://space.bilibili.com/25228512) and the [Maker Community](https://github.com/maker-community)**
 
-[报告 Bug](https://github.com/maker-community/verdure-mcp/issues) • [请求功能](https://github.com/maker-community/verdure-mcp/issues)
+[报告 Bug](https://github.com/maker-community/verdure-mcp/issues) • [请求功能](https://github.com/maker-community/verdure-mcp/issues) • [🏠 返回顶部](#-verdure-mcp-server)
 
 </div>
 

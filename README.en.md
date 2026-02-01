@@ -705,19 +705,51 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
+## � Community & Support
+
+### Join our community for help and sharing!
+
+<div align="center">
+
+| 💬 **QQ Group** | 📺 **Bilibili** | 🐙 **GitHub Community** |
+|:---:|:---:|:---:|
+| **Greenery DIY Hardware Group** | **绿荫阿广 Verdure Hiro** | **Maker Community** |
+| Group: **1023487000** | [Visit Channel](https://space.bilibili.com/25228512) | [Visit Org](https://github.com/maker-community) |
+| Discuss AI, MCP and Hardware DIY | Get AI & Maker Tutorials | Contribute Code, Join Development |
+
+</div>
+
+### 📮 Contact
+
+- **📧 Issue Reports**: [GitHub Issues](https://github.com/maker-community/verdure-mcp/issues)
+- **💡 Feature Requests**: [GitHub Discussions](https://github.com/maker-community/verdure-mcp/discussions)
+- **🎥 Video Tutorials**: [Bilibili @绿荫阿广 Verdure Hiro](https://space.bilibili.com/25228512)
+- **🔗 XiaoZhi Bridge Platform**: [Verdure MCP for XiaoZhi](https://github.com/maker-community/verdure-mcp-for-xiaozhi) - MCP bridge service designed for XiaoZhi AI Assistant, with online platform and multi-tenant SaaS solution
+
+---
+
 ## 🌟 Acknowledgments
+
+Thanks to the following open source projects and technologies:
 
 - [Model Context Protocol](https://modelcontextprotocol.io/) - Protocol specification
 - [Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service) - AI services
 - [Anthropic Claude](https://www.anthropic.com/) - MCP client reference
 - [ESP32 Community](https://github.com/maker-community) - IoT device support
+- [Microsoft .NET](https://dotnet.microsoft.com/) - Powerful cross-platform development framework
+- [Keycloak](https://www.keycloak.org/) - Open source identity and access management solution
+- [Entity Framework Core](https://docs.microsoft.com/ef/core/) - Modern ORM framework
+
+Special thanks to all developers and makers who support and use this project!
+
+⭐ **If this project helps you, please give us a Star!** ⭐
 
 ---
 
 <div align="center">
 
-**Made with 🌿 by the Verdure MCP Team**
+**Made with ❤️ by [绿荫阿广 Verdure Hiro](https://space.bilibili.com/25228512) and the [Maker Community](https://github.com/maker-community)**
 
-[Report Bug](https://github.com/maker-community/verdure-mcp/issues) • [Request Feature](https://github.com/maker-community/verdure-mcp/issues)
+[Report Bug](https://github.com/maker-community/verdure-mcp/issues) • [Request Feature](https://github.com/maker-community/verdure-mcp/issues) • [🏠 Back to Top](#-verdure-mcp-server)
 
 </div>
