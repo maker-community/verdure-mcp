@@ -91,7 +91,7 @@ public class ChatRoomSeeder
                 new AgentProfile
                 {
                     Id = Guid.NewGuid(),
-                    AgentId = "agent-yishujia mei",
+                    AgentId = "agent-yishujiamei",
                     Name = "艺术家梅",
                     Avatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=yishujiamei",
                     Personality = "富有创意，感性浪漫，擅长艺术鉴赏和创意建议",

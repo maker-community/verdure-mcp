@@ -171,7 +171,7 @@ public class AgentOrchestrationService : IAgentOrchestrationService
                 $"让我来解释一下'{message}'的相关知识点。",
                 $"'{message}'是个很值得研究的主题，让我为你详细说明。"
             },
-            "agent-yishujia mei" => new[]
+            "agent-yishujiamei" => new[]
             {
                 $"'{message}'让我想到了一幅美丽的画面～",
                 $"如果要表现'{message}'，我觉得可以用充满创意的方式！",

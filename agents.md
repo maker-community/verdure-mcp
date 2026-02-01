@@ -639,7 +639,7 @@ Verdure MCP 新增 AI 群组交流功能，允许用户通过 MCP 工具与多�
 | 小甜甜 | agent-xiaotiantian | 甜美可爱，温柔体贴 | 情感支持、倾听、闲聊 | - |
 | 御姐雅 | agent-yujieya | 成熟稳重，知性优雅 | 深度对话、人生建议 | - |
 | 才女琳 | agent-cainvlin | 博学多才，逻辑清晰 | 知识问答、学习辅导 | - |
-| 艺术家梅 | agent-yishujia mei | 富有创意，感性浪漫 | 创意启发、艺术鉴赏 | 生图 |
+| 艺术家梅 | agent-yishujiamei | 富有创意，感性浪漫 | 创意启发、艺术鉴赏 | 生图 |
 | 音乐家莉 | agent-yinyuejiali | 文艺浪漫，感性细腻 | 音乐推荐、情感表达 | 音乐 |
 | 活泼妹 | agent-huopo | 活泼开朗，幽默风趣 | 闲聊、讲笑话 | - |
 
