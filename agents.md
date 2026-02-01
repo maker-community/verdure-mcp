@@ -60,10 +60,12 @@ https://github.com/maker-community/esp-signalr-example/tree/main/signalr-server
 2. **EmailTool** - SMTP 邮件发送
 3. **MusicTool** - 随机音频推送到用户设备
 4. **DebugTool** - 请求调试与 Header 检查
+5. **AiGroupChatTool** - AI 群组交流（多智能体对话）
 
 **后台任务：**
 - `ImageGenerationBackgroundJob` - 异步图像生成（Hangfire）
 - `MusicPushBackgroundJob` - 延迟音频推送（Hangfire）
+- `ChatMessageBackgroundJob` - AI 智能体回复处理（Hangfire）
 
 ### 3. SignalR 设备中心 (核心功能)
 **Hub 文件：** [src/Verdure.Mcp.Server/Hubs/DeviceHub.cs](src/Verdure.Mcp.Server/Hubs/DeviceHub.cs)
@@ -135,6 +137,10 @@ DeviceBinding       // 用户-设备绑定关系 (OwnerUserId, TargetUserId, Sta
 ApiToken            // API 访问令牌
 ImageGenerationTask // 图像生成任务队列
 McpService          // MCP 服务配置
+ChatRoom            // AI 群组聊天室
+ChatMessage         // 聊天消息（用户+智能体）
+UserChatRoomMembership // 用户-群组关系
+AgentProfile        // AI 智能体配置
 ```
 
 **枚举定义：**
@@ -344,8 +350,45 @@ DeviceHub.RegisterDevice()
 
 ### ✅ 5. 工具分类过滤
 - 路由参数驱动 (`/mcp/{toolCategory}`)
-- 支持分类：all / image / email / debug / music
+- 支持分类：all / image / email / debug / music / chat
 - 动态工具过滤器
+
+---
+
+## 当前实现状态 (✅ 已完成功能)
+
+### 6. AI 群组交流功能 (新增)
+**关键文件：** [Tools/AiGroupChatTool.cs](src/Verdure.Mcp.Server/Tools/AiGroupChatTool.cs)
+
+**功能概述：**
+- ✅ 多智能体群组对话系统
+- ✅ 5个预设AI智能体（小甜甜、御姐雅、才女琳、艺术家梅、音乐家莉）
+- ✅ 智能体自动选择（基于能力匹配 + 轮询）
+- ✅ 消息持久化存储（PostgreSQL）
+- ✅ SignalR 实时推送智能体回复
+- ✅ 支持群组管理（列表、加入、设置默认、历史查询）
+
+**MCP 工具：**
+- `chat_with_group` - 与AI群组交互的统一入口
+  - `action=send` - 发送消息
+  - `action=list_rooms` - 列出群组
+  - `action=join` - 加入群组
+  - `action=set_default` - 设置默认群组
+  - `action=get_history` - 获取历史消息
+
+**数据模型：**
+```csharp
+ChatRoom             // 群组信息
+ChatMessage          // 消息记录（用户+智能体）
+UserChatRoomMembership  // 用户-群组关系
+AgentProfile         // 智能体配置
+```
+
+**后台任务：**
+- `ChatMessageBackgroundJob` - 异步处理智能体回复
+- 自动通过 SignalR 推送回复到用户设备
+
+**详细文档：** [AI_GROUP_CHAT_GUIDE.md](docs/AI_GROUP_CHAT_GUIDE.md)
 
 ---
 
@@ -399,6 +442,7 @@ DeviceHub.RegisterDevice()
 ### 项目内部文档
 - [SIGNALR_DEVICE_HUB.md](docs/SIGNALR_DEVICE_HUB.md) - DeviceHub 完整 API 文档
 - [TOOL_CATEGORY_GUIDE.md](docs/TOOL_CATEGORY_GUIDE.md) - MCP 工具分类指南
+- [AI_GROUP_CHAT_GUIDE.md](docs/AI_GROUP_CHAT_GUIDE.md) - AI 群组交流使用指南
 - [CLAIMS_PRINCIPAL_EXTENSIONS.md](docs/CLAIMS_PRINCIPAL_EXTENSIONS.md) - 认证扩展实现
 - [ROLE_IMPLEMENTATION_SUMMARY.md](docs/ROLE_IMPLEMENTATION_SUMMARY.md) - 角色映射实现
 
