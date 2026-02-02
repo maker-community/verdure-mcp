@@ -118,7 +118,7 @@ public class MusicTool
             try
             {
 
-                var jobDelay = TimeSpan.FromSeconds(5);
+                var jobDelay = TimeSpan.FromSeconds(1);
 
                 _logger.LogInformation("Scheduling audio push to user {UserId} after {Delay}s: {Url}",
                     effectiveUserId, jobDelay.TotalSeconds, url);

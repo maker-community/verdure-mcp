@@ -125,30 +125,39 @@ public class ChatMessageBackgroundJob
                 .AsNoTracking()
                 .FirstOrDefaultAsync(cr => cr.Id == chatRoomId, cancellationToken);
 
-            // Push response to user via SignalR
-            var pushMessage = new
+            // Push response to user via SignalR (xiaozhi 协议格式)
+            // 1. 先发送通知消息
+            var notificationMessage = new
+            {
+                action = "notification",
+                title = "新消息",
+                content = $"{agentResponse.AgentName}: {agentResponse.Content.Substring(0, Math.Min(30, agentResponse.Content.Length))}...",
+                emotion = "happy",
+                sound = "message"
+            };
+            await _devicePushService.SendCustomMessageAsync(userId, notificationMessage, cancellationToken);
+
+            // 2. 再发送群聊消息
+            var groupChatMessage = new
             {
                 action = "group_chat",
-                roomId = chatRoomId,
+                roomId = chatRoomId.ToString(),
                 roomName = chatRoom?.Name ?? "AI Group Chat",
-                message = new
-                {
-                    id = agentMessage.Id,
-                    senderId = agentResponse.AgentId,
-                    senderName = agentResponse.AgentName,
-                    content = agentResponse.Content,
-                    isAgent = true,
-                    timestamp = agentMessage.CreatedAt,
-                    attachments = attachments.Count > 0 ? attachments : null,
-                    metadata = agentResponse.Metadata
-                }
+                id = agentMessage.Id.ToString(),
+                senderId = agentResponse.AgentId,
+                senderName = agentResponse.AgentName,
+                content = agentResponse.Content,
+                isAgent = true,
+                timestamp = agentMessage.CreatedAt,
+                attachments = attachments.Count > 0 ? attachments : null,
+                metadata = agentResponse.Metadata
             };
 
-            await _devicePushService.SendCustomMessageAsync(userId, pushMessage, cancellationToken);
+            await _devicePushService.SendCustomMessageAsync(userId, groupChatMessage, cancellationToken);
 
             _logger.LogInformation(
-                "Agent response pushed to user {UserId} via SignalR",
-                userId);
+                "Agent response pushed to user {UserId} via SignalR, roomId={ChatRoomId}",
+                userId, chatRoomId);
         }
         catch (Exception ex)
         {
