@@ -61,6 +61,10 @@ builder.Services.AddScoped<ITokenValidationService, TokenValidationService>();
 builder.Services.AddScoped<IMcpServiceService, McpServiceService>();
 builder.Services.AddScoped<IImageStorageService, ImageStorageService>();
 
+// Add AI Group Chat services
+builder.Services.AddScoped<IAgentOrchestrationService, AgentOrchestrationService>();
+builder.Services.AddScoped<ChatRoomSeeder>();
+
 // Add SignalR for device hub
 builder.Services.AddSignalR();
 
@@ -74,6 +78,8 @@ builder.Services.AddSingleton<McpToolFilterService>();
 builder.Services.AddScoped<ImageGenerationBackgroundJob>();
 // Background job for delayed music/audio pushes
 builder.Services.AddScoped<MusicPushBackgroundJob>();
+// Background job for AI group chat messages
+builder.Services.AddScoped<ChatMessageBackgroundJob>();
 
 // Add MCP Server with HTTP transport and route-based tool filtering
 builder.Services.AddMcpServer()
@@ -214,6 +220,21 @@ using (var scope = app.Services.CreateScope())
     catch (Exception ex)
     {
         app.Logger.LogWarning(ex, "Could not apply migrations. Database may not be available or migrations may not exist yet.");
+    }
+
+    // Seed AI group chat data in development environment
+    if (app.Environment.IsDevelopment())
+    {
+        try
+        {
+            var seeder = scope.ServiceProvider.GetRequiredService<ChatRoomSeeder>();
+            await seeder.SeedAsync();
+            app.Logger.LogInformation("AI group chat seed data initialized");
+        }
+        catch (Exception ex)
+        {
+            app.Logger.LogWarning(ex, "Could not seed AI group chat data");
+        }
     }
 }
 

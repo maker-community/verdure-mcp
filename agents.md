@@ -612,3 +612,205 @@ dotnet run --project src/Verdure.Mcp.Server --verbosity detailed
 **文档维护责任：** 项目 Tech Lead  
 **更新频率：** 随版本发布更新  
 **反馈渠道：** 通过 Issue 或 Pull Request 提交文档改进建议
+
+---
+
+## AI 群组交流功能
+
+### 功能概述
+**状态**: ✅ 已实现（v1.0.0 - 2026-02-01）
+
+Verdure MCP 新增 AI 群组交流功能，允许用户通过 MCP 工具与多个智能体进行协作对话。系统预设了 6 位具有不同性格和专长的 AI 智能体，能够根据用户消息内容自动选择最合适的智能体进行响应。
+
+**关键特性:**
+- ✅ 群组管理（列表、加入、设置默认）
+- ✅ 智能体自动选择（基于消息内容和能力匹配）
+- ✅ 消息持久化存储（PostgreSQL）
+- ✅ 实时推送（SignalR）
+- ✅ 工具调用支持（生图、音乐）
+- ✅ 历史消息查询
+
+### 预设智能体
+
+系统包含 6 位 AI 智能体，每位都有独特的性格和专长：
+
+| 智能体 | Agent ID | 性格 | 擅长领域 | 工具能力 |
+|--------|----------|------|----------|----------|
+| 小甜甜 | agent-xiaotiantian | 甜美可爱，温柔体贴 | 情感支持、倾听、闲聊 | - |
+| 御姐雅 | agent-yujieya | 成熟稳重，知性优雅 | 深度对话、人生建议 | - |
+| 才女琳 | agent-cainvlin | 博学多才，逻辑清晰 | 知识问答、学习辅导 | - |
+| 艺术家梅 | agent-yishujiamei | 富有创意，感性浪漫 | 创意启发、艺术鉴赏 | 生图 |
+| 音乐家莉 | agent-yinyuejiali | 文艺浪漫，感性细腻 | 音乐推荐、情感表达 | 音乐 |
+| 活泼妹 | agent-huopo | 活泼开朗，幽默风趣 | 闲聊、讲笑话 | - |
+
+### MCP 工具
+
+**工具名称**: `chat_with_group`
+
+**支持的操作:**
+- `send` - 发送消息到群组（默认）
+- `list_rooms` - 列出已加入的群组
+- `join` - 加入指定群组
+- `set_default` - 设置默认群组
+- `get_history` - 获取历史消息
+
+**示例调用:**
+```bash
+# 发送消息
+POST /mcp/all
+X-User-Id: user-123
+Content-Type: application/json
+
+{
+  "tool": "chat_with_group",
+  "params": {
+    "message": "今天心情不太好，有谁能陪我聊聊天吗？",
+    "action": "send"
+  }
+}
+```
+
+**响应流程:**
+1. 用户消息保存到数据库
+2. 创建 Hangfire 后台任务（立即返回响应）
+3. 后台任务选择合适的智能体
+4. 生成回复并处理工具调用
+5. 通过 SignalR 推送回复到用户设备
+
+### SignalR 消息格式
+
+**群组消息推送:**
+```json
+{
+  "action": "group_chat",
+  "roomId": "uuid",
+  "roomName": "日常交流群",
+  "message": {
+    "id": "uuid",
+    "senderId": "agent-xiaotiantian",
+    "senderName": "小甜甜",
+    "content": "哎呀，听到你说心情不好，我好心疼呀～",
+    "isAgent": true,
+    "timestamp": "2026-02-01T10:30:00Z",
+    "attachments": [
+      {
+        "type": "image",
+        "url": "https://cdn.example.com/generated/xxx.png"
+      }
+    ],
+    "metadata": {
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=xiaotiantian",
+      "personality": "甜美可爱，温柔体贴"
+    }
+  }
+}
+```
+
+### 数据库架构
+
+新增 4 张表支持 AI 群组功能：
+
+1. **chat_rooms** - 群组信息
+2. **chat_messages** - 聊天消息
+3. **user_chat_room_memberships** - 用户群组关系
+4. **agent_profiles** - 智能体配置
+
+**迁移文件**: `20260201125600_AddAiGroupChat.cs`
+
+### 关键文件
+
+- **MCP 工具**: [AiGroupChatTool.cs](src/Verdure.Mcp.Server/Tools/AiGroupChatTool.cs)
+- **智能体编排**: [AgentOrchestrationService.cs](src/Verdure.Mcp.Server/Services/AgentOrchestrationService.cs)
+- **后台任务**: [ChatMessageBackgroundJob.cs](src/Verdure.Mcp.Server/Tools/ChatMessageBackgroundJob.cs)
+- **数据初始化**: [ChatRoomSeeder.cs](src/Verdure.Mcp.Server/Services/ChatRoomSeeder.cs)
+- **实体定义**: [Domain/Entities/](src/Verdure.Mcp.Domain/Entities/) (ChatRoom, ChatMessage, UserChatRoomMembership, AgentProfile)
+
+### 使用场景示例
+
+#### 场景 1: 情感倾诉
+```json
+{
+  "message": "今天工作压力好大，感觉快要崩溃了..."
+}
+```
+**响应**: 小甜甜或活泼妹提供情感支持
+
+#### 场景 2: 知识问答
+```json
+{
+  "message": "能帮我解释一下什么是区块链吗？"
+}
+```
+**响应**: 才女琳提供专业解答
+
+#### 场景 3: 创意生图
+```json
+{
+  "message": "我想要一张温馨的咖啡店画面"
+}
+```
+**响应**: 艺术家梅回复并生成图片
+
+#### 场景 4: 音乐推荐
+```json
+{
+  "message": "推荐一些放松的音乐给我听吧"
+}
+```
+**响应**: 音乐家莉推荐并播放音乐
+
+### 技术实现
+
+**智能体选择机制:**
+1. **能力匹配优先** - 检测消息中的关键词（图、画、音乐等）
+2. **轮询分配** - 无明确匹配时使用轮询，确保所有智能体都有响应机会
+
+**响应生成:**
+- 当前版本使用预定义响应模板，基于智能体性格特点
+- 未来可集成 Azure OpenAI GPT-4 实现更智能的对话
+
+**异步处理:**
+- 使用 Hangfire 后台任务处理消息
+- 响应时间 < 200ms（立即返回处理状态）
+- 智能体推理 + 推送总耗时 < 10s
+
+### 开发环境初始化
+
+在开发环境中，系统会自动：
+1. 创建默认群组："日常交流群"
+2. 初始化 6 个智能体配置
+3. 配置智能体能力和系统提示词
+
+**触发时机**: 应用启动时，如果数据库中没有群组和智能体数据
+
+### 未来增强计划
+
+以下功能可在后续版本实现：
+
+1. **Microsoft Agent Framework 集成**
+   - 使用 `Microsoft.Agents.AI` 进行智能体编排
+   - 支持 Hand-Off 智能体切换
+   - 实现真正的 GroupChat 机制
+
+2. **Azure OpenAI 深度集成**
+   - 使用 GPT-4 生成动态回复
+   - 基于上下文的智能对话
+   - 智能体个性化微调
+
+3. **更多智能体能力**
+   - 网络搜索
+   - 文件处理
+   - 日程管理
+   - 邮件发送
+
+4. **群组管理增强**
+   - 创建自定义群组
+   - 邀请其他用户
+   - 群组权限配置
+   - 智能体动态添加/移除
+
+### 详细文档
+
+完整使用指南请参考: [AI_GROUP_CHAT_GUIDE.md](docs/AI_GROUP_CHAT_GUIDE.md)
+
+---
