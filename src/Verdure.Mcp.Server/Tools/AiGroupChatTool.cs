@@ -43,9 +43,9 @@ public class AiGroupChatTool
     public async Task<GroupChatResponse> ChatWithGroup(
         [Description("发送给群组的消息内容（当 action=send 时必需）")] string? message = null,
         [Description("群组 ID（可选，默认使用用户当前默认群组）")] string? roomId = null,
-        [Description("操作类型：send(发送消息), list_rooms(列出群组), join(加入群组), set_default(设置默认群组), get_history(获取历史)")] 
+        [Description("操作类型：send(发送消息), list_rooms(已加入的群组), discover(发现所有可用群组), join(加入群组), set_default(设置默认群组), get_history(获取历史)")] 
         string action = "send",
-        [Description("每页数量（用于 list_rooms 和 get_history）")] int limit = 3,
+        [Description("每页数量（用于 list_rooms, discover 和 get_history）")] int limit = 3,
         CancellationToken cancellationToken = default)
     {
         try
@@ -69,13 +69,14 @@ public class AiGroupChatTool
             {
                 "send" => await HandleSendMessageAsync(userId, message, roomId, cancellationToken),
                 "list_rooms" => await HandleListRoomsAsync(userId, limit, cancellationToken),
+                "discover" => await HandleDiscoverRoomsAsync(userId, limit, cancellationToken),
                 "join" => await HandleJoinRoomAsync(userId, roomId, cancellationToken),
                 "set_default" => await HandleSetDefaultRoomAsync(userId, roomId, cancellationToken),
                 "get_history" => await HandleGetHistoryAsync(userId, roomId, limit, cancellationToken),
                 _ => new GroupChatResponse
                 {
                     Success = false,
-                    Message = $"未知的操作类型: {action}。支持的操作: send, list_rooms, join, set_default, get_history"
+                    Message = $"未知的操作类型: {action}。支持的操作: send, list_rooms, discover, join, set_default, get_history"
                 }
             };
         }
@@ -212,7 +213,52 @@ public class AiGroupChatTool
         return new GroupChatResponse
         {
             Success = true,
-            Message = $"找到 {rooms.Count} 个群组",
+            Message = $"找到 {rooms.Count} 个已加入的群组",
+            Data = new { rooms = rooms }
+        };
+    }
+
+    private async Task<GroupChatResponse> HandleDiscoverRoomsAsync(
+        string userId,
+        int limit,
+        CancellationToken cancellationToken)
+    {
+        // Get user's joined room IDs
+        var joinedRoomIds = await _dbContext.UserChatRoomMemberships
+            .Where(m => m.UserId == userId)
+            .Select(m => m.ChatRoomId)
+            .ToListAsync(cancellationToken);
+
+        // Get all available rooms
+        var allRooms = await _dbContext.ChatRooms
+            .AsNoTracking()
+            .OrderBy(r => r.Name)
+            .Take(Math.Min(limit, 20)) // Max 20 rooms
+            .ToListAsync(cancellationToken);
+
+        // Get agents info for display
+        var agentIds = allRooms.SelectMany(r => r.AgentIds).Distinct().ToList();
+        var agents = await _dbContext.AgentProfiles
+            .AsNoTracking()
+            .Where(a => agentIds.Contains(a.AgentId))
+            .ToDictionaryAsync(a => a.AgentId, a => a.Name, cancellationToken);
+
+        var rooms = allRooms.Select(r => new
+        {
+            id = r.Id,
+            name = r.Name,
+            description = r.Description,
+            avatarUrl = r.AvatarUrl,
+            agentCount = r.AgentIds.Count,
+            agentNames = r.AgentIds.Select(agentId => agents.GetValueOrDefault(agentId, agentId)).ToList(),
+            isJoined = joinedRoomIds.Contains(r.Id),
+            createdAt = r.CreatedAt
+        }).ToList();
+
+        return new GroupChatResponse
+        {
+            Success = true,
+            Message = $"发现 {rooms.Count} 个可用群组（{rooms.Count(r => r.isJoined)} 个已加入）",
             Data = new { rooms = rooms }
         };
     }
