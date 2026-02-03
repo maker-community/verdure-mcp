@@ -65,6 +65,7 @@ public class AgentOrchestrationService : IAgentOrchestrationService
 
             // Execute workflow using InProcessExecution
             var responses = new List<AgentResponseContent>();
+            var toolCalls = new List<ToolCall>();
             string? currentAgentId = null;
             string? currentAgentName = null;
             var currentContent = new System.Text.StringBuilder();
@@ -114,6 +115,56 @@ public class AgentOrchestrationService : IAgentOrchestrationService
                         if (!string.IsNullOrEmpty(textContent))
                         {
                             currentContent.Append(textContent);
+                        }
+
+                        // Capture tool calls from message contents
+                        if (update.Contents != null)
+                        {
+                            foreach (var content in update.Contents)
+                            {
+                                if (content is FunctionCallContent functionCall)
+                                {
+                                    _logger.LogInformation("Tool call detected: {ToolName} by agent {AgentId}",
+                                        functionCall.Name, currentAgentId);
+
+                                    var parameters = new Dictionary<string, object>();
+                                    if (functionCall.Arguments != null)
+                                    {
+                                        try
+                                        {
+                                            var jsonString = functionCall.Arguments.ToString();
+                                            if (!string.IsNullOrEmpty(jsonString))
+                                            {
+                                                var argsDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(jsonString);
+                                                if (argsDict != null)
+                                                {
+                                                    foreach (var kvp in argsDict)
+                                                    {
+                                                        parameters[kvp.Key] = kvp.Value.ToString();
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            _logger.LogWarning(ex, "Failed to parse function arguments");
+                                        }
+                                    }
+
+                                    toolCalls.Add(new ToolCall
+                                    {
+                                        ToolName = functionCall.Name,
+                                        Parameters = parameters
+                                    });
+                                }
+                                else if (content is FunctionResultContent functionResult)
+                                {
+                                    var resultStr = functionResult.Result?.ToString();
+                                    _logger.LogInformation("Tool result received, CallId: {CallId}, Result: {Result}",
+                                        functionResult.CallId,
+                                        resultStr != null && resultStr.Length > 100 ? resultStr.Substring(0, 100) + "..." : resultStr);
+                                }
+                            }
                         }
                     }
                     // Handle final workflow output
@@ -172,7 +223,7 @@ public class AgentOrchestrationService : IAgentOrchestrationService
                     ["avatar"] = finalAgentProfile?.Avatar ?? string.Empty,
                     ["personality"] = finalAgentProfile?.Personality ?? string.Empty
                 },
-                ToolCalls = null // Tool calls are handled by the framework automatically
+                ToolCalls = toolCalls.Count > 0 ? toolCalls : null // Include tool calls
             };
         }
         catch (Exception ex)

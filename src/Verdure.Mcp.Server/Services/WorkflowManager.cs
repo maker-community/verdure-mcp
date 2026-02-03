@@ -15,6 +15,7 @@ public class WorkflowManager
 {
     private readonly IChatClient _chatClient;
     private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly McpToolService _mcpToolService;
     private readonly ILogger<WorkflowManager> _logger;
     
     // Cache workflows by chat room ID
@@ -24,10 +25,12 @@ public class WorkflowManager
     public WorkflowManager(
         IChatClient chatClient,
         IServiceScopeFactory serviceScopeFactory,
+        McpToolService mcpToolService,
         ILogger<WorkflowManager> logger)
     {
         _chatClient = chatClient ?? throw new ArgumentNullException(nameof(chatClient));
         _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
+        _mcpToolService = mcpToolService ?? throw new ArgumentNullException(nameof(mcpToolService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -128,19 +131,40 @@ public class WorkflowManager
         _logger.LogDebug("Created triage agent for chat room {ChatRoomId}", chatRoomId);
 
         // Create Specialist Agents (with their system prompts and capabilities)
+        // ✅ Following official best practice: ChatClientAgent auto-injects FunctionInvokingChatClient
         var specialistAgents = agents.Select(agent =>
         {
             var instructions = agent.SystemPrompt +
                 "\n\n【重要提示】" +
                 "\n- 如果用户询问超出你专业领域的问题，可以建议他们询问其他智能体，但仍需提供有帮助的回答。" +
                 "\n- 始终保持你的个性和风格。" +
-                "\n- 回复要自然、友好、符合角色设定。";
+                "\n- 回复要自然、友好、符合角色设定。" +
+                "\n\n【使用工具时】" +
+                "\n- 调用工具后，务必等待结果并将其融入你的回复中。" +
+                "\n- 以清晰、用户友好的格式呈现工具结果。" +
+                "\n- 对于图像 URL，可以说类似「我给你生成了一张图片，快看看吧～」。" +
+                "\n- 对于音频 URL，可以说类似「我为你挑选了一首好听的音乐，快去听听吧～」。" +
+                "\n- 主动使用工具来丰富对话，让互动更加生动有趣。";
 
+            // Get tools for this agent's capabilities
+            // ✅ AIFunction is already an AITool, no need to cast
+            var agentTools = _mcpToolService.GetToolsForCapabilities(agent.Capabilities).ToList();
+
+            if (agentTools.Count > 0)
+            {
+                _logger.LogDebug("Agent {AgentId} ({Name}) has {ToolCount} tools: {ToolNames}",
+                    agent.AgentId, agent.Name, agentTools.Count,
+                    string.Join(", ", agentTools.Select(t => t.Name)));
+            }
+
+            // ✅ Official best practice: Pass tools directly to ChatClientAgent
+            // ChatClientAgent will automatically inject FunctionInvokingChatClient when tools are present
             return new ChatClientAgent(
-                _chatClient,
+                _chatClient,  // Use original chat client - no manual wrapping needed
                 instructions: instructions,
                 name: agent.AgentId,  // Use AgentId as agent name
-                description: agent.Personality);
+                description: agent.Personality,
+                tools: agentTools.Cast<AITool>().ToList());  // Convert to AITool list
         }).ToList();
 
         _logger.LogInformation("Created {SpecialistCount} specialist agents for chat room {ChatRoomId}",

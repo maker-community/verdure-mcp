@@ -15,20 +15,17 @@ public class ChatMessageBackgroundJob
     private readonly McpDbContext _dbContext;
     private readonly IAgentOrchestrationService _agentOrchestrationService;
     private readonly IDevicePushService _devicePushService;
-    private readonly IImageGenerationService _imageGenerationService;
     private readonly ILogger<ChatMessageBackgroundJob> _logger;
 
     public ChatMessageBackgroundJob(
         McpDbContext dbContext,
         IAgentOrchestrationService agentOrchestrationService,
         IDevicePushService devicePushService,
-        IImageGenerationService imageGenerationService,
         ILogger<ChatMessageBackgroundJob> logger)
     {
         _dbContext = dbContext;
         _agentOrchestrationService = agentOrchestrationService;
         _devicePushService = devicePushService;
-        _imageGenerationService = imageGenerationService;
         _logger = logger;
     }
 
@@ -93,28 +90,50 @@ public class ChatMessageBackgroundJob
                 {
                     _logger.LogInformation("Processing tool call: {ToolName}", toolCall.ToolName);
                     
+                    // Extract results from tool parameters (after execution)
+                    // Note: FunctionInvokingChatClient already executed the tools
+                    // We just need to extract URLs for frontend display
                     switch (toolCall.ToolName)
                     {
                         case "generate_image":
-                            if (toolCall.Parameters?.TryGetValue("prompt", out var promptObj) == true)
+                            // Tool already executed, look for imageUrl in result
+                            if (toolCall.Parameters?.TryGetValue("imageUrl", out var imageUrlObj) == true ||
+                                toolCall.Parameters?.TryGetValue("result", out imageUrlObj) == true)
                             {
-                                var prompt = promptObj?.ToString() ?? string.Empty;
-                                if (!string.IsNullOrEmpty(prompt))
+                                var imageUrl = imageUrlObj?.ToString();
+                                if (!string.IsNullOrEmpty(imageUrl))
                                 {
-                                    // Generate image and add to attachments
-                                    var imageUrl = await GenerateImageAsync(prompt, userId, cancellationToken);
-                                    if (!string.IsNullOrEmpty(imageUrl))
-                                    {
-                                        attachments.Add(new { type = "image", url = imageUrl });
-                                    }
+                                    _logger.LogInformation("Image URL found in tool result: {ImageUrl}", imageUrl);
+                                    attachments.Add(new { type = "image", url = imageUrl });
+                                }
+                            }
+                            // Fallback: Try to parse from agent's message content
+                            else if (!string.IsNullOrEmpty(agentResponse.Content))
+                            {
+                                var urlMatch = System.Text.RegularExpressions.Regex.Match(
+                                    agentResponse.Content,
+                                    @"(https?://[^\s]+?\.(?:png|jpg|jpeg|gif|webp))");
+                                if (urlMatch.Success)
+                                {
+                                    var imageUrl = urlMatch.Groups[1].Value;
+                                    _logger.LogInformation("Image URL extracted from content: {ImageUrl}", imageUrl);
+                                    attachments.Add(new { type = "image", url = imageUrl });
                                 }
                             }
                             break;
 
                         case "play_random_music":
-                            // Music will be handled by the MusicTool directly
-                            // For now, just note it in the response
-                            attachments.Add(new { type = "audio", status = "queued" });
+                            // Tool already executed, look for audioUrl in result
+                            if (toolCall.Parameters?.TryGetValue("audioUrl", out var audioUrlObj) == true ||
+                                toolCall.Parameters?.TryGetValue("result", out audioUrlObj) == true)
+                            {
+                                var audioUrl = audioUrlObj?.ToString();
+                                if (!string.IsNullOrEmpty(audioUrl))
+                                {
+                                    _logger.LogInformation("Audio URL found in tool result: {AudioUrl}", audioUrl);
+                                    attachments.Add(new { type = "audio", url = audioUrl });
+                                }
+                            }
                             break;
                     }
                 }
@@ -177,41 +196,6 @@ public class ChatMessageBackgroundJob
             {
                 _logger.LogError(notifyEx, "Failed to send error notification to user {UserId}", userId);
             }
-        }
-    }
-
-    private async Task<string?> GenerateImageAsync(
-        string prompt,
-        string userId,
-        CancellationToken cancellationToken)
-    {
-        try
-        {
-            _logger.LogInformation("Generating image for prompt: {Prompt}", prompt);
-
-            // Use the existing image generation service
-            var result = await _imageGenerationService.GenerateImageAsync(
-                prompt,
-                size: "1024x1024",
-                quality: "standard",
-                style: "vivid",
-                cancellationToken: cancellationToken);
-
-            if (result.Success && !string.IsNullOrEmpty(result.ImageUrl))
-            {
-                _logger.LogInformation("Image generated successfully: {ImageUrl}", result.ImageUrl);
-                return result.ImageUrl;
-            }
-            else
-            {
-                _logger.LogWarning("Image generation failed: {Error}", result.ErrorMessage);
-                return null;
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error generating image for prompt: {Prompt}", prompt);
-            return null;
         }
     }
 }
