@@ -66,6 +66,10 @@ builder.Services.AddScoped<IImageStorageService, ImageStorageService>();
 builder.Services.AddScoped<IAgentOrchestrationService, AgentOrchestrationService>();
 builder.Services.AddScoped<ChatRoomSeeder>();
 
+// Configure Azure OpenAI Chat settings for group chat
+builder.Services.Configure<AzureOpenAIChatSettings>(
+    builder.Configuration.GetSection(AzureOpenAIChatSettings.SectionName));
+
 // Configure IChatClient for Agent Framework
 // This will be used by WorkflowManager to create agents
 builder.Services.AddSingleton<Microsoft.Extensions.AI.IChatClient>(sp =>
@@ -74,26 +78,26 @@ builder.Services.AddSingleton<Microsoft.Extensions.AI.IChatClient>(sp =>
     var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
     var logger = loggerFactory.CreateLogger("IChatClient");
     
-    // Get Azure OpenAI settings
-    var azureOpenAISettings = configuration.GetSection(AzureOpenAISettings.SectionName).Get<AzureOpenAISettings>();
+    // Get Azure OpenAI Chat settings (dedicated for group chat)
+    var azureOpenAIChatSettings = configuration.GetSection(AzureOpenAIChatSettings.SectionName).Get<AzureOpenAIChatSettings>();
     
-    if (azureOpenAISettings == null || string.IsNullOrEmpty(azureOpenAISettings.Endpoint))
+    if (azureOpenAIChatSettings == null || string.IsNullOrEmpty(azureOpenAIChatSettings.Endpoint))
     {
-        throw new InvalidOperationException("Azure OpenAI settings not configured properly");
+        throw new InvalidOperationException("Azure OpenAI Chat settings not configured properly. Please configure AzureOpenAIChat section in appsettings.json");
     }
     
-    logger.LogInformation("Configuring IChatClient with Azure OpenAI endpoint: {Endpoint}, deployment: {Deployment}",
-        azureOpenAISettings.Endpoint, azureOpenAISettings.DeploymentName);
+    logger.LogInformation("Configuring IChatClient for AI Group Chat with Azure OpenAI endpoint: {Endpoint}, deployment: {Deployment}",
+        azureOpenAIChatSettings.Endpoint, azureOpenAIChatSettings.DeploymentName);
     
     // Create Azure OpenAI client
     var azureClient = new Azure.AI.OpenAI.AzureOpenAIClient(
-        new Uri(azureOpenAISettings.Endpoint),
-        new Azure.AzureKeyCredential(azureOpenAISettings.ApiKey));
+        new Uri(azureOpenAIChatSettings.Endpoint),
+        new Azure.AzureKeyCredential(azureOpenAIChatSettings.ApiKey));
     
     // Create IChatClient using Microsoft.Extensions.AI.OpenAI
-    var chatClient = azureClient.GetChatClient(azureOpenAISettings.DeploymentName).AsIChatClient();
+    var chatClient = azureClient.GetChatClient(azureOpenAIChatSettings.DeploymentName).AsIChatClient();
     
-    logger.LogInformation("IChatClient configured successfully");
+    logger.LogInformation("IChatClient configured successfully for AI Group Chat");
     
     return chatClient;
 });

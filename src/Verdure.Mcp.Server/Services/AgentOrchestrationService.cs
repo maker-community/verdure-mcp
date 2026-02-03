@@ -73,46 +73,57 @@ public class AgentOrchestrationService : IAgentOrchestrationService
             {
                 await run.TrySendMessageAsync(new TurnToken(emitEvents: true));
 
-                // Process workflow events
+                // Process workflow events to extract agent responses
                 await foreach (var evt in run.WatchStreamAsync(cancellationToken))
                 {
-                    // Log event type for debugging
                     _logger.LogTrace("Received workflow event: {EventType}", evt.GetType().Name);
                     
-                    // The actual event processing depends on the Microsoft Agent Framework version
-                    // For now, we'll use a simplified approach
-                    // TODO: Update based on the actual event structure in the framework
+                    // Handle AgentResponseUpdateEvent to track agent switches and content
+                    if (evt is AgentResponseUpdateEvent agentUpdateEvent)
+                    {
+                        var update = agentUpdateEvent.Update;
+                        var executorId = agentUpdateEvent.ExecutorId;
+                        
+                        // Check if agent switched
+                        if (executorId != currentAgentId)
+                        {
+                            // Save previous agent's response if any
+                            if (currentAgentId != null && currentContent.Length > 0)
+                            {
+                                responses.Add(new AgentResponseContent
+                                {
+                                    AgentId = currentAgentId,
+                                    AgentName = currentAgentName ?? currentAgentId,
+                                    Content = currentContent.ToString()
+                                });
+                                
+                                _logger.LogDebug("Agent {AgentName} completed response ({Length} chars)",
+                                    currentAgentName, currentContent.Length);
+                            }
+
+                            // Switch to new agent
+                            currentAgentId = executorId;
+                            currentAgentName = update.AuthorName ?? executorId; // Use AuthorName if available
+                            currentContent.Clear();
+                            
+                            _logger.LogInformation("Agent switched to: {AgentId} ({AgentName})", currentAgentId, currentAgentName);
+                        }
+
+                        // Accumulate content from this agent
+                        var textContent = update.Text;
+                        if (!string.IsNullOrEmpty(textContent))
+                        {
+                            currentContent.Append(textContent);
+                        }
+                    }
+                    // Handle final workflow output
+                    else if (evt is WorkflowOutputEvent outputEvent)
+                    {
+                        _logger.LogDebug("Workflow output event received");
+                    }
                 }
             }
 
-            // For now, return a temporary response since event processing needs to be updated
-            // TODO: Update this section once we understand the correct event structure
-            _logger.LogWarning("Workflow event processing not yet implemented. Returning placeholder response.");
-            
-            // Return a default response from the first available agent
-            var firstAgent = await _dbContext.AgentProfiles
-                .AsNoTracking()
-                .FirstOrDefaultAsync(cancellationToken);
-
-            if (firstAgent == null)
-            {
-                throw new InvalidOperationException("No agents found in database");
-            }
-
-            return new AgentResponse
-            {
-                AgentId = firstAgent.AgentId,
-                AgentName = firstAgent.Name,
-                Content = "I'm processing your message. Event handling implementation pending.",
-                Metadata = new Dictionary<string, object>
-                {
-                    ["avatar"] = firstAgent.Avatar ?? string.Empty,
-                    ["personality"] = firstAgent.Personality ?? string.Empty
-                },
-                ToolCalls = null
-            };
-
-            /* Original code - commented out until event structure is confirmed
             // Save final agent's response
             if (currentAgentId != null && currentContent.Length > 0)
             {
@@ -122,28 +133,39 @@ public class AgentOrchestrationService : IAgentOrchestrationService
                     AgentName = currentAgentName ?? currentAgentId,
                     Content = currentContent.ToString()
                 });
+                
+                _logger.LogDebug("Final agent {AgentName} response saved ({Length} chars)",
+                    currentAgentName, currentContent.Length);
             }
 
-            // Get the final response (filter out triage agent's responses)
-            var finalResponse = responses.FirstOrDefault(r => r.AgentId != "triage");
+            // Get the final response (filter out triage agent's responses if any)
+            var finalResponse = responses.LastOrDefault(r => r.AgentId != "triage");
 
             if (finalResponse == null)
             {
-                throw new InvalidOperationException("No agent response generated from workflow");
+                _logger.LogWarning("No specialist agent response found. All responses: {ResponseCount}", responses.Count);
+                
+                // Fallback: use any response if available
+                finalResponse = responses.LastOrDefault();
+                
+                if (finalResponse == null)
+                {
+                    throw new InvalidOperationException("No agent response generated from workflow");
+                }
             }
 
-            _logger.LogInformation("Agent {AgentName} responded with message of length {Length}",
-                finalResponse.AgentName, finalResponse.Content.Length);
+            _logger.LogInformation("Agent {AgentName} ({AgentId}) responded with message of length {Length}",
+                finalResponse.AgentName, finalResponse.AgentId, finalResponse.Content.Length);
 
-            // Get agent metadata
+            // Get agent metadata from database
             var finalAgentProfile = await _dbContext.AgentProfiles
                 .AsNoTracking()
-                .FirstOrDefaultAsync(a => a.AgentId == finalResponse.AgentId, cancellationToken);
+                .FirstOrDefaultAsync(a => a.AgentId == finalResponse.AgentName, cancellationToken);
 
             return new AgentResponse
             {
                 AgentId = finalResponse.AgentId,
-                AgentName = finalResponse.AgentName,
+                AgentName = finalAgentProfile?.Name ?? finalResponse.AgentName,
                 Content = finalResponse.Content,
                 Metadata = new Dictionary<string, object>
                 {
@@ -152,7 +174,6 @@ public class AgentOrchestrationService : IAgentOrchestrationService
                 },
                 ToolCalls = null // Tool calls are handled by the framework automatically
             };
-            */
         }
         catch (Exception ex)
         {
