@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.AI;
 using Microsoft.IdentityModel.Tokens;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
@@ -64,6 +65,41 @@ builder.Services.AddScoped<IImageStorageService, ImageStorageService>();
 // Add AI Group Chat services
 builder.Services.AddScoped<IAgentOrchestrationService, AgentOrchestrationService>();
 builder.Services.AddScoped<ChatRoomSeeder>();
+
+// Configure IChatClient for Agent Framework
+// This will be used by WorkflowManager to create agents
+builder.Services.AddSingleton<Microsoft.Extensions.AI.IChatClient>(sp =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
+    var logger = loggerFactory.CreateLogger("IChatClient");
+    
+    // Get Azure OpenAI settings
+    var azureOpenAISettings = configuration.GetSection(AzureOpenAISettings.SectionName).Get<AzureOpenAISettings>();
+    
+    if (azureOpenAISettings == null || string.IsNullOrEmpty(azureOpenAISettings.Endpoint))
+    {
+        throw new InvalidOperationException("Azure OpenAI settings not configured properly");
+    }
+    
+    logger.LogInformation("Configuring IChatClient with Azure OpenAI endpoint: {Endpoint}, deployment: {Deployment}",
+        azureOpenAISettings.Endpoint, azureOpenAISettings.DeploymentName);
+    
+    // Create Azure OpenAI client
+    var azureClient = new Azure.AI.OpenAI.AzureOpenAIClient(
+        new Uri(azureOpenAISettings.Endpoint),
+        new Azure.AzureKeyCredential(azureOpenAISettings.ApiKey));
+    
+    // Create IChatClient using Microsoft.Extensions.AI.OpenAI
+    var chatClient = azureClient.GetChatClient(azureOpenAISettings.DeploymentName).AsIChatClient();
+    
+    logger.LogInformation("IChatClient configured successfully");
+    
+    return chatClient;
+});
+
+// Add WorkflowManager as singleton (for workflow caching)
+builder.Services.AddSingleton<WorkflowManager>();
 
 // Add SignalR for device hub
 builder.Services.AddSignalR();

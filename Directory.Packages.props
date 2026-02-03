@@ -1,69 +1,74 @@
 <Project>
-	<PropertyGroup>
-		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-	</PropertyGroup>
-	<ItemGroup>
-		<!-- Aspire packages -->
-		<PackageVersion Include="Aspire.Hosting.AppHost" Version="13.1.0" />
-		<PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.1.0" />
-		<PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.1.0" />
-		<!-- Microsoft AspNetCore packages -->
-		<PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.1" />
-		<PackageVersion Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.1" />
-		<PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.1" />
-		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.1" />
-		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="10.0.1" />
-		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.1" />
-		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.1" />
-		<PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.1" />
-		<PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
-		<!-- Microsoft EntityFrameworkCore packages -->
-		<PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.1" />
-		<PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1" />
-		<PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.1" />
-		<!-- Microsoft Extensions packages -->
-		<PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.1" />
-		<PackageVersion Include="Microsoft.Extensions.Localization" Version="10.0.1" />
-		<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.1" />
-		<PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.1.0" />
-		<!-- Model Context Protocol packages -->
-		<PackageVersion Include="ModelContextProtocol" Version="0.6.0-preview.1" />
-		<PackageVersion Include="ModelContextProtocol.AspNetCore" Version="0.6.0-preview.1" />
-		<!-- Azure OpenAI -->
-		<PackageVersion Include="Azure.AI.OpenAI" Version="2.8.0-beta.1" />
-		<!-- Email - MailKit is the most modern and recommended library for .NET -->
-		<PackageVersion Include="MailKit" Version="4.14.1" />
-		<!-- Background Jobs - Hangfire -->
-		<PackageVersion Include="Hangfire.Core" Version="1.8.22" />
-		<PackageVersion Include="Hangfire.AspNetCore" Version="1.8.22" />
-		<PackageVersion Include="Hangfire.PostgreSql" Version="1.20.12" />
-		<!-- MudBlazor -->
-		<PackageVersion Include="MudBlazor" Version="8.15.0" />
-		<!-- Npgsql packages -->
-		<PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
-		<!-- OpenTelemetry packages -->
-		<PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.14.0" />
-		<PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
-		<PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
-		<PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.14.0" />
-		<PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.14.0" />
-		<!-- Other packages -->
-		<PackageVersion Include="RedLock.net" Version="2.3.2" />
-		<PackageVersion Include="Scalar.AspNetCore" Version="2.11.10" />
-		<PackageVersion Include="StackExchange.Redis" Version="2.10.1" />
-		<PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.15.0" />
-		<!-- Image processing -->
-		<PackageVersion Include="SixLabors.ImageSharp" Version="3.1.12" />
-		<!-- Blazor WASM packages -->
-		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.11" />
-		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="9.0.11" />
-		<PackageVersion Include="MudBlazor" Version="8.15.0" />
-		<!-- Test packages -->
-		<PackageVersion Include="coverlet.collector" Version="6.0.2" />
-		<PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.0" />
-		<PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="9.0.0" />
-		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-		<PackageVersion Include="xunit" Version="2.9.2" />
-		<PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
-	</ItemGroup>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Aspire packages -->
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="13.1.0" />
+    <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.1.0" />
+    <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.1.0" />
+    <!-- Microsoft AspNetCore packages -->
+    <PackageVersion Include="Microsoft.Agents.AI.Workflows" Version="1.0.0-preview.260128.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
+    <!-- Microsoft EntityFrameworkCore packages -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.1" />
+    <!-- Microsoft Extensions packages -->
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.Localization" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.1.0" />
+    <!-- Model Context Protocol packages -->
+    <PackageVersion Include="ModelContextProtocol" Version="0.6.0-preview.1" />
+    <PackageVersion Include="ModelContextProtocol.AspNetCore" Version="0.6.0-preview.1" />
+    <!-- Azure OpenAI -->
+    <PackageVersion Include="Azure.AI.OpenAI" Version="2.8.0-beta.1" />
+    <!-- Microsoft Agent Framework -->
+    <PackageVersion Include="Microsoft.Agents.AI" Version="1.0.0-preview.260128.1" />
+    <PackageVersion Include="Microsoft.Extensions.AI" Version="10.2.0" />
+    <PackageVersion Include="Microsoft.Extensions.AI.OpenAI" Version="10.2.0-preview.1.26063.2" />
+    <!-- Email - MailKit is the most modern and recommended library for .NET -->
+    <PackageVersion Include="MailKit" Version="4.14.1" />
+    <!-- Background Jobs - Hangfire -->
+    <PackageVersion Include="Hangfire.Core" Version="1.8.22" />
+    <PackageVersion Include="Hangfire.AspNetCore" Version="1.8.22" />
+    <PackageVersion Include="Hangfire.PostgreSql" Version="1.20.12" />
+    <!-- MudBlazor -->
+    <PackageVersion Include="MudBlazor" Version="8.15.0" />
+    <!-- Npgsql packages -->
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
+    <!-- OpenTelemetry packages -->
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.14.0" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.14.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.14.0" />
+    <!-- Other packages -->
+    <PackageVersion Include="RedLock.net" Version="2.3.2" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.11.10" />
+    <PackageVersion Include="StackExchange.Redis" Version="2.10.1" />
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.15.0" />
+    <!-- Image processing -->
+    <PackageVersion Include="SixLabors.ImageSharp" Version="3.1.12" />
+    <!-- Blazor WASM packages -->
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.11" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="9.0.11" />
+    <PackageVersion Include="MudBlazor" Version="8.15.0" />
+    <!-- Test packages -->
+    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="xunit" Version="2.9.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
 </Project>

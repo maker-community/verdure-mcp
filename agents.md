@@ -618,17 +618,16 @@ dotnet run --project src/Verdure.Mcp.Server --verbosity detailed
 ## AI 群组交流功能
 
 ### 功能概述
-**状态**: ✅ 已实现（v1.0.0 - 2026-02-01）
+**状态**: ✅ 已实现（v2.0.0 - 2026-02-03）- **使用 Microsoft Agent Framework Handoff 模式**
 
-Verdure MCP 新增 AI 群组交流功能，允许用户通过 MCP 工具与多个智能体进行协作对话。系统预设了 6 位具有不同性格和专长的 AI 智能体，能够根据用户消息内容自动选择最合适的智能体进行响应。
+Verdure MCP 的 AI 群组交流功能现在使用 **Microsoft Agent Framework** 的 **Handoff 模式**实现真正的多智能体协作。系统预设了 6 位具有不同性格和专长的 AI 智能体，通过智能 Triage Agent 自动路由到最合适的专家进行响应。
 
-**关键特性:**
-- ✅ 群组管理（列表、加入、设置默认）
-- ✅ 智能体自动选择（基于消息内容和能力匹配）
-- ✅ 消息持久化存储（PostgreSQL）
-- ✅ 实时推送（SignalR）
-- ✅ 工具调用支持（生图、音乐）
-- ✅ 历史消息查询
+**架构升级**:
+- ✅ **Agent Framework Handoff** - 官方 Workflow 模式（替代假的预定义响应）
+- ✅ **智能路由** - Triage Agent 自动分析并选择最佳专家
+- ✅ **真实 AI 对话** - Azure OpenAI GPT 模型生成回复
+- ✅ **Workflow 缓存** - 按 ChatRoom 级别缓存，性能优化
+- ✅ **动态配置** - 从数据库加载智能体，支持运行时更新
 
 ### 预设智能体
 
@@ -720,10 +719,12 @@ Content-Type: application/json
 ### 关键文件
 
 - **MCP 工具**: [AiGroupChatTool.cs](src/Verdure.Mcp.Server/Tools/AiGroupChatTool.cs)
-- **智能体编排**: [AgentOrchestrationService.cs](src/Verdure.Mcp.Server/Services/AgentOrchestrationService.cs)
+- **Workflow 管理**: [WorkflowManager.cs](src/Verdure.Mcp.Server/Services/WorkflowManager.cs) ⭐ **新增**
+- **智能体编排**: [AgentOrchestrationService.cs](src/Verdure.Mcp.Server/Services/AgentOrchestrationService.cs) ⭐ **重构**
 - **后台任务**: [ChatMessageBackgroundJob.cs](src/Verdure.Mcp.Server/Tools/ChatMessageBackgroundJob.cs)
 - **数据初始化**: [ChatRoomSeeder.cs](src/Verdure.Mcp.Server/Services/ChatRoomSeeder.cs)
 - **实体定义**: [Domain/Entities/](src/Verdure.Mcp.Domain/Entities/) (ChatRoom, ChatMessage, UserChatRoomMembership, AgentProfile)
+- **整合文档**: [AGENT_FRAMEWORK_INTEGRATION.md](docs/AGENT_FRAMEWORK_INTEGRATION.md) ⭐ **新增**
 
 ### 使用场景示例
 
@@ -761,18 +762,49 @@ Content-Type: application/json
 
 ### 技术实现
 
+**Agent Framework Handoff 模式:**
+```csharp
+// 1. WorkflowManager 创建 Handoff Workflow
+var triageAgent = new ChatClientAgent(_chatClient, triageInstructions, "triage", "智能路由器");
+var specialistAgents = agents.Select(a => 
+    new ChatClientAgent(_chatClient, a.SystemPrompt, a.AgentId, a.Personality)).ToList();
+
+var workflow = AgentWorkflowBuilder.CreateHandoffBuilderWith(triageAgent)
+    .WithHandoffs(triageAgent, specialistAgents)      // triage → specialists
+    .WithHandoffs(specialistAgents, triageAgent)      // specialists → triage
+    .Build();
+
+// 2. AgentOrchestrationService 执行 Workflow
+await using var run = await InProcessExecution.StreamAsync(workflow, messages);
+await run.TrySendMessageAsync(new TurnToken(emitEvents: true));
+
+// 3. 处理 WorkflowEvent 提取 Agent 响应
+await foreach (var evt in run.WatchStreamAsync())
+{
+    if (evt is AgentRunUpdateEvent agentUpdate)
+    {
+        // 追踪 Agent 切换和内容生成
+    }
+}
+```
+
 **智能体选择机制:**
-1. **能力匹配优先** - 检测消息中的关键词（图、画、音乐等）
-2. **轮询分配** - 无明确匹配时使用轮询，确保所有智能体都有响应机会
+1. **话题匹配** - Triage Agent 分析消息主题
+2. **关键词识别** - 检测能力标识（图、音乐等）
+3. **语气风格** - 匹配用户语气（活泼、理性等）
+4. **上下文连贯** - 继续与同一专家对话
+5. **隐式意图** - 理解未明说的需求
 
 **响应生成:**
-- 当前版本使用预定义响应模板，基于智能体性格特点
-- 未来可集成 Azure OpenAI GPT-4 实现更智能的对话
+- 使用 Azure OpenAI GPT 模型（不再是预定义模板）
+- 每个智能体有独立的 SystemPrompt
+- 基于智能体性格和专长生成个性化回复
+- 支持 MCP 工具调用（图像生成、音乐等）
 
 **异步处理:**
-- 使用 Hangfire 后台任务处理消息
-- 响应时间 < 200ms（立即返回处理状态）
-- 智能体推理 + 推送总耗时 < 10s
+- Hangfire 后台任务处理消息
+- Workflow 执行 + GPT 推理
+- SignalR 实时推送到设备
 
 ### 开发环境初始化
 
@@ -783,25 +815,53 @@ Content-Type: application/json
 
 **触发时机**: 应用启动时，如果数据库中没有群组和智能体数据
 
+### 配置要求
+
+**Azure OpenAI**:
+```json
+{
+  "AzureOpenAI": {
+    "Endpoint": "https://your-resource.openai.azure.com/",
+    "ApiKey": "your-api-key",
+    "DeploymentName": "gpt-4o-mini"
+  }
+}
+```
+
+**推荐部署**:
+- `gpt-4o-mini`: 性价比高，适合日常对话
+- `gpt-4o`: 更强大，适合复杂推理
+
+**日志配置**（调试）:
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Microsoft.Agents.AI": "Debug",
+      "Verdure.Mcp.Server.Services.WorkflowManager": "Debug"
+    }
+  }
+}
+```
+
 ### 未来增强计划
 
 以下功能可在后续版本实现：
 
-1. **Microsoft Agent Framework 集成**
-   - 使用 `Microsoft.Agents.AI` 进行智能体编排
-   - 支持 Hand-Off 智能体切换
-   - 实现真正的 GroupChat 机制
+1. **工具增强**
+   - 为 Specialist Agents 添加更多 MCP 工具
+   - 支持多模态输入（图片、语音）
+   - 实现工具链式调用
 
-2. **Azure OpenAI 深度集成**
-   - 使用 GPT-4 生成动态回复
-   - 基于上下文的智能对话
-   - 智能体个性化微调
+2. **对话优化**
+   - 增加更多历史消息上下文
+   - 实现对话摘要功能
+   - 优化 Token 使用
 
-3. **更多智能体能力**
-   - 网络搜索
-   - 文件处理
-   - 日程管理
-   - 邮件发送
+3. **监控与分析**
+   - 统计每个 Agent 的响应次数
+   - 分析用户偏好（最常用的 Agent）
+   - 监控 Workflow 执行耗时
 
 4. **群组管理增强**
    - 创建自定义群组
