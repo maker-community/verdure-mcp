@@ -47,7 +47,7 @@ public class GenerateImageTool
     }
 
     /// <summary>
-    /// 使用 Azure OpenAI DALL-E 根据提示词生成图片。
+    /// 使用 Azure OpenAI DALL-E gpt-image-1.5根据提示词生成图片。
     /// 如果提供邮箱地址，会将生成的图片发送到指定邮箱。
     /// 如果请求头中包含用户信息（X-User-Email 和 X-User-Id），任务将异步运行。
     /// </summary>
@@ -58,7 +58,7 @@ public class GenerateImageTool
     /// <param name="cancellationToken"></param>
     /// <returns>包含任务信息和图片数据的 JSON 对象（同步模式下）</returns>
     [McpServerTool(Name = "generate_image")]
-    [Description("使用 DALL-E 模型，根据文本提示词生成图片。支持邮件通知和异步处理。")]
+    [Description("使用 DALL-E gpt-image-1.5 模型，根据文本提示词生成图片。支持邮件通知和异步处理。")]
     public async Task<ImageGenerationResponse> GenerateImage(
         [Description("描述要生成图片的文本提示词")] string prompt,
         [Description("图片尺寸：'1024x1024'、'1792x1024' 或 '1024x1792'，默认为 '1024x1024'")] string? size = null,

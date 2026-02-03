@@ -81,9 +81,9 @@ public class ImageGenerationService : IImageGenerationService
             var options = new ImageGenerationOptions
             {
                 Size = imageSize,
-                Quality = imageQuality,
-                Style = imageStyle,
-                ResponseFormat = GeneratedImageFormat.Bytes
+                //Quality = imageQuality,
+                //Style = imageStyle,
+                //ResponseFormat = GeneratedImageFormat.Bytes
             };
 
             var response = await imageClient.GenerateImageAsync(prompt, options, cancellationToken);
