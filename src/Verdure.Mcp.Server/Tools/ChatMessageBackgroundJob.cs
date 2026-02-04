@@ -36,13 +36,14 @@ public class ChatMessageBackgroundJob
         Guid chatRoomId,
         Guid messageId,
         string userId,
+        string? userEmail,
         CancellationToken cancellationToken)
     {
         try
         {
             _logger.LogInformation(
-                "Processing chat message: roomId={ChatRoomId}, messageId={MessageId}, userId={UserId}",
-                chatRoomId, messageId, userId);
+                "Processing chat message: roomId={ChatRoomId}, messageId={MessageId}, userId={UserId}, userEmail={UserEmail}",
+                chatRoomId, messageId, userId, userEmail ?? "未提供");
 
             // Get the user message
             var userMessage = await _dbContext.ChatMessages
@@ -53,6 +54,15 @@ public class ChatMessageBackgroundJob
                 _logger.LogWarning("Message {MessageId} not found", messageId);
                 return;
             }
+
+            // ✅ Set user context for MCP tool calls (from request headers)
+            UserContext.Current = new UserContext
+            {
+                UserId = userId,
+                UserEmail = userEmail
+            };
+            _logger.LogDebug("UserContext set in ChatMessageBackgroundJob: UserId={UserId}, UserEmail={UserEmail}",
+                userId, userEmail);
 
             // Process message with agent orchestration
             var agentResponse = await _agentOrchestrationService.ProcessMessageAsync(

@@ -6,6 +6,23 @@ using Verdure.Mcp.Domain.Entities;
 namespace Verdure.Mcp.Server.Services;
 
 /// <summary>
+/// User context for MCP tool calls - stored in AsyncLocal for cross-service access
+/// </summary>
+public class UserContext
+{
+    private static readonly AsyncLocal<UserContext?> _current = new();
+
+    public static UserContext? Current
+    {
+        get => _current.Value;
+        set => _current.Value = value;
+    }
+
+    public string? UserId { get; set; }
+    public string? UserEmail { get; set; }
+}
+
+/// <summary>
 /// Service for managing MCP (Model Context Protocol) server connections and tools.
 /// ✅ Lazy-loading approach: Connects to MCP servers on-demand when tools are requested.
 /// ✅ Suitable for low-frequency scenarios (like AI group chat).
@@ -183,6 +200,9 @@ public class McpToolService : IAsyncDisposable
         httpClient.DefaultRequestHeaders.Authorization = 
             new AuthenticationHeaderValue("Bearer", config.BearerToken);
 
+        // ✅ Inject user context into MCP tool calls
+        InjectUserContextToHttpClient(httpClient);
+
         // Convert config transport mode to SDK transport mode
         var transportMode = ConvertToSdkTransportMode(config.TransportMode);
 
@@ -217,6 +237,9 @@ public class McpToolService : IAsyncDisposable
 
         // Get HttpClient from factory
         var httpClient = _httpClientFactory.CreateClient("McpClient");
+
+        // ✅ Inject user context into MCP tool calls
+        InjectUserContextToHttpClient(httpClient);
 
         var transportOptions = new HttpClientTransportOptions
         {
@@ -253,6 +276,9 @@ public class McpToolService : IAsyncDisposable
         // Get HttpClient from factory
         var httpClient = _httpClientFactory.CreateClient("McpClient");
 
+        // ✅ Inject user context into MCP tool calls
+        InjectUserContextToHttpClient(httpClient);
+
         var transportOptions = new HttpClientTransportOptions
         {
             Endpoint = new Uri(config.Endpoint),
@@ -283,6 +309,30 @@ public class McpToolService : IAsyncDisposable
             McpTransportMode.StreamableHttp => HttpTransportMode.StreamableHttp,
             _ => HttpTransportMode.Sse // Default to SSE
         };
+    }
+
+    /// <summary>
+    /// Inject user context (userId, email) into HttpClient request headers for MCP tool calls
+    /// </summary>
+    private void InjectUserContextToHttpClient(HttpClient httpClient)
+    {
+        // Get user context from AsyncLocal storage (set by AgentOrchestrationService)
+        var userId = UserContext.Current?.UserId;
+        var userEmail = UserContext.Current?.UserEmail;
+
+        if (!string.IsNullOrEmpty(userId))
+        {
+            httpClient.DefaultRequestHeaders.Remove("X-User-Id");
+            httpClient.DefaultRequestHeaders.Add("X-User-Id", userId);
+            _logger.LogDebug("Injected X-User-Id: {UserId} into MCP HttpClient", userId);
+        }
+
+        if (!string.IsNullOrEmpty(userEmail))
+        {
+            httpClient.DefaultRequestHeaders.Remove("X-User-Email");
+            httpClient.DefaultRequestHeaders.Add("X-User-Email", userEmail);
+            _logger.LogDebug("Injected X-User-Email: {UserEmail} into MCP HttpClient", userEmail);
+        }
     }
 
     /// <summary>

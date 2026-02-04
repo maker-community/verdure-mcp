@@ -40,6 +40,13 @@ public class AgentOrchestrationService : IAgentOrchestrationService
         {
             _logger.LogInformation("Processing message for chat room {ChatRoomId} from user {UserId}", chatRoomId, userId);
 
+            // Note: UserContext should be set by the caller (e.g., ChatMessageBackgroundJob)
+            // to ensure correct user information is available for MCP tool calls
+            if (UserContext.Current == null)
+            {
+                _logger.LogWarning("UserContext is not set. MCP tool calls may not have user information.");
+            }
+
             // Get chat history (last 10 messages for context)
             var historyMessages = await GetChatHistoryAsync(chatRoomId, limit: 10, cancellationToken);
 

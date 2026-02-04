@@ -51,7 +51,12 @@ public class AiGroupChatTool
         try
         {
             var httpContext = _httpContextAccessor.HttpContext;
+            
+            // 从请求头提取用户 ID (X-User-Id)
             var userId = httpContext?.Request.Headers["X-User-Id"].FirstOrDefault();
+            
+            // 从请求头提取邮箱地址 (X-User-Email)
+            var userEmail = httpContext?.Request.Headers["X-User-Email"].FirstOrDefault();
 
             if (string.IsNullOrEmpty(userId))
             {
@@ -62,12 +67,12 @@ public class AiGroupChatTool
                 };
             }
 
-            _logger.LogInformation("ChatWithGroup called: action={Action}, userId={UserId}, roomId={RoomId}",
-                action, userId, roomId ?? "default");
+            _logger.LogInformation("ChatWithGroup called: action={Action}, userId={UserId}, userEmail={UserEmail}, roomId={RoomId}",
+                action, userId, userEmail ?? "未提供", roomId ?? "default");
 
             return action.ToLower() switch
             {
-                "send" => await HandleSendMessageAsync(userId, message, roomId, cancellationToken),
+                "send" => await HandleSendMessageAsync(userId, userEmail, message, roomId, cancellationToken),
                 "list_rooms" => await HandleListRoomsAsync(userId, limit, cancellationToken),
                 "discover" => await HandleDiscoverRoomsAsync(userId, limit, cancellationToken),
                 "join" => await HandleJoinRoomAsync(userId, roomId, cancellationToken),
@@ -93,6 +98,7 @@ public class AiGroupChatTool
 
     private async Task<GroupChatResponse> HandleSendMessageAsync(
         string userId,
+        string? userEmail,
         string? message,
         string? roomId,
         CancellationToken cancellationToken)
@@ -166,7 +172,7 @@ public class AiGroupChatTool
 
         // Enqueue background job for agent processing
         var jobId = _backgroundJobClient.Enqueue<ChatMessageBackgroundJob>(
-            job => job.ProcessChatMessageAsync(chatRoomId, userMessage.Id, userId, CancellationToken.None));
+            job => job.ProcessChatMessageAsync(chatRoomId, userMessage.Id, userId, userEmail, CancellationToken.None));
 
         _logger.LogInformation(
             "User message saved and background job enqueued: messageId={MessageId}, jobId={JobId}",

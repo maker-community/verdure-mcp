@@ -554,6 +554,7 @@ X-User-Id: user-123
 
 | 日期 | 版本 | 更新内容 | 状态 |
 |------|------|---------|------|
+| 2026-02-04 | v2.1 | 新增 MCP 用户上下文转发功能（AsyncLocal 实现） | ✅ 已完成 |
 | 2026-02-01 | v2.0 | 完整重写 - 反映当前实现状态与架构 | ✅ 已完成 |
 | 之前 | v1.0 | 初始版本 - 设计建议阶段 | 已归档 |
 
@@ -797,6 +798,21 @@ await foreach (var evt in run.WatchStreamAsync())
 
 **响应生成:**
 - 使用 Azure OpenAI GPT 模型（不再是预定义模板）
+- 每个智能体有独立的 SystemPrompt
+- 基于智能体性格和专长生成个性化回复
+- 支持 MCP 工具调用（图像生成、音乐等）
+
+**异步处理:**
+- Hangfire 后台任务处理消息
+- Workflow 执行 + GPT 推理
+- SignalR 实时推送到设备
+
+**用户上下文转发（v2.1 新增）:**
+- 使用 `AsyncLocal<UserContext>` 在异步调用链中传递用户信息
+- 在 `AgentOrchestrationService` 中设置 `UserContext`（包含 UserId 和 UserEmail）
+- 在 `McpToolService` 中将用户信息注入到外部 MCP Server 的 HttpClient 请求头
+- 支持 `X-User-Id` 和 `X-User-Email` 请求头自动转发
+- 详见: [MCP_USER_CONTEXT_FORWARDING.md](docs/MCP_USER_CONTEXT_FORWARDING.md)
 - 每个智能体有独立的 SystemPrompt
 - 基于智能体性格和专长生成个性化回复
 - 支持 MCP 工具调用（图像生成、音乐等）
