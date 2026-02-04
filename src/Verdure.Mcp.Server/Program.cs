@@ -284,17 +284,8 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    // Initialize MCP Tool Service (connect to MCP servers and load tools)
-    try
-    {
-        var mcpToolService = scope.ServiceProvider.GetRequiredService<McpToolService>();
-        await mcpToolService.InitializeAsync();
-        app.Logger.LogInformation("MCP Tool Service initialized successfully");
-    }
-    catch (Exception ex)
-    {
-        app.Logger.LogWarning(ex, "Could not initialize MCP Tool Service. Dynamic MCP tools will not be available.");
-    }
+    // ✅ No longer need to initialize MCP Tool Service at startup
+    // Tools will be loaded lazily when needed (GetToolsForCapabilitiesAsync)
 }
 
 // Configure the HTTP request pipeline

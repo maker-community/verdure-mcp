@@ -7,17 +7,20 @@ namespace Verdure.Mcp.Server.Services;
 
 /// <summary>
 /// Service for managing MCP (Model Context Protocol) server connections and tools.
-/// This service initializes MCP clients, handles authentication, and provides tools to agents.
-/// ✅ Following official Agent Framework MCP best practices
+/// ✅ Lazy-loading approach: Connects to MCP servers on-demand when tools are requested.
+/// ✅ Suitable for low-frequency scenarios (like AI group chat).
 /// Based on: https://github.com/microsoft/agent-framework/tree/main/dotnet/samples/GettingStarted/ModelContextProtocol
 /// </summary>
+/// <remarks>
+/// This service uses a lazy-loading pattern where MCP clients are created only when needed.
+/// For high-frequency scenarios, consider caching connections or using Singleton lifecycle.
+/// </remarks>
 public class McpToolService : IAsyncDisposable
 {
     private readonly ILogger<McpToolService> _logger;
     private readonly IConfiguration _configuration;
-    private readonly List<McpClientWrapper> _mcpClients = new();
-    private readonly HttpClient _httpClient;
-    private bool _initialized = false;
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly SemaphoreSlim _connectionLock = new(1, 1);
 
     public McpToolService(
         ILogger<McpToolService> logger,
@@ -26,128 +29,114 @@ public class McpToolService : IAsyncDisposable
     {
         _logger = logger;
         _configuration = configuration;
-        _httpClient = httpClientFactory.CreateClient("McpClient");
+        _httpClientFactory = httpClientFactory;
     }
 
     /// <summary>
-    /// Initialize all configured MCP server connections
-    /// Must be called before using GetAllTools()
+    /// Get tools for specific capabilities from configured MCP servers.
+    /// Creates connections on-demand (lazy loading).
     /// </summary>
-    public async Task InitializeAsync(CancellationToken cancellationToken = default)
+    /// <param name="capabilities">Agent capabilities (currently unused, returns all tools)</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>List of AIFunction tools from all enabled MCP servers</returns>
+    public async Task<IEnumerable<AIFunction>> GetToolsForCapabilitiesAsync(
+        List<string> capabilities,
+        CancellationToken cancellationToken = default)
     {
-        if (_initialized)
-        {
-            _logger.LogWarning("MCP service already initialized");
-            return;
-        }
-
         var config = _configuration.GetSection("McpServers").Get<McpServersConfig>();
         if (config == null || config.Servers.Count == 0)
         {
-            _logger.LogInformation("No MCP servers configured");
-            _initialized = true;
-            return;
+            _logger.LogDebug("No MCP servers configured");
+            return Enumerable.Empty<AIFunction>();
         }
 
-        foreach (var serverConfig in config.Servers.Where(s => s.Enabled))
+        var allTools = new List<AIFunction>();
+        var enabledServers = config.Servers.Where(s => s.Enabled).ToList();
+
+        _logger.LogInformation("Loading tools from {ServerCount} MCP servers", enabledServers.Count);
+
+        // Connect to each enabled server and retrieve tools
+        foreach (var serverConfig in enabledServers)
         {
             try
             {
-                _logger.LogInformation("Initializing MCP server: {ServerName} ({Endpoint})", 
+                _logger.LogDebug("Connecting to MCP server: {ServerName} ({Endpoint})", 
                     serverConfig.Name, serverConfig.Endpoint);
 
-                var client = await CreateMcpClientAsync(serverConfig, cancellationToken);
-                if (client != null)
+                // Create MCP client (will be disposed after getting tools)
+                await using var mcpClient = await CreateMcpClientAsync(serverConfig, cancellationToken);
+                
+                if (mcpClient != null)
                 {
-                    var tools = await client.Client.ListToolsAsync();
+                    // ✅ Official pattern: ListToolsAsync returns McpClientTool which implements AITool
+                    var tools = await mcpClient.ListToolsAsync();
+                    var aiFunctions = tools.Cast<AIFunction>().ToList();
                     
-                    _mcpClients.Add(new McpClientWrapper
-                    {
-                        Config = serverConfig,
-                        Client = client.Client,
-                        Tools = tools.Cast<AITool>().ToList()
-                    });
-
-                    _logger.LogInformation("Successfully initialized MCP server '{ServerName}' with {ToolCount} tools",
-                        serverConfig.Name, tools.Count());
+                    allTools.AddRange(aiFunctions);
+                    
+                    _logger.LogInformation(
+                        "Loaded {ToolCount} tools from MCP server '{ServerName}': {ToolNames}",
+                        aiFunctions.Count, 
+                        serverConfig.Name,
+                        string.Join(", ", aiFunctions.Select(t => t.Name)));
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to initialize MCP server: {ServerName}", serverConfig.Name);
+                _logger.LogWarning(ex, 
+                    "Failed to load tools from MCP server '{ServerName}'. Continuing with other servers.",
+                    serverConfig.Name);
+                // Continue with other servers instead of failing completely
             }
         }
 
-        _initialized = true;
-        _logger.LogInformation("MCP service initialized with {ClientCount} active servers", _mcpClients.Count);
+        _logger.LogInformation("Total tools loaded: {TotalCount} from {ServerCount} servers", 
+            allTools.Count, enabledServers.Count);
+
+        // TODO: Implement capability-based filtering when needed
+        // For now, return all tools regardless of capabilities
+        return allTools;
     }
 
     /// <summary>
-    /// Get tools for specific capabilities
-    /// Returns tools from all MCP servers (capability filter currently not implemented)
+    /// Get information about all configured MCP servers (not connected)
     /// </summary>
-    public IEnumerable<AIFunction> GetToolsForCapabilities(List<string> capabilities)
+    public IEnumerable<McpServerInfo> GetConfiguredServers()
     {
-        // ✅ Return all MCP tools for now
-        // TODO: Implement capability-based filtering when MCP servers support it
-        return GetAllTools();
-    }
-
-    /// <summary>
-    /// Get all available MCP tools from all connected servers
-    /// </summary>
-    public IEnumerable<AIFunction> GetAllTools()
-    {
-        if (!_initialized)
+        var config = _configuration.GetSection("McpServers").Get<McpServersConfig>();
+        if (config == null || config.Servers.Count == 0)
         {
-            _logger.LogWarning("MCP service not initialized. Call InitializeAsync() first.");
-            return Enumerable.Empty<AIFunction>();
+            return Enumerable.Empty<McpServerInfo>();
         }
 
-        return _mcpClients.SelectMany(c => c.Tools).Cast<AIFunction>();
-    }
-
-    /// <summary>
-    /// Get MCP tools from a specific server
-    /// </summary>
-    public IEnumerable<AITool> GetToolsByServerId(string serverId)
-    {
-        var client = _mcpClients.FirstOrDefault(c => 
-            c.Config.Id.Equals(serverId, StringComparison.OrdinalIgnoreCase));
-
-        return client?.Tools ?? Enumerable.Empty<AITool>();
-    }
-
-    /// <summary>
-    /// Get information about all connected MCP servers
-    /// </summary>
-    public IEnumerable<McpServerInfo> GetServerInfo()
-    {
-        return _mcpClients.Select(c => new McpServerInfo
+        return config.Servers.Where(s => s.Enabled).Select(c => new McpServerInfo
         {
-            Id = c.Config.Id,
-            Name = c.Config.Name,
-            Endpoint = c.Config.Endpoint,
-            Description = c.Config.Description,
-            ToolCount = c.Tools.Count,
-            IsConnected = true
+            Id = c.Id,
+            Name = c.Name,
+            Endpoint = c.Endpoint,
+            Description = c.Description,
+            ToolCount = 0, // Unknown until connected
+            IsConnected = false
         });
     }
 
     /// <summary>
-    /// Create an MCP client for a specific server configuration
+    /// Create an MCP client for a specific server configuration.
+    /// The client should be disposed by the caller using 'await using'.
     /// </summary>
-    private async Task<McpClientWrapper?> CreateMcpClientAsync(
+    private async Task<McpClient?> CreateMcpClientAsync(
         McpServerConfig config, 
         CancellationToken cancellationToken)
     {
+        // Use lock to prevent concurrent connection attempts
+        await _connectionLock.WaitAsync(cancellationToken);
         try
         {
             // Create logger factory for MCP client
             var loggerFactory = LoggerFactory.Create(builder =>
             {
                 builder.AddConsole();
-                builder.SetMinimumLevel(LogLevel.Information);
+                builder.SetMinimumLevel(LogLevel.Warning); // Reduce noise
             });
 
             // Create transport based on authentication type
@@ -158,22 +147,24 @@ public class McpToolService : IAsyncDisposable
                 _ => CreateNoAuthTransport(config)
             };
 
-            // Create MCP client
-            var mcpClient = await McpClient.CreateAsync(transport, cancellationToken: cancellationToken, loggerFactory: loggerFactory);
+            // ✅ Create MCP client - caller is responsible for disposal
+            var mcpClient = await McpClient.CreateAsync(
+                transport, 
+                cancellationToken: cancellationToken, 
+                loggerFactory: loggerFactory);
 
-            _logger.LogInformation("Created MCP client for server: {ServerName}", config.Name);
+            _logger.LogDebug("Created MCP client for server: {ServerName}", config.Name);
 
-            return new McpClientWrapper
-            {
-                Config = config,
-                Client = mcpClient,
-                Tools = new List<AITool>()
-            };
+            return mcpClient;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to create MCP client for server: {ServerName}", config.Name);
             return null;
+        }
+        finally
+        {
+            _connectionLock.Release();
         }
     }
 
@@ -187,8 +178,8 @@ public class McpToolService : IAsyncDisposable
             throw new InvalidOperationException($"Bearer token is required for server: {config.Name}");
         }
 
-        // Configure HttpClient with Bearer token
-        var httpClient = new HttpClient();
+        // Get HttpClient from factory for proper lifecycle management
+        var httpClient = _httpClientFactory.CreateClient("McpClient");
         httpClient.DefaultRequestHeaders.Authorization = 
             new AuthenticationHeaderValue("Bearer", config.BearerToken);
 
@@ -224,6 +215,9 @@ public class McpToolService : IAsyncDisposable
             throw new InvalidOperationException($"OAuth configuration is required for server: {config.Name}");
         }
 
+        // Get HttpClient from factory
+        var httpClient = _httpClientFactory.CreateClient("McpClient");
+
         var transportOptions = new HttpClientTransportOptions
         {
             Endpoint = new Uri(config.Endpoint),
@@ -244,7 +238,7 @@ public class McpToolService : IAsyncDisposable
             transportOptions.TransportMode = ConvertToSdkTransportMode(config.TransportMode);
         }
 
-        var transport = new HttpClientTransport(transportOptions, _httpClient);
+        var transport = new HttpClientTransport(transportOptions, httpClient);
 
         _logger.LogDebug("Created OAuth transport for {ServerName} with mode: {TransportMode}", 
             config.Name, config.TransportMode);
@@ -256,6 +250,9 @@ public class McpToolService : IAsyncDisposable
     /// </summary>
     private IClientTransport CreateNoAuthTransport(McpServerConfig config)
     {
+        // Get HttpClient from factory
+        var httpClient = _httpClientFactory.CreateClient("McpClient");
+
         var transportOptions = new HttpClientTransportOptions
         {
             Endpoint = new Uri(config.Endpoint),
@@ -268,7 +265,7 @@ public class McpToolService : IAsyncDisposable
             transportOptions.TransportMode = ConvertToSdkTransportMode(config.TransportMode);
         }
 
-        var transport = new HttpClientTransport(transportOptions, _httpClient);
+        var transport = new HttpClientTransport(transportOptions, httpClient);
 
         _logger.LogDebug("Created no-auth transport for {ServerName} with mode: {TransportMode}", 
             config.Name, config.TransportMode);
@@ -284,42 +281,18 @@ public class McpToolService : IAsyncDisposable
         {
             McpTransportMode.Sse => HttpTransportMode.Sse,
             McpTransportMode.StreamableHttp => HttpTransportMode.StreamableHttp,
-            McpTransportMode.AutoDetect => HttpTransportMode.AutoDetect,
-            _ => HttpTransportMode.AutoDetect
+            _ => HttpTransportMode.Sse // Default to SSE
         };
     }
 
     /// <summary>
-    /// Dispose all MCP clients
+    /// Dispose resources (SemaphoreSlim)
     /// </summary>
     public async ValueTask DisposeAsync()
     {
-        foreach (var client in _mcpClients)
-        {
-            try
-            {
-                await client.Client.DisposeAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error disposing MCP client for server: {ServerName}", client.Config.Name);
-            }
-        }
-
-        _mcpClients.Clear();
-        _httpClient?.Dispose();
-        
+        _connectionLock?.Dispose();
+        await Task.CompletedTask;
         GC.SuppressFinalize(this);
-    }
-
-    /// <summary>
-    /// Wrapper class for MCP client with its configuration and tools
-    /// </summary>
-    private class McpClientWrapper
-    {
-        public required McpServerConfig Config { get; set; }
-        public required McpClient Client { get; set; }
-        public required List<AITool> Tools { get; set; }
     }
 }
 

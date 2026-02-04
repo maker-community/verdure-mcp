@@ -132,7 +132,9 @@ public class WorkflowManager
 
         // Create Specialist Agents (with their system prompts and capabilities)
         // ✅ Following official best practice: ChatClientAgent auto-injects FunctionInvokingChatClient
-        var specialistAgents = agents.Select(agent =>
+        var specialistAgents = new List<ChatClientAgent>();
+        
+        foreach (var agent in agents)
         {
             var instructions = agent.SystemPrompt +
                 "\n\n【重要提示】" +
@@ -148,24 +150,28 @@ public class WorkflowManager
 
             // Get tools for this agent's capabilities
             // ✅ AIFunction is already an AITool, no need to cast
-            var agentTools = _mcpToolService.GetToolsForCapabilities(agent.Capabilities).ToList();
+            var agentTools = await _mcpToolService.GetToolsForCapabilitiesAsync(
+                agent.Capabilities, cancellationToken);
+            var toolList = agentTools.ToList();
 
-            if (agentTools.Count > 0)
+            if (toolList.Count > 0)
             {
                 _logger.LogDebug("Agent {AgentId} ({Name}) has {ToolCount} tools: {ToolNames}",
-                    agent.AgentId, agent.Name, agentTools.Count,
-                    string.Join(", ", agentTools.Select(t => t.Name)));
+                    agent.AgentId, agent.Name, toolList.Count,
+                    string.Join(", ", toolList.Select(t => t.Name)));
             }
 
             // ✅ Official best practice: Pass tools directly to ChatClientAgent
             // ChatClientAgent will automatically inject FunctionInvokingChatClient when tools are present
-            return new ChatClientAgent(
+            var chatAgent = new ChatClientAgent(
                 _chatClient,  // Use original chat client - no manual wrapping needed
                 instructions: instructions,
                 name: agent.AgentId,  // Use AgentId as agent name
                 description: agent.Personality,
-                tools: agentTools.Cast<AITool>().ToList());  // Convert to AITool list
-        }).ToList();
+                tools: toolList.Cast<AITool>().ToList());  // Convert to AITool list
+            
+            specialistAgents.Add(chatAgent);
+        }
 
         _logger.LogInformation("Created {SpecialistCount} specialist agents for chat room {ChatRoomId}",
             specialistAgents.Count, chatRoomId);
