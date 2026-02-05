@@ -15,25 +15,26 @@ namespace Verdure.Mcp.Server.Services;
 public class WorkflowManager
 {
     private readonly IChatClient _chatClient;
+    private readonly IServiceProvider _rootServiceProvider;
     private readonly IServiceScopeFactory _serviceScopeFactory;
-    private readonly McpToolService _mcpToolService;
     private readonly IMemoryCache _cache;
     private readonly ILogger<WorkflowManager> _logger;
-    
+
     // Cache settings
     private static readonly TimeSpan CacheExpiration = TimeSpan.FromHours(1);
     private const int MaxCacheSize = 100;
 
     public WorkflowManager(
         IChatClient chatClient,
+        IServiceProvider rootServiceProvider,
         IServiceScopeFactory serviceScopeFactory,
         McpToolService mcpToolService,
         IMemoryCache cache,
         ILogger<WorkflowManager> logger)
     {
         _chatClient = chatClient ?? throw new ArgumentNullException(nameof(chatClient));
+        _rootServiceProvider = rootServiceProvider ?? throw new ArgumentNullException(nameof(rootServiceProvider));
         _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
-        _mcpToolService = mcpToolService ?? throw new ArgumentNullException(nameof(mcpToolService));
         _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -44,7 +45,7 @@ public class WorkflowManager
     public async Task<Workflow> GetOrCreateWorkflowAsync(Guid chatRoomId, CancellationToken cancellationToken = default)
     {
         var cacheKey = $"workflow:{chatRoomId}";
-        
+
         // Try get from cache
         if (_cache.TryGetValue<Workflow>(cacheKey, out var cachedWorkflow) && cachedWorkflow != null)
         {
@@ -55,7 +56,7 @@ public class WorkflowManager
         // Create new workflow
         _logger.LogDebug("Creating new workflow for chat room {ChatRoomId}", chatRoomId);
         var workflow = await CreateWorkflowAsync(chatRoomId, cancellationToken);
-        
+
         // Cache with expiration and size limit
         var cacheOptions = new MemoryCacheEntryOptions()
             .SetSlidingExpiration(CacheExpiration)
@@ -64,10 +65,10 @@ public class WorkflowManager
             {
                 _logger.LogDebug("Workflow cache evicted for {Key}, Reason: {Reason}", key, reason);
             });
-        
+
         _cache.Set(cacheKey, workflow, cacheOptions);
-        
-        _logger.LogInformation("Created and cached new workflow for chat room {ChatRoomId} (expires in {Expiration})", 
+
+        _logger.LogInformation("Created and cached new workflow for chat room {ChatRoomId} (expires in {Expiration})",
             chatRoomId, CacheExpiration);
         return workflow;
     }
@@ -96,7 +97,7 @@ public class WorkflowManager
         // Create a scope to get DbContext
         using var scope = _serviceScopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<McpDbContext>();
-        
+
         // Load chat room
         var chatRoom = await dbContext.ChatRooms
             .AsNoTracking()
@@ -136,7 +137,7 @@ public class WorkflowManager
         // Create Specialist Agents (with their system prompts and capabilities)
         // ✅ Following official best practice: ChatClientAgent auto-injects FunctionInvokingChatClient
         var specialistAgents = new List<ChatClientAgent>();
-        
+
         foreach (var agent in agents)
         {
             var instructions = agent.SystemPrompt +
@@ -151,19 +152,8 @@ public class WorkflowManager
                 "\n- 对于音频 URL，可以说类似「我为你挑选了一首好听的音乐，快去听听吧～」。" +
                 "\n- 主动使用工具来丰富对话，让互动更加生动有趣。";
 
-            // Get tools for this agent's capabilities
-            // ✅ AIFunction is already an AITool, no need to cast
-            var agentTools = await _mcpToolService.GetToolsForCapabilitiesAsync(
-                agent.Capabilities, cancellationToken);
-            var toolList = agentTools.ToList();
-
-            if (toolList.Count > 0)
-            {
-                _logger.LogDebug("Agent {AgentId} ({Name}) has {ToolCount} tools: {ToolNames}",
-                    agent.AgentId, agent.Name, toolList.Count,
-                    string.Join(", ", toolList.Select(t => t.Name)));
-            }
-
+            // 1. 优先使用自定义工具 (带 DI 支持，性能更好)
+            var customTools = CreateCustomToolsForCapabilities(agent.Capabilities);
             // ✅ Official best practice: Pass tools directly to ChatClientAgent
             // ChatClientAgent will automatically inject FunctionInvokingChatClient when tools are present
             var chatAgent = new ChatClientAgent(
@@ -171,8 +161,11 @@ public class WorkflowManager
                 instructions: instructions,
                 name: agent.AgentId,  // Use AgentId as agent name
                 description: agent.Personality,
-                tools: toolList.Cast<AITool>().ToList());  // Convert to AITool list
-            
+                tools: customTools,
+                // IMPORTANT: Do NOT pass a scoped ServiceProvider here.
+                // Workflows/agents are cached and may outlive the scope used to build them.
+                services: _rootServiceProvider);
+
             specialistAgents.Add(chatAgent);
         }
 
@@ -185,7 +178,7 @@ public class WorkflowManager
         // Configure handoff paths:
         // 1. Triage can handoff to any specialist
         builder.WithHandoffs(triageAgent, specialistAgents);
-        
+
         // 2. Specialists can handoff back to triage (for re-routing if needed)
         builder.WithHandoffs(specialistAgents, triageAgent);
 
@@ -196,13 +189,32 @@ public class WorkflowManager
         return workflow;
     }
 
+    /// <summary>
+    /// 根据 capabilities 创建自定义工具 (带 DI 支持)
+    /// </summary>
+    /// <remarks>
+    /// 自定义工具优势:
+    /// - 类型安全 (编译时检查)
+    /// - 性能更好 (本地调用)
+    /// - 完整 DI 支持 (DbContext, Logger, HttpClient...)
+    /// </remarks>
+    private List<AITool> CreateCustomToolsForCapabilities(
+        List<string> capabilities)
+    {
+        var tools = new List<AITool>();
+        tools.Add(AIFunctionFactory.Create(CustomToolExample.DatabaseToolPlugin.GetUserDeviceCountAsync));
+        tools.Add(AIFunctionFactory.Create(CustomToolExample.DatabaseToolPlugin.ListUserDevicesAsync));
+        _logger.LogDebug("Added custom database tools (static methods)");
+        return tools;
+    }
+
     private string GenerateTriageInstructions(ChatRoom chatRoom, List<AgentProfile> agents)
     {
         // Build specialist descriptions dynamically
         var specialistDescriptions = string.Join("\n", agents.Select(agent =>
         {
-            var capabilities = agent.Capabilities.Count > 0 
-                ? $"（能力：{string.Join("、", agent.Capabilities)}）" 
+            var capabilities = agent.Capabilities.Count > 0
+                ? $"（能力：{string.Join("、", agent.Capabilities)}）"
                 : "";
             return $"- {agent.AgentId}({agent.Name})：{agent.Personality}{capabilities}";
         }));
