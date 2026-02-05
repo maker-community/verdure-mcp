@@ -55,6 +55,12 @@ builder.Services.AddHangfireServer();
 // Add HTTP context accessor
 builder.Services.AddHttpContextAccessor();
 
+// Add memory cache for workflow caching
+builder.Services.AddMemoryCache(options =>
+{
+    options.SizeLimit = 100;  // Max 100 workflows in cache
+});
+
 // Add infrastructure services
 builder.Services.AddScoped<IImageGenerationService, ImageGenerationService>();
 builder.Services.AddScoped<IEmailService, EmailService>();

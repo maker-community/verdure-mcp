@@ -2,6 +2,7 @@ using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Workflows;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.AI;
+using Microsoft.Extensions.Caching.Memory;
 using Verdure.Mcp.Domain.Entities;
 using Verdure.Mcp.Infrastructure.Data;
 
@@ -16,21 +17,24 @@ public class WorkflowManager
     private readonly IChatClient _chatClient;
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly McpToolService _mcpToolService;
+    private readonly IMemoryCache _cache;
     private readonly ILogger<WorkflowManager> _logger;
     
-    // Cache workflows by chat room ID
-    private readonly Dictionary<Guid, Workflow> _workflowCache = new();
-    private readonly object _cacheLock = new();
+    // Cache settings
+    private static readonly TimeSpan CacheExpiration = TimeSpan.FromHours(1);
+    private const int MaxCacheSize = 100;
 
     public WorkflowManager(
         IChatClient chatClient,
         IServiceScopeFactory serviceScopeFactory,
         McpToolService mcpToolService,
+        IMemoryCache cache,
         ILogger<WorkflowManager> logger)
     {
         _chatClient = chatClient ?? throw new ArgumentNullException(nameof(chatClient));
         _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
         _mcpToolService = mcpToolService ?? throw new ArgumentNullException(nameof(mcpToolService));
+        _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -39,26 +43,32 @@ public class WorkflowManager
     /// </summary>
     public async Task<Workflow> GetOrCreateWorkflowAsync(Guid chatRoomId, CancellationToken cancellationToken = default)
     {
-        // Check cache first
-        lock (_cacheLock)
+        var cacheKey = $"workflow:{chatRoomId}";
+        
+        // Try get from cache
+        if (_cache.TryGetValue<Workflow>(cacheKey, out var cachedWorkflow) && cachedWorkflow != null)
         {
-            if (_workflowCache.TryGetValue(chatRoomId, out var cachedWorkflow))
-            {
-                _logger.LogDebug("Using cached workflow for chat room {ChatRoomId}", chatRoomId);
-                return cachedWorkflow;
-            }
+            _logger.LogDebug("Using cached workflow for chat room {ChatRoomId}", chatRoomId);
+            return cachedWorkflow;
         }
 
         // Create new workflow
+        _logger.LogDebug("Creating new workflow for chat room {ChatRoomId}", chatRoomId);
         var workflow = await CreateWorkflowAsync(chatRoomId, cancellationToken);
         
-        // Cache it
-        lock (_cacheLock)
-        {
-            _workflowCache[chatRoomId] = workflow;
-        }
+        // Cache with expiration and size limit
+        var cacheOptions = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(CacheExpiration)
+            .SetSize(1)  // Each workflow counts as 1 unit
+            .RegisterPostEvictionCallback((key, value, reason, state) =>
+            {
+                _logger.LogDebug("Workflow cache evicted for {Key}, Reason: {Reason}", key, reason);
+            });
         
-        _logger.LogInformation("Created and cached new workflow for chat room {ChatRoomId}", chatRoomId);
+        _cache.Set(cacheKey, workflow, cacheOptions);
+        
+        _logger.LogInformation("Created and cached new workflow for chat room {ChatRoomId} (expires in {Expiration})", 
+            chatRoomId, CacheExpiration);
         return workflow;
     }
 
@@ -67,25 +77,18 @@ public class WorkflowManager
     /// </summary>
     public void ClearWorkflowCache(Guid chatRoomId)
     {
-        lock (_cacheLock)
-        {
-            if (_workflowCache.Remove(chatRoomId))
-            {
-                _logger.LogInformation("Cleared workflow cache for chat room {ChatRoomId}", chatRoomId);
-            }
-        }
+        var cacheKey = $"workflow:{chatRoomId}";
+        _cache.Remove(cacheKey);
+        _logger.LogInformation("Cleared workflow cache for chat room {ChatRoomId}", chatRoomId);
     }
 
     /// <summary>
-    /// Clear all workflow caches
+    /// Clear all workflow caches (not supported by IMemoryCache, but can be implemented with cache key tracking)
     /// </summary>
     public void ClearAllWorkflowCache()
     {
-        lock (_cacheLock)
-        {
-            _workflowCache.Clear();
-            _logger.LogInformation("Cleared all workflow cache");
-        }
+        _logger.LogWarning("ClearAllWorkflowCache called - IMemoryCache doesn't support clearing all entries. " +
+            "Workflows will expire naturally after {Expiration}.", CacheExpiration);
     }
 
     private async Task<Workflow> CreateWorkflowAsync(Guid chatRoomId, CancellationToken cancellationToken)

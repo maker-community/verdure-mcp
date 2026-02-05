@@ -139,22 +139,72 @@ public class AgentOrchestrationService : IAgentOrchestrationService
                                     {
                                         try
                                         {
-                                            var jsonString = functionCall.Arguments.ToString();
-                                            if (!string.IsNullOrEmpty(jsonString))
+                                            // functionCall.Arguments 可能是 BinaryData、JsonElement 或其他类型
+                                            // 尝试多种方式解析
+                                            Dictionary<string, JsonElement>? argsDict = null;
+                                            
+                                            // 方法1: 如果是 BinaryData，转为字符串
+                                            if (functionCall.Arguments is System.BinaryData binaryData)
                                             {
-                                                var argsDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(jsonString);
-                                                if (argsDict != null)
+                                                var jsonString = binaryData.ToString();
+                                                argsDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(jsonString);
+                                            }
+                                            // 方法2: 如果是 IDictionary，直接转换
+                                            else if (functionCall.Arguments is IDictionary<string, object?> dict)
+                                            {
+                                                foreach (var kvp in dict)
                                                 {
-                                                    foreach (var kvp in argsDict)
+                                                    if (kvp.Value != null)
                                                     {
-                                                        parameters[kvp.Key] = kvp.Value.ToString();
+                                                        var jsonStr = JsonSerializer.Serialize(kvp.Value);
+                                                        var element = JsonSerializer.Deserialize<JsonElement>(jsonStr);
+                                                        parameters[kvp.Key] = element.ValueKind switch
+                                                        {
+                                                            JsonValueKind.String => element.GetString() ?? "",
+                                                            JsonValueKind.Number => element.GetDouble(),
+                                                            JsonValueKind.True => true,
+                                                            JsonValueKind.False => false,
+                                                            JsonValueKind.Null => null!,
+                                                            _ => kvp.Value
+                                                        };
                                                     }
+                                                }
+                                                argsDict = new Dictionary<string, JsonElement>(); // 标记为已处理
+                                            }
+                                            // 方法3: 尝试序列化后反序列化（适用于未知类型）
+                                            else
+                                            {
+                                                var jsonString = JsonSerializer.Serialize(functionCall.Arguments);
+                                                // 检查是否是有效的 JSON（不是类型名称）
+                                                if (jsonString.StartsWith("{") || jsonString.StartsWith("["))
+                                                {
+                                                    argsDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(jsonString);
+                                                }
+                                            }
+                                            
+                                            // 如果通过方法1或3获取到了字典，提取值
+                                            if (argsDict != null && argsDict.Count > 0)
+                                            {
+                                                foreach (var kvp in argsDict)
+                                                {
+                                                    // 根据 JsonElement 的类型提取实际值
+                                                    parameters[kvp.Key] = kvp.Value.ValueKind switch
+                                                    {
+                                                        JsonValueKind.String => kvp.Value.GetString() ?? "",
+                                                        JsonValueKind.Number => kvp.Value.GetDouble(),
+                                                        JsonValueKind.True => true,
+                                                        JsonValueKind.False => false,
+                                                        JsonValueKind.Null => null!,
+                                                        _ => kvp.Value.ToString()
+                                                    };
                                                 }
                                             }
                                         }
                                         catch (Exception ex)
                                         {
-                                            _logger.LogWarning(ex, "Failed to parse function arguments");
+                                            _logger.LogWarning(ex, "Failed to parse function arguments. Type: {Type}, Raw: {Raw}", 
+                                                functionCall.Arguments?.GetType().FullName ?? "null",
+                                                functionCall.Arguments?.ToString() ?? "null");
                                         }
                                     }
 

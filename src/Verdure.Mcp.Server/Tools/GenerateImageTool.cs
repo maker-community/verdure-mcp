@@ -306,7 +306,7 @@ public class GenerateImageTool
             TaskId = task.Id,
             Status = task.Status.ToString().ToLowerInvariant(),
             Message = task.ErrorMessage ?? GetStatusMessage(task.Status),
-            ImageBase64 = task.ImageData,
+            //ImageBase64 = task.ImageData,
             ImageUrl = task.ImageUrl,
             IsAsync = !string.IsNullOrEmpty(task.HangfireJobId)
         };
