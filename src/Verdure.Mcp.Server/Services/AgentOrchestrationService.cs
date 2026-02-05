@@ -268,7 +268,7 @@ public class AgentOrchestrationService : IAgentOrchestrationService
             // Get agent metadata from database
             var finalAgentProfile = await _dbContext.AgentProfiles
                 .AsNoTracking()
-                .FirstOrDefaultAsync(a => a.AgentId == finalResponse.AgentId, cancellationToken);
+                .FirstOrDefaultAsync(a => a.AgentId == finalResponse.AgentName, cancellationToken);
 
             return new AgentResponse
             {
