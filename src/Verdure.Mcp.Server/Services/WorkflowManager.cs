@@ -6,6 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Verdure.Mcp.Domain.Entities;
 using Verdure.Mcp.Infrastructure.Data;
+using Verdure.Mcp.Server.AITools;
 
 namespace Verdure.Mcp.Server.Services;
 
@@ -200,9 +201,12 @@ public class WorkflowManager
         List<string> capabilities)
     {
         var tools = new List<AITool>();
-        tools.Add(AIFunctionFactory.Create(CustomToolExample.DatabaseToolPlugin.GetUserDeviceCountAsync));
-        tools.Add(AIFunctionFactory.Create(CustomToolExample.DatabaseToolPlugin.ListUserDevicesAsync));
-        _logger.LogDebug("Added custom database tools (static methods)");
+        tools.Add(AIFunctionFactory.Create(ImageGenerationAiTool.GenerateImageAsync));
+        //if (capabilities.Any(c => string.Equals(c, "生图", StringComparison.OrdinalIgnoreCase)))
+        //{
+        //    tools.Add(AIFunctionFactory.Create(ImageGenerationAiTool.GenerateImageAsync));
+        //    _logger.LogDebug("Added AI image generation tool");
+        //}
         return tools;
     }
 

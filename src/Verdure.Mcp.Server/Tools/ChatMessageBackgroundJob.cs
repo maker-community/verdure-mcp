@@ -105,20 +105,9 @@ public class ChatMessageBackgroundJob
                     // We just need to extract URLs for frontend display
                     switch (toolCall.ToolName)
                     {
-                        case "generate_image":
-                            // Tool already executed, look for imageUrl in result
-                            if (toolCall.Parameters?.TryGetValue("imageUrl", out var imageUrlObj) == true ||
-                                toolCall.Parameters?.TryGetValue("result", out imageUrlObj) == true)
-                            {
-                                var imageUrl = imageUrlObj?.ToString();
-                                if (!string.IsNullOrEmpty(imageUrl))
-                                {
-                                    _logger.LogInformation("Image URL found in tool result: {ImageUrl}", imageUrl);
-                                    attachments.Add(new { type = "image", url = imageUrl });
-                                }
-                            }
+                        case "GenerateImage":
                             // Fallback: Try to parse from agent's message content
-                            else if (!string.IsNullOrEmpty(agentResponse.Content))
+                            if (!string.IsNullOrEmpty(agentResponse.Content))
                             {
                                 var urlMatch = System.Text.RegularExpressions.Regex.Match(
                                     agentResponse.Content,
@@ -128,20 +117,6 @@ public class ChatMessageBackgroundJob
                                     var imageUrl = urlMatch.Groups[1].Value;
                                     _logger.LogInformation("Image URL extracted from content: {ImageUrl}", imageUrl);
                                     attachments.Add(new { type = "image", url = imageUrl });
-                                }
-                            }
-                            break;
-
-                        case "play_random_music":
-                            // Tool already executed, look for audioUrl in result
-                            if (toolCall.Parameters?.TryGetValue("audioUrl", out var audioUrlObj) == true ||
-                                toolCall.Parameters?.TryGetValue("result", out audioUrlObj) == true)
-                            {
-                                var audioUrl = audioUrlObj?.ToString();
-                                if (!string.IsNullOrEmpty(audioUrl))
-                                {
-                                    _logger.LogInformation("Audio URL found in tool result: {AudioUrl}", audioUrl);
-                                    attachments.Add(new { type = "audio", url = audioUrl });
                                 }
                             }
                             break;
