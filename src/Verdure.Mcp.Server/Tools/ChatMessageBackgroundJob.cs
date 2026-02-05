@@ -110,10 +110,12 @@ public class ChatMessageBackgroundJob
             }
 
             string? audioUrl = null;
+            var voiceName = TryGetMetadataValue(agentResponse.Metadata, "voiceName");
             if (!string.IsNullOrWhiteSpace(agentResponse.Content))
             {
                 var synthesisResult = await _audioSynthesisService.SynthesizeOggAsync(
                     agentResponse.Content,
+                    voiceName,
                     cancellationToken);
 
                 if (synthesisResult.Success && synthesisResult.AudioBytes is { Length: > 0 })
@@ -222,5 +224,19 @@ public class ChatMessageBackgroundJob
         var previewLength = Math.Min(30, content.Length);
         var preview = content.Substring(0, previewLength);
         return $"{agentName}: {preview}...";
+    }
+
+    private static string? TryGetMetadataValue(Dictionary<string, object>? metadata, string key)
+    {
+        if (metadata == null || !metadata.TryGetValue(key, out var value) || value == null)
+        {
+            return null;
+        }
+
+        return value switch
+        {
+            string s => string.IsNullOrWhiteSpace(s) ? null : s,
+            _ => value.ToString()
+        };
     }
 }

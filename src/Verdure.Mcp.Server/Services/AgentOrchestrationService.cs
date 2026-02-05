@@ -268,7 +268,7 @@ public class AgentOrchestrationService : IAgentOrchestrationService
             // Get agent metadata from database
             var finalAgentProfile = await _dbContext.AgentProfiles
                 .AsNoTracking()
-                .FirstOrDefaultAsync(a => a.AgentId == finalResponse.AgentName, cancellationToken);
+                .FirstOrDefaultAsync(a => a.AgentId == finalResponse.AgentId, cancellationToken);
 
             return new AgentResponse
             {
@@ -278,7 +278,8 @@ public class AgentOrchestrationService : IAgentOrchestrationService
                 Metadata = new Dictionary<string, object>
                 {
                     ["avatar"] = finalAgentProfile?.Avatar ?? string.Empty,
-                    ["personality"] = finalAgentProfile?.Personality ?? string.Empty
+                    ["personality"] = finalAgentProfile?.Personality ?? string.Empty,
+                    ["voiceName"] = finalAgentProfile?.VoiceName ?? string.Empty
                 },
                 ToolCalls = toolCalls.Count > 0 ? toolCalls : null // Include tool calls
             };

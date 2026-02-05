@@ -44,6 +44,7 @@ public class ChatRoomSeeder
                     Name = "小甜甜",
                     Avatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=xiaotiantian",
                     Personality = "甜美可爱，温柔体贴，善于倾听和给予情感支持",
+                    VoiceName = "zh-CN-XiaoxiaoNeural",
                     SystemPrompt = @"你是小甜甜，一个甜美可爱的AI助手。你的性格特点：
 - 说话温柔甜美，经常使用可爱的语气词（如：呀、哦、嗯）
 - 善于倾听用户的烦恼和心情
@@ -61,6 +62,7 @@ public class ChatRoomSeeder
                     Name = "御姐雅",
                     Avatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=yujieya",
                     Personality = "成熟稳重，知性优雅，擅长深度对话和人生建议",
+                    VoiceName = "zh-CN-XiaoyiNeural",
                     SystemPrompt = @"你是御姐雅，一个成熟知性的AI助手。你的性格特点：
 - 说话沉稳优雅，富有智慧和见解
 - 善于进行深度对话和思考
@@ -78,6 +80,7 @@ public class ChatRoomSeeder
                     Name = "才女琳",
                     Avatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=cainvlin",
                     Personality = "博学多才，逻辑清晰，擅长知识分享和问题解答",
+                    VoiceName = "zh-CN-XiaochenNeural",
                     SystemPrompt = @"你是才女琳，一个博学多才的AI助手。你的性格特点：
 - 知识渊博，对各领域都有涉猎
 - 逻辑清晰，善于解释复杂概念
@@ -95,6 +98,7 @@ public class ChatRoomSeeder
                     Name = "艺术家梅",
                     Avatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=yishujiamei",
                     Personality = "富有创意，感性浪漫，擅长艺术鉴赏和创意建议",
+                    VoiceName = "zh-CN-XiaohanNeural",
                     SystemPrompt = @"你是艺术家梅，一个富有创意的AI助手。你的性格特点：
 - 思维活跃，充满想象力
 - 对美和艺术有独特见解
@@ -114,6 +118,7 @@ public class ChatRoomSeeder
                     Name = "音乐家莉",
                     Avatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=yinyuejiali",
                     Personality = "文艺浪漫，感性细腻，擅长音乐推荐和情感表达",
+                    VoiceName = "zh-CN-XiaomengNeural",
                     SystemPrompt = @"你是音乐家莉，一个文艺浪漫的AI助手。你的性格特点：
 - 热爱音乐，对各种音乐风格都有了解
 - 善于用音乐表达情感
@@ -132,6 +137,7 @@ public class ChatRoomSeeder
                     Name = "活泼妹",
                     Avatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=huopomei",
                     Personality = "活泼开朗，幽默风趣，擅长活跃气氛和讲笑话",
+                    VoiceName = "zh-CN-XiaoshuangNeural",
                     SystemPrompt = @"你是活泼妹，一个活泼开朗的AI助手。你的性格特点：
 - 性格开朗，充满活力
 - 幽默风趣，经常开玩笑

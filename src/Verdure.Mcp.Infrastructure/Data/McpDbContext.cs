@@ -581,6 +581,10 @@ public class McpDbContext : DbContext
                 .HasColumnName("system_prompt")
                 .IsRequired()
                 .HasMaxLength(2000);
+
+            entity.Property(e => e.VoiceName)
+                .HasColumnName("voice_name")
+                .HasMaxLength(200);
             
             entity.Property(e => e.Capabilities)
                 .HasColumnName("capabilities")

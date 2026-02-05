@@ -36,6 +36,11 @@ public class AgentProfile
     public required string SystemPrompt { get; set; }
 
     /// <summary>
+    /// Azure Speech voice name for the agent (e.g., zh-CN-XiaoxiaoNeural)
+    /// </summary>
+    public string? VoiceName { get; set; }
+
+    /// <summary>
     /// List of capabilities (e.g., "生图", "音乐", "闲聊")
     /// </summary>
     public List<string> Capabilities { get; set; } = new();

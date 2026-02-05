@@ -20,7 +20,10 @@ public class AudioSynthesisResult
 /// </summary>
 public interface IAudioSynthesisService
 {
-    Task<AudioSynthesisResult> SynthesizeOggAsync(string text, CancellationToken cancellationToken = default);
+    Task<AudioSynthesisResult> SynthesizeOggAsync(
+        string text,
+        string? voiceName = null,
+        CancellationToken cancellationToken = default);
 }
 
 /// <summary>
@@ -43,7 +46,10 @@ public class AudioSynthesisService : IAudioSynthesisService
         _logger = logger;
     }
 
-    public async Task<AudioSynthesisResult> SynthesizeOggAsync(string text, CancellationToken cancellationToken = default)
+    public async Task<AudioSynthesisResult> SynthesizeOggAsync(
+        string text,
+        string? voiceName = null,
+        CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(text))
         {
@@ -73,9 +79,13 @@ public class AudioSynthesisService : IAudioSynthesisService
                 speechConfig.SpeechSynthesisLanguage = _settings.SpeechSynthesisLanguage;
             }
 
-            if (!string.IsNullOrWhiteSpace(_settings.SpeechSynthesisVoiceName))
+            var selectedVoice = string.IsNullOrWhiteSpace(voiceName)
+                ? _settings.SpeechSynthesisVoiceName
+                : voiceName;
+
+            if (!string.IsNullOrWhiteSpace(selectedVoice))
             {
-                speechConfig.SpeechSynthesisVoiceName = _settings.SpeechSynthesisVoiceName;
+                speechConfig.SpeechSynthesisVoiceName = selectedVoice;
             }
 
             speechConfig.SetSpeechSynthesisOutputFormat(SpeechSynthesisOutputFormat.Ogg16Khz16BitMonoOpus);
