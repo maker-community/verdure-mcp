@@ -41,8 +41,8 @@
     <!-- Email - MailKit is the most modern and recommended library for .NET -->
     <PackageVersion Include="MailKit" Version="4.14.1" />
     <!-- Background Jobs - Hangfire -->
-    <PackageVersion Include="Hangfire.Core" Version="1.8.22" />
-    <PackageVersion Include="Hangfire.AspNetCore" Version="1.8.22" />
+    <PackageVersion Include="Hangfire.Core" Version="1.8.23" />
+    <PackageVersion Include="Hangfire.AspNetCore" Version="1.8.23" />
     <PackageVersion Include="Hangfire.PostgreSql" Version="1.20.13" />
     <!-- MudBlazor -->
     <PackageVersion Include="MudBlazor" Version="8.15.0" />
@@ -61,6 +61,8 @@
     <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.15.0" />
     <!-- Image processing -->
     <PackageVersion Include="SixLabors.ImageSharp" Version="3.1.12" />
+    <!-- Audio encoding (Opus) -->
+    <PackageVersion Include="OpusSharp" Version="1.5.7" />
     <!-- Test packages -->
     <PackageVersion Include="coverlet.collector" Version="6.0.2" />
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.0" />
