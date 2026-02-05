@@ -145,24 +145,6 @@ public class ChatMessageBackgroundJob
             };
             await _devicePushService.SendCustomMessageAsync(userId, notificationMessage, cancellationToken);
 
-            // 2. 再发送群聊消息
-            var groupChatMessage = new
-            {
-                action = "group_chat",
-                roomId = chatRoomId.ToString(),
-                roomName = chatRoom?.Name ?? "AI Group Chat",
-                id = agentMessage.Id.ToString(),
-                senderId = agentResponse.AgentId,
-                senderName = agentResponse.AgentName,
-                content = agentResponse.Content,
-                isAgent = true,
-                timestamp = agentMessage.CreatedAt,
-                attachments = attachments.Count > 0 ? attachments : null,
-                metadata = agentResponse.Metadata
-            };
-
-            await _devicePushService.SendCustomMessageAsync(userId, groupChatMessage, cancellationToken);
-
             _logger.LogInformation(
                 "Agent response pushed to user {UserId} via SignalR, roomId={ChatRoomId}",
                 userId, chatRoomId);

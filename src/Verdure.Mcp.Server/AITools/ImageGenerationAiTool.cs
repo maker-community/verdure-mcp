@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Net;
 using Microsoft.Extensions.DependencyInjection;
 using Verdure.Mcp.Infrastructure.Services;
 using Verdure.Mcp.Server.Services;
@@ -25,6 +26,8 @@ public class ImageGenerationAiTool
         using var scope = serviceProvider.CreateScope();
         var imageGenerationService = scope.ServiceProvider.GetRequiredService<IImageGenerationService>();
         var imageStorageService = scope.ServiceProvider.GetRequiredService<IImageStorageService>();
+        var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
+        var devicePushService = scope.ServiceProvider.GetRequiredService<IDevicePushService>();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<ImageGenerationAiTool>>();
 
         if (string.IsNullOrWhiteSpace(prompt))
@@ -54,16 +57,75 @@ public class ImageGenerationAiTool
 
             string? pngUrl = null;
             string? jpegUrl = null;
+            ImageStorageResult? storageResult = null;
+            var imageId = Guid.NewGuid();
 
             if (!string.IsNullOrEmpty(result.ImageBase64))
             {
-                var storage = await imageStorageService.SaveImageAsync(
+                storageResult = await imageStorageService.SaveImageAsync(
                     result.ImageBase64,
-                    Guid.NewGuid(),
+                    imageId,
                     cancellationToken);
 
-                pngUrl = storage.PngUrl;
-                jpegUrl = storage.JpegUrl;
+                pngUrl = storageResult.PngUrl;
+                jpegUrl = storageResult.JpegUrl;
+            }
+
+            var userId = UserContext.Current?.UserId;
+            var userEmail = UserContext.Current?.UserEmail;
+
+            if (!string.IsNullOrEmpty(userEmail) && !string.IsNullOrEmpty(result.ImageBase64))
+            {
+                try
+                {
+                    var imageBytes = Convert.FromBase64String(result.ImageBase64);
+                    var encodedPrompt = WebUtility.HtmlEncode(prompt);
+                    var encodedRevisedPrompt = WebUtility.HtmlEncode(result.RevisedPrompt ?? "无");
+                    await emailService.SendImageEmailAsync(
+                        userEmail,
+                        "您的图片已生成",
+                        $"<h1>您的图片已成功生成！</h1><p>提示词：{encodedPrompt}</p><p>修订后的提示词：{encodedRevisedPrompt}</p>",
+                        imageBytes,
+                        $"image_{imageId}.png",
+                        cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "发送邮件失败，UserEmail={UserEmail}", userEmail);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(userId) && storageResult != null)
+            {
+                try
+                {
+                    var notificationMessage = new
+                    {
+                        action = "notification",
+                        title = "图片生成完成",
+                        content = $"您的图片已生成：{prompt.Substring(0, Math.Min(30, prompt.Length))}...",
+                        emotion = "happy",
+                        sound = "success"
+                    };
+                    await devicePushService.SendCustomMessageAsync(userId, notificationMessage, cancellationToken);
+
+                    var imageMessage = new
+                    {
+                        action = "image",
+                        url = storageResult.JpegUrl,
+                        taskId = imageId.ToString(),
+                        pngUrl = storageResult.PngUrl,
+                        prompt = prompt,
+                        jpegSize = storageResult.JpegSize,
+                        timestamp = DateTime.UtcNow
+                    };
+
+                    await devicePushService.SendCustomMessageAsync(userId, imageMessage, cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "推送消息到设备失败，UserId={UserId}", userId);
+                }
             }
 
             return new AiImageGenerationResponse
