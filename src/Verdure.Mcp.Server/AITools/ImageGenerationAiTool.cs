@@ -70,7 +70,7 @@ public class ImageGenerationAiTool
             {
                 Success = true,
                 Message = "图片生成成功",
-                ImageUrl = pngUrl ?? result.ImageUrl,
+                //ImageUrl = pngUrl ?? result.ImageUrl,
                 JpegUrl = jpegUrl,
                 RevisedPrompt = result.RevisedPrompt
             };
