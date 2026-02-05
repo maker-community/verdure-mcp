@@ -3,6 +3,7 @@ using Microsoft.Agents.AI.Workflows;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using Verdure.Mcp.Domain.Entities;
 using Verdure.Mcp.Infrastructure.Data;
 
@@ -16,7 +17,6 @@ public class WorkflowManager
 {
     private readonly IChatClient _chatClient;
     private readonly IServiceProvider _rootServiceProvider;
-    private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly IMemoryCache _cache;
     private readonly ILogger<WorkflowManager> _logger;
 
@@ -27,14 +27,12 @@ public class WorkflowManager
     public WorkflowManager(
         IChatClient chatClient,
         IServiceProvider rootServiceProvider,
-        IServiceScopeFactory serviceScopeFactory,
         McpToolService mcpToolService,
         IMemoryCache cache,
         ILogger<WorkflowManager> logger)
     {
         _chatClient = chatClient ?? throw new ArgumentNullException(nameof(chatClient));
         _rootServiceProvider = rootServiceProvider ?? throw new ArgumentNullException(nameof(rootServiceProvider));
-        _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
         _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -94,8 +92,8 @@ public class WorkflowManager
 
     private async Task<Workflow> CreateWorkflowAsync(Guid chatRoomId, CancellationToken cancellationToken)
     {
-        // Create a scope to get DbContext
-        using var scope = _serviceScopeFactory.CreateScope();
+        // Create a scope from the root provider to resolve scoped services (e.g., DbContext)
+        using var scope = _rootServiceProvider.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<McpDbContext>();
 
         // Load chat room
