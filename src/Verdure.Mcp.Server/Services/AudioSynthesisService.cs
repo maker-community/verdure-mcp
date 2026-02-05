@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Microsoft.CognitiveServices.Speech;
 using Microsoft.Extensions.Options;
 using OpusSharp.Core;
+using OpusSharp.Core.Extensions;
 using Verdure.Mcp.Server.Settings;
 
 namespace Verdure.Mcp.Server.Services;
@@ -40,11 +41,12 @@ public class AudioSynthesisService : IAudioSynthesisService
     private const double EstimatedCharsPerSecond = 6.0;
     private const int TargetSampleRate = 16000;
     private const int TargetChannels = 1;
-    private const int OpusFrameDurationMs = 20;
+    private const int OpusFrameDurationMs = 60;
     private const int OpusMaxPacketSize = 4000;
     private const int OpusGranuleSampleRate = 48000;
-    private const int OpusFramesPerPage = 51;
+    private const int OpusFramesPerPage = 17;
     private const ushort OpusPreSkip = 312;
+    private const int OpusTargetBitrate = 16000;
 
     private static readonly Regex EmojiRegex = new(
         @"(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]|[\u2702-\u27b0])",
@@ -224,11 +226,12 @@ public class AudioSynthesisService : IAudioSynthesisService
             return Array.Empty<byte>();
         }
 
-        var samplesPerFrame = samplesPerChannel * channels;
-        var bytesPerFrame = samplesPerFrame * sizeof(short);
+        var bytesPerFrame = samplesPerChannel * channels * sizeof(short);
 
         using var output = new MemoryStream();
         using var encoder = new OpusEncoder(sampleRate, channels, OpusPredefinedValues.OPUS_APPLICATION_AUDIO);
+        encoder.SetBitRate(OpusTargetBitrate);
+        encoder.SetVbr(true);
         using var oggWriter = new OggOpusWriter(output, sampleRate, channels);
 
         oggWriter.WriteOpusHead();
@@ -243,7 +246,7 @@ public class AudioSynthesisService : IAudioSynthesisService
             var frameBuffer = new byte[bytesPerFrame];
             Buffer.BlockCopy(pcmBytes, offset, frameBuffer, 0, bytesToCopy);
 
-            var encodedBytes = encoder.Encode(frameBuffer, samplesPerFrame, encodedBuffer, encodedBuffer.Length);
+            var encodedBytes = encoder.Encode(frameBuffer, samplesPerChannel, encodedBuffer, encodedBuffer.Length);
             if (encodedBytes <= 0)
             {
                 return Array.Empty<byte>();
@@ -274,10 +277,7 @@ public class AudioSynthesisService : IAudioSynthesisService
         private static readonly byte[] TagVendorBytes = Encoding.ASCII.GetBytes("Lavf62.3.100");
         private static readonly byte[][] TagComments =
         {
-            Encoding.ASCII.GetBytes("encoder=Lavc62.11.100 libopus"),
-            new byte[] { 0x74, 0x69, 0x74, 0x6c, 0x65, 0x3d, 0xc3, 0x8e, 0xc3, 0x92, 0xc3, 0x83, 0xc3, 0x87, 0xc2, 0xb6, 0xc2, 0xbc, 0xc3, 0x92, 0xc2, 0xbb, 0xc3, 0x91, 0xc3, 0xb9 },
-            new byte[] { 0x61, 0x72, 0x74, 0x69, 0x73, 0x74, 0x3d, 0xc3, 0x95, 0xc3, 0x85, 0xc2, 0xbd, 0xc3, 0x9c },
-            new byte[] { 0x61, 0x6c, 0x62, 0x75, 0x6d, 0x3d, 0xc3, 0x83, 0xc3, 0xb7, 0xc3, 0x8c, 0xc3, 0xac, 0xc2, 0xb9, 0xc3, 0xbd, 0xc2, 0xba, 0xc3, 0xb3 }
+            Encoding.ASCII.GetBytes("encoder=Lavc62.11.100 libopus")
         };
 
         private readonly Stream _output;
