@@ -112,7 +112,13 @@ builder.Services.AddSingleton<Microsoft.Extensions.AI.IChatClient>(sp =>
 builder.Services.AddSingleton<WorkflowManager>();
 
 // Add HttpClientFactory for MCP Tool Service
-builder.Services.AddHttpClient();
+// ⭐ 配置 MCP 工具调用超时
+builder.Services.AddHttpClient("McpClient", client =>
+{
+    client.DefaultRequestHeaders.Add("User-Agent", "Verdure-MCP-Server/1.0");
+    client.Timeout = TimeSpan.FromSeconds(100); // MCP 工具调用全局超时 100 秒
+});
+builder.Services.AddHttpClient(); // 保留默认 HttpClient 注册
 
 // Add MCP Tool Service for agents (provides tools as AIFunctions)
 // This will dynamically load tools from configured MCP servers
