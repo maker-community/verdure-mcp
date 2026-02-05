@@ -71,36 +71,14 @@ public class ChatMessageBackgroundJob
                 userMessage.Content,
                 cancellationToken);
 
-            // Save agent response to database
-            var agentMessage = new ChatMessage
-            {
-                Id = Guid.NewGuid(),
-                ChatRoomId = chatRoomId,
-                UserId = userId,
-                SenderId = agentResponse.AgentId,
-                IsAgent = true,
-                Content = agentResponse.Content,
-                Metadata = agentResponse.Metadata != null 
-                    ? JsonSerializer.Serialize(agentResponse.Metadata) 
-                    : null,
-                CreatedAt = DateTime.UtcNow
-            };
-
-            _dbContext.ChatMessages.Add(agentMessage);
-            await _dbContext.SaveChangesAsync(cancellationToken);
-
-            _logger.LogInformation(
-                "Agent response saved: agentId={AgentId}, messageId={MessageId}",
-                agentResponse.AgentId, agentMessage.Id);
-
-            // Handle tool calls if any
+            // Handle tool calls if any (prepare attachments before saving message)
             var attachments = new List<object>();
             if (agentResponse.ToolCalls != null && agentResponse.ToolCalls.Count > 0)
             {
                 foreach (var toolCall in agentResponse.ToolCalls)
                 {
                     _logger.LogInformation("Processing tool call: {ToolName}", toolCall.ToolName);
-                    
+
                     // Extract results from tool parameters (after execution)
                     // Note: FunctionInvokingChatClient already executed the tools
                     // We just need to extract URLs for frontend display
@@ -124,6 +102,31 @@ public class ChatMessageBackgroundJob
                     }
                 }
             }
+
+            // Save agent response to database
+            var agentMessage = new ChatMessage
+            {
+                Id = Guid.NewGuid(),
+                ChatRoomId = chatRoomId,
+                UserId = userId,
+                SenderId = agentResponse.AgentId,
+                IsAgent = true,
+                Content = agentResponse.Content,
+                Metadata = agentResponse.Metadata != null 
+                    ? JsonSerializer.Serialize(agentResponse.Metadata) 
+                    : null,
+                Attachments = attachments.Count > 0
+                    ? JsonSerializer.Serialize(attachments)
+                    : null,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _dbContext.ChatMessages.Add(agentMessage);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            _logger.LogInformation(
+                "Agent response saved: agentId={AgentId}, messageId={MessageId}",
+                agentResponse.AgentId, agentMessage.Id);
 
             // Get chat room info
             var chatRoom = await _dbContext.ChatRooms

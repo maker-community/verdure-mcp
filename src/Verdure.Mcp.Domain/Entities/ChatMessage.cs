@@ -41,6 +41,11 @@ public class ChatMessage
     public string? Metadata { get; set; }
 
     /// <summary>
+    /// Attachments as JSON (image, audio, etc.)
+    /// </summary>
+    public string? Attachments { get; set; }
+
+    /// <summary>
     /// When the message was created
     /// </summary>
     public DateTime CreatedAt { get; set; }
