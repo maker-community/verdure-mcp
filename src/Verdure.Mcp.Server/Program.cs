@@ -35,6 +35,10 @@ builder.Services.Configure<TokenValidationSettings>(
     builder.Configuration.GetSection(TokenValidationSettings.SectionName));
 builder.Services.Configure<ImageStorageSettings>(
     builder.Configuration.GetSection(ImageStorageSettings.SectionName));
+builder.Services.Configure<AudioStorageSettings>(
+    builder.Configuration.GetSection(AudioStorageSettings.SectionName));
+builder.Services.Configure<AzureSpeechSettings>(
+    builder.Configuration.GetSection(AzureSpeechSettings.SectionName));
 
 // Add database context
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -67,6 +71,8 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ITokenValidationService, TokenValidationService>();
 builder.Services.AddScoped<IMcpServiceService, McpServiceService>();
 builder.Services.AddScoped<IImageStorageService, ImageStorageService>();
+builder.Services.AddScoped<IAudioStorageService, AudioStorageService>();
+builder.Services.AddScoped<IAudioSynthesisService, AudioSynthesisService>();
 
 // Add AI Group Chat services
 builder.Services.AddScoped<IAgentOrchestrationService, AgentOrchestrationService>();

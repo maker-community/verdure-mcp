@@ -15,17 +15,23 @@ public class ChatMessageBackgroundJob
     private readonly McpDbContext _dbContext;
     private readonly IAgentOrchestrationService _agentOrchestrationService;
     private readonly IDevicePushService _devicePushService;
+    private readonly IAudioSynthesisService _audioSynthesisService;
+    private readonly IAudioStorageService _audioStorageService;
     private readonly ILogger<ChatMessageBackgroundJob> _logger;
 
     public ChatMessageBackgroundJob(
         McpDbContext dbContext,
         IAgentOrchestrationService agentOrchestrationService,
         IDevicePushService devicePushService,
+        IAudioSynthesisService audioSynthesisService,
+        IAudioStorageService audioStorageService,
         ILogger<ChatMessageBackgroundJob> logger)
     {
         _dbContext = dbContext;
         _agentOrchestrationService = agentOrchestrationService;
         _devicePushService = devicePushService;
+        _audioSynthesisService = audioSynthesisService;
+        _audioStorageService = audioStorageService;
         _logger = logger;
     }
 
@@ -103,6 +109,30 @@ public class ChatMessageBackgroundJob
                 }
             }
 
+            string? audioUrl = null;
+            if (!string.IsNullOrWhiteSpace(agentResponse.Content))
+            {
+                var synthesisResult = await _audioSynthesisService.SynthesizeOggAsync(
+                    agentResponse.Content,
+                    cancellationToken);
+
+                if (synthesisResult.Success && synthesisResult.AudioBytes is { Length: > 0 })
+                {
+                    var audioId = Guid.NewGuid();
+                    var storageResult = await _audioStorageService.SaveOggAsync(
+                        synthesisResult.AudioBytes,
+                        audioId,
+                        cancellationToken);
+
+                    audioUrl = storageResult.OggUrl;
+                    attachments.Add(new { type = "audio", url = audioUrl, format = "ogg" });
+                }
+                else if (!string.IsNullOrWhiteSpace(synthesisResult.ErrorMessage))
+                {
+                    _logger.LogWarning("Speech synthesis failed: {Error}", synthesisResult.ErrorMessage);
+                }
+            }
+
             // Save agent response to database
             var agentMessage = new ChatMessage
             {
@@ -139,11 +169,23 @@ public class ChatMessageBackgroundJob
             {
                 action = "notification",
                 title = "新消息",
-                content = $"{agentResponse.AgentName}: {agentResponse.Content.Substring(0, Math.Min(30, agentResponse.Content.Length))}...",
+                content = BuildNotificationContent(agentResponse.AgentName, agentResponse.Content),
                 emotion = "happy",
                 sound = "message"
             };
             await _devicePushService.SendCustomMessageAsync(userId, notificationMessage, cancellationToken);
+
+            if (!string.IsNullOrWhiteSpace(audioUrl))
+            {
+                var audioMessage = new
+                {
+                    action = "audio",
+                    url = audioUrl,
+                    title = agentResponse.AgentName
+                };
+
+                await _devicePushService.SendCustomMessageAsync(userId, audioMessage, cancellationToken);
+            }
 
             _logger.LogInformation(
                 "Agent response pushed to user {UserId} via SignalR, roomId={ChatRoomId}",
@@ -168,5 +210,17 @@ public class ChatMessageBackgroundJob
                 _logger.LogError(notifyEx, "Failed to send error notification to user {UserId}", userId);
             }
         }
+    }
+
+    private static string BuildNotificationContent(string agentName, string? content)
+    {
+        if (string.IsNullOrWhiteSpace(content))
+        {
+            return $"{agentName}: (空)";
+        }
+
+        var previewLength = Math.Min(30, content.Length);
+        var preview = content.Substring(0, previewLength);
+        return $"{agentName}: {preview}...";
     }
 }

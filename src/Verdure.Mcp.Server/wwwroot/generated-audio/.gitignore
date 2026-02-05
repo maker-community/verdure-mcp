@@ -1,0 +1,10 @@
+# 忽略所有生成的音频文件
+*.ogg
+*.wav
+*.mp3
+*.opus
+*.m4a
+*.aac
+
+# 但保留 README.md
+!README.md
