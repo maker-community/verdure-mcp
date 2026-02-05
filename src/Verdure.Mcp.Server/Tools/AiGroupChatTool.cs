@@ -161,6 +161,7 @@ public class AiGroupChatTool
         {
             Id = Guid.NewGuid(),
             ChatRoomId = chatRoomId,
+            UserId = userId,
             SenderId = userId,
             IsAgent = false,
             Content = message,
@@ -446,12 +447,13 @@ public class AiGroupChatTool
         // Get recent messages
         var messages = await _dbContext.ChatMessages
             .AsNoTracking()
-            .Where(m => m.ChatRoomId == chatRoomId)
+            .Where(m => m.ChatRoomId == chatRoomId && m.UserId == userId)
             .OrderByDescending(m => m.CreatedAt)
             .Take(Math.Min(limit, 50)) // Max 50 messages
             .Select(m => new
             {
                 id = m.Id,
+                userId = m.UserId,
                 senderId = m.SenderId,
                 isAgent = m.IsAgent,
                 content = m.Content,

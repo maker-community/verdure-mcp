@@ -44,7 +44,8 @@ public interface IAgentOrchestrationService
     /// Get chat history for context
     /// </summary>
     Task<List<ChatMessageDto>> GetChatHistoryAsync(
-        Guid chatRoomId, 
+        Guid chatRoomId,
+        string userId,
         int limit = 50, 
         CancellationToken cancellationToken = default);
 }

@@ -47,7 +47,7 @@ public class ChatMessageBackgroundJob
 
             // Get the user message
             var userMessage = await _dbContext.ChatMessages
-                .FirstOrDefaultAsync(m => m.Id == messageId, cancellationToken);
+                .FirstOrDefaultAsync(m => m.Id == messageId && m.UserId == userId, cancellationToken);
 
             if (userMessage == null)
             {
@@ -76,6 +76,7 @@ public class ChatMessageBackgroundJob
             {
                 Id = Guid.NewGuid(),
                 ChatRoomId = chatRoomId,
+                UserId = userId,
                 SenderId = agentResponse.AgentId,
                 IsAgent = true,
                 Content = agentResponse.Content,

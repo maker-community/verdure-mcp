@@ -465,6 +465,11 @@ public class McpDbContext : DbContext
             entity.Property(e => e.ChatRoomId)
                 .HasColumnName("chat_room_id")
                 .IsRequired();
+
+            entity.Property(e => e.UserId)
+                .HasColumnName("user_id")
+                .IsRequired()
+                .HasMaxLength(255);
             
             entity.Property(e => e.SenderId)
                 .HasColumnName("sender_id")
@@ -496,6 +501,8 @@ public class McpDbContext : DbContext
 
             // Indexes
             entity.HasIndex(e => e.ChatRoomId);
+            entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => new { e.UserId, e.ChatRoomId, e.CreatedAt });
             entity.HasIndex(e => e.SenderId);
             entity.HasIndex(e => e.CreatedAt);
         });

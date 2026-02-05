@@ -16,6 +16,11 @@ public class ChatMessage
     public Guid ChatRoomId { get; set; }
 
     /// <summary>
+    /// User ID that this message session belongs to
+    /// </summary>
+    public required string UserId { get; set; }
+
+    /// <summary>
     /// Sender ID (user ID or agent ID)
     /// </summary>
     public required string SenderId { get; set; }

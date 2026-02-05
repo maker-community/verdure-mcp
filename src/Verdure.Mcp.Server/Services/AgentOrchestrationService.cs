@@ -48,7 +48,7 @@ public class AgentOrchestrationService : IAgentOrchestrationService
             }
 
             // Get chat history (last 10 messages for context)
-            var historyMessages = await GetChatHistoryAsync(chatRoomId, limit: 10, cancellationToken);
+            var historyMessages = await GetChatHistoryAsync(chatRoomId, userId, limit: 10, cancellationToken);
 
             // Prepare messages for the workflow
             var messages = new List<AIChatMessage>();
@@ -302,12 +302,13 @@ public class AgentOrchestrationService : IAgentOrchestrationService
 
     public async Task<List<ChatMessageDto>> GetChatHistoryAsync(
         Guid chatRoomId,
+        string userId,
         int limit = 50,
         CancellationToken cancellationToken = default)
     {
         var messages = await _dbContext.ChatMessages
             .AsNoTracking()
-            .Where(m => m.ChatRoomId == chatRoomId)
+            .Where(m => m.ChatRoomId == chatRoomId && m.UserId == userId)
             .OrderByDescending(m => m.CreatedAt)
             .Take(limit)
             .Select(m => new ChatMessageDto
