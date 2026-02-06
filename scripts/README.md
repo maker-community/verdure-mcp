@@ -1,0 +1,1 @@
+.\scripts\seed-mcp-services.ps1 -Token "<YOUR_TOKEN>"
