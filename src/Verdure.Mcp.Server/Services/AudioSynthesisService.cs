@@ -64,12 +64,32 @@ public class AudioSynthesisService : IAudioSynthesisService
         @"```[\s\S]*?```",
         RegexOptions.Compiled);
 
+    private static readonly Regex MarkdownBlockquoteRegex = new(
+        @"^\s*>+\s?",
+        RegexOptions.Compiled | RegexOptions.Multiline);
+
+    private static readonly Regex MarkdownHeadingRegex = new(
+        @"^\s*#{1,6}\s+",
+        RegexOptions.Compiled | RegexOptions.Multiline);
+
+    private static readonly Regex MarkdownListPrefixRegex = new(
+        @"^\s*([-*+]\s+|\d+\.\s+)",
+        RegexOptions.Compiled | RegexOptions.Multiline);
+
+    private static readonly Regex MarkdownStrongEmRegex = new(
+        @"(\*\*|__|\*|_)",
+        RegexOptions.Compiled);
+
     private static readonly Regex InlineCodeRegex = new(
         @"`[^`]+`",
         RegexOptions.Compiled);
 
     private static readonly Regex MultiSpaceRegex = new(
         @"\s+",
+        RegexOptions.Compiled);
+
+    private static readonly Regex MaskedContentRegex = new(
+        @"[\*＊]{2,}",
         RegexOptions.Compiled);
 
     public AudioSynthesisService(
@@ -196,8 +216,13 @@ public class AudioSynthesisService : IAudioSynthesisService
         cleaned = MarkdownCodeBlockRegex.Replace(cleaned, " ");
         cleaned = InlineCodeRegex.Replace(cleaned, " ");
         cleaned = MarkdownLinkRegex.Replace(cleaned, "$1");
+        cleaned = MarkdownBlockquoteRegex.Replace(cleaned, " ");
+        cleaned = MarkdownHeadingRegex.Replace(cleaned, " ");
+        cleaned = MarkdownListPrefixRegex.Replace(cleaned, " ");
+        cleaned = MarkdownStrongEmRegex.Replace(cleaned, " ");
         cleaned = UrlRegex.Replace(cleaned, " ");
         cleaned = RemoveEmojis(cleaned);
+        cleaned = MaskedContentRegex.Replace(cleaned, " ");
         cleaned = MultiSpaceRegex.Replace(cleaned, " ").Trim();
 
         return TruncateForSpeech(cleaned);

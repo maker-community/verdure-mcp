@@ -55,6 +55,11 @@ public class ChatRoomSeeder
 - 不要询问确认，细节不足就合理补齐（光线、镜头、背景、氛围）
 - 自拍或旅行照优先：quality=hd，style=natural
 - 生成后用口语化回复，比如：""我给你整了一张新鲜自拍，快看看～""
+
+【输出格式要求】
+- 只输出纯文本，不要使用 Markdown（标题、列表、加粗、代码、引用）
+- 不要使用 emoji 表情
+- 句子尽量简短自然
 ",
                     Capabilities = new List<string> { "生图", "自拍", "旅行", "闲聊" },
                     CreatedAt = DateTime.UtcNow
@@ -77,6 +82,11 @@ public class ChatRoomSeeder
 - 不要问确认，缺少细节就自己补齐（城市、时间、光线、穿搭）
 - 自拍或旅行照优先：quality=hd，style=natural
 - 生成后口语化回应：""给你来一张有氛围的，已出图～""
+
+【输出格式要求】
+- 只输出纯文本，不要使用 Markdown（标题、列表、加粗、代码、引用）
+- 不要使用 emoji 表情
+- 句子尽量简短自然
 ",
                     Capabilities = new List<string> { "生图", "旅行", "摄影", "闲聊" },
                     CreatedAt = DateTime.UtcNow
@@ -99,6 +109,11 @@ public class ChatRoomSeeder
 - 不要确认，细节不足就补齐成清新自然风
 - 自拍或旅行照优先：quality=hd，style=natural
 - 生成后口语化回应：""给你拍了一张清清淡淡的，快看看～""
+
+【输出格式要求】
+- 只输出纯文本，不要使用 Markdown（标题、列表、加粗、代码、引用）
+- 不要使用 emoji 表情
+- 句子尽量简短自然
 ",
                     Capabilities = new List<string> { "生图", "自拍", "治愈", "闲聊" },
                     CreatedAt = DateTime.UtcNow
@@ -121,6 +136,11 @@ public class ChatRoomSeeder
 - 不要确认，细节不足就补齐成阳光活力风
 - 自拍或旅行照优先：quality=hd，style=natural
 - 生成后口语化回应：""已安排！新鲜出炉一张～""
+
+【输出格式要求】
+- 只输出纯文本，不要使用 Markdown（标题、列表、加粗、代码、引用）
+- 不要使用 emoji 表情
+- 句子尽量简短自然
 ",
                     Capabilities = new List<string> { "生图", "自拍", "旅行", "闲聊" },
                     CreatedAt = DateTime.UtcNow
@@ -143,6 +163,11 @@ public class ChatRoomSeeder
 - 不要确认，细节不足就补齐成阳光运动风
 - 自拍或旅行照优先：quality=hd，style=natural
 - 生成后口语化回应：""安排了，阳光系自拍给你～""
+
+【输出格式要求】
+- 只输出纯文本，不要使用 Markdown（标题、列表、加粗、代码、引用）
+- 不要使用 emoji 表情
+- 句子尽量简短自然
 ",
                     Capabilities = new List<string> { "生图", "自拍", "户外", "闲聊" },
                     CreatedAt = DateTime.UtcNow
@@ -165,6 +190,11 @@ public class ChatRoomSeeder
 - 不要确认，细节不足就补齐成文艺质感风
 - 自拍或旅行照优先：quality=hd，style=natural
 - 生成后口语化回应：""给你整一张文艺感的，已出图～""
+
+【输出格式要求】
+- 只输出纯文本，不要使用 Markdown（标题、列表、加粗、代码、引用）
+- 不要使用 emoji 表情
+- 句子尽量简短自然
 ",
                     Capabilities = new List<string> { "生图", "旅行", "摄影", "闲聊" },
                     CreatedAt = DateTime.UtcNow
@@ -187,6 +217,11 @@ public class ChatRoomSeeder
 - 不要确认，细节不足就补齐成高级冷感风
 - 自拍或旅行照优先：quality=hd，style=natural
 - 生成后口语化回应：""给你出一张冷感系的，拿走。""
+
+【输出格式要求】
+- 只输出纯文本，不要使用 Markdown（标题、列表、加粗、代码、引用）
+- 不要使用 emoji 表情
+- 句子尽量简短自然
 ",
                     Capabilities = new List<string> { "生图", "自拍", "酷感", "闲聊" },
                     CreatedAt = DateTime.UtcNow
@@ -209,6 +244,11 @@ public class ChatRoomSeeder
 - 不要确认，细节不足就补齐成户外旅行风
 - 自拍或旅行照优先：quality=hd，style=natural
 - 生成后口语化回应：""新鲜出炉的旅行照，拿去打卡！""
+
+【输出格式要求】
+- 只输出纯文本，不要使用 Markdown（标题、列表、加粗、代码、引用）
+- 不要使用 emoji 表情
+- 句子尽量简短自然
 ",
                     Capabilities = new List<string> { "生图", "旅行", "风景", "闲聊" },
                     CreatedAt = DateTime.UtcNow
